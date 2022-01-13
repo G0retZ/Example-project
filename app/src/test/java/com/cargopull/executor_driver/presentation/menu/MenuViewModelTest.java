@@ -76,10 +76,10 @@ public class MenuViewModelTest {
    */
   @Test
   public void reportIllegalArgumentErrorIfBlocked() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -90,7 +90,7 @@ public class MenuViewModelTest {
    */
   @Test
   public void askExecutorStateUseCaseForSubscribeInitially() {
-    // Результат:
+    // Effect:
     verify(executorStateUseCase, only()).getExecutorStates();
   }
 
@@ -101,10 +101,10 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailablePendingViewStateInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(any(MenuViewStateFilterUnAvailable.class));
   }
 
@@ -113,13 +113,13 @@ public class MenuViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForExecutorStateError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(any(MenuViewStateFilterUnAvailable.class));
   }
 
@@ -128,14 +128,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForBlocked() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.BLOCKED);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -146,14 +146,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForShiftClosed() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.SHIFT_CLOSED);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -164,14 +164,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setAvailableViewStateForShiftOpened() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(MenuViewStateFilterUnAvailable.class));
     inOrder.verify(viewStateObserver)
         .onChanged(new MenuViewStateFilterAvailable(runnableCaptor.capture()));
@@ -183,14 +183,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setAvailableViewStateForOnline() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.ONLINE);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(MenuViewStateFilterUnAvailable.class));
     inOrder.verify(viewStateObserver)
         .onChanged(new MenuViewStateFilterAvailable(runnableCaptor.capture()));
@@ -202,14 +202,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForDriverOrderConfirmation() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.DRIVER_ORDER_CONFIRMATION);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -221,14 +221,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForDriverPreOrderConfirmation() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.DRIVER_PRELIMINARY_ORDER_CONFIRMATION);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -239,14 +239,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForClientOrderConfirmation() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.CLIENT_ORDER_CONFIRMATION);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -257,14 +257,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForMovingToClient() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.MOVING_TO_CLIENT);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -275,14 +275,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForWaitingForClient() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -293,14 +293,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForOrderFulfillment() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.ORDER_FULFILLMENT);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -311,14 +311,14 @@ public class MenuViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateForPaymentConfirmation() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.PAYMENT_CONFIRMATION);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver, times(2))
         .onChanged(any(MenuViewStateFilterUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -331,13 +331,13 @@ public class MenuViewModelTest {
    */
   @Test
   public void setNavigateToServerDataErrorForExecutorStateError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -346,15 +346,15 @@ public class MenuViewModelTest {
    */
   @Test
   public void doNotTouchNavigationObserver() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     for (ExecutorState executorState : ExecutorState.values()) {
       publishSubject.onNext(executorState);
     }
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -363,18 +363,18 @@ public class MenuViewModelTest {
    */
   @Test
   public void navigateToOrdersFilterForShiftOpened() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.SHIFT_OPENED);
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(fragmentViewActions);
     verify(fragmentViewActions).setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(MenuNavigate.ORDERS_FILTER);
   }
 
@@ -383,18 +383,18 @@ public class MenuViewModelTest {
    */
   @Test
   public void navigateToOrdersFilterForOnline() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(ExecutorState.ONLINE);
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(fragmentViewActions);
     verify(fragmentViewActions).setClickAction(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(MenuNavigate.ORDERS_FILTER);
   }
 }

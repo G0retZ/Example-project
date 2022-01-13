@@ -9,13 +9,15 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.gateway.SmsGatewayImpl;
-import io.reactivex.Completable;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SmsGatewayTest {
@@ -41,10 +43,10 @@ public class SmsGatewayTest {
    */
   @Test
   public void smsMeCompletableRequested() {
-    // Действие:
+    // Action:
     gateway.sendMeCode("012345");
 
-    // Результат:
+    // Effect:
     verify(api, only()).sendMeCode("012345");
   }
 
@@ -55,10 +57,10 @@ public class SmsGatewayTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Действие:
+    // Action:
     when(api.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-    // Результат:
+    // Effect:
     gateway.sendMeCode("01234").test().assertError(NoNetworkException.class);
   }
 
@@ -67,10 +69,10 @@ public class SmsGatewayTest {
    */
   @Test
   public void answerSmsSuccessful() {
-    // Действие:
+    // Action:
     when(api.sendMeCode(anyString())).thenReturn(Completable.complete());
 
-    // Результат:
+    // Effect:
     gateway.sendMeCode("012345").test().assertComplete();
   }
 }

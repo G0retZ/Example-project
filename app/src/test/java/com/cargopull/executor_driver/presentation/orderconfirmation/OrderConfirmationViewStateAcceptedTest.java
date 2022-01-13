@@ -19,11 +19,11 @@ public class OrderConfirmationViewStateAcceptedTest {
 
   @Test
   public void testActionsWithMessage() {
-    // Действие:
+    // Action:
     InOrder inOrder = Mockito.inOrder(viewActions);
     new OrderConfirmationViewStateAccepted("message").apply(viewActions);
 
-    // Результат:
+      // Effect:
     inOrder.verify(viewActions).showDriverOrderConfirmationPending(true);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);

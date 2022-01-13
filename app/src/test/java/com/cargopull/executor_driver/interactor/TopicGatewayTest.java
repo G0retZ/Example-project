@@ -77,10 +77,10 @@ public class TopicGatewayTest {
    */
   @Test
   public void askExecutorStateUseCaseForStatusUpdates() {
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(topicListener, only()).getMessages();
   }
 
@@ -91,10 +91,10 @@ public class TopicGatewayTest {
    */
   @Test
   public void doNotTouchFilterIfNoDataYet() {
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(filter);
   }
 
@@ -105,13 +105,13 @@ public class TopicGatewayTest {
    */
   @Test
   public void askFilterForCheck() throws Exception {
-    // Дано:
+    // Given:
     when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(filter, only()).test(stompFrame);
   }
 
@@ -122,13 +122,13 @@ public class TopicGatewayTest {
    */
   @Test
   public void doNotTouchMapperIfFiltered() {
-    // Дано:
+    // Given:
     when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(mapper);
   }
 
@@ -139,14 +139,14 @@ public class TopicGatewayTest {
    */
   @Test
   public void askMapperForForDataMapping() throws Exception {
-    // Дано:
+    // Given:
     when(filter.test(stompFrame)).thenReturn(true);
     when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, only()).map(stompFrame);
   }
 
@@ -158,13 +158,13 @@ public class TopicGatewayTest {
    */
   @Test
   public void ignoreFilteredMessages() {
-    // Дано:
+    // Given:
     when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     if (withDefault) {
       testSubscriber.assertValue("defaultValue");
     } else {
@@ -180,15 +180,15 @@ public class TopicGatewayTest {
    */
   @Test
   public void answerNoStringAvailableForNoData() throws Exception {
-    // Дано:
+    // Given:
     doThrow(new DataMappingException()).when(mapper).map(stompFrame);
     when(filter.test(stompFrame)).thenReturn(true);
     when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     if (withDefault) {
       testSubscriber.assertValue("defaultValue");
@@ -204,15 +204,15 @@ public class TopicGatewayTest {
    */
   @Test
   public void answerWithData() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(stompFrame)).thenReturn("Data");
     when(filter.test(stompFrame)).thenReturn(true);
     when(topicListener.getMessages()).thenReturn(Flowable.just(stompFrame));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     if (withDefault) {
       testSubscriber.assertValues("defaultValue", "Data");
     } else {

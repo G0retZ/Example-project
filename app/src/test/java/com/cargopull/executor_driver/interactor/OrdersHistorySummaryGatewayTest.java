@@ -62,10 +62,10 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void askApiGetOrdersHistory() {
-    // Действие:
+    // Action:
     gateway.getOrdersHistorySummary(11, 100);
 
-    // Результат:
+    // Effect:
     verify(api, only()).getOrdersHistory(11, 100);
   }
 
@@ -76,15 +76,15 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void doNotTouchMapperOnApiErrors() {
-    // Дано:
+    // Given:
     when(api.getOrdersHistory(anyLong(), anyLong())).thenReturn(Single.error(new Exception()));
 
-    // Действие:
+    // Action:
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(mapper);
   }
 
@@ -95,15 +95,15 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void askMapperForMapping() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOrdersHistory(11, 100)).thenReturn(Single.just(apiOrdersHistorySummary));
 
-    // Действие:
+    // Action:
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, times(3)).map(apiOrdersHistorySummary);
     verifyNoMoreInteractions(mapper);
   }
@@ -115,16 +115,16 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void askMapperMappingAfterMappingErrors() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(apiOrdersHistorySummary)).thenThrow(new DataMappingException());
     when(api.getOrdersHistory(11, 100)).thenReturn(Single.just(apiOrdersHistorySummary));
 
-    // Действие:
+    // Action:
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, times(3)).map(apiOrdersHistorySummary);
     verifyNoMoreInteractions(mapper);
   }
@@ -136,10 +136,10 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(api.getOrdersHistory(anyLong(), anyLong())).thenReturn(Single.error(new Exception()));
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.getOrdersHistorySummary(11, 100).test().assertError(Exception.class);
     gateway.getOrdersHistorySummary(11, 100).test().assertError(Exception.class);
   }
@@ -151,11 +151,11 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void answerDataMappingError() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOrdersHistory(11, 100)).thenReturn(Single.just(apiOrdersHistorySummary));
     when(mapper.map(apiOrdersHistorySummary)).thenThrow(new DataMappingException());
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.getOrdersHistorySummary(11, 100).test().assertError(DataMappingException.class);
   }
 
@@ -164,14 +164,14 @@ public class OrdersHistorySummaryGatewayTest {
    */
   @Test
   public void answerWithOrdersHistorySummary() {
-    // Дано:
+    // Given:
     when(api.getOrdersHistory(11, 100)).thenReturn(Single.just(apiOrdersHistorySummary));
 
-    // Действие:
+    // Action:
     TestObserver<OrdersHistorySummary> testObserver = gateway.getOrdersHistorySummary(11, 100)
         .test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertValue(ordersHistorySummary);
   }

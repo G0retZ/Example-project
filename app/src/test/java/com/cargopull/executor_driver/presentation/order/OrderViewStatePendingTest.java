@@ -35,10 +35,10 @@ public class OrderViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).blockWithPending("OrderViewState");
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -46,13 +46,13 @@ public class OrderViewStatePendingTest {
 
   @Test
   public void testNoActions() {
-    // Дано:
+      // Given:
     viewState = new OrderViewStatePending(null);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).blockWithPending("OrderViewState");
     verifyNoMoreInteractions(viewActions);
     verifyNoInteractions(parentViewState);

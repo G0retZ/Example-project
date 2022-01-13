@@ -73,10 +73,10 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -87,7 +87,7 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToUpcomingPreOrdersMessages() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getNotificationMessages();
   }
 
@@ -96,13 +96,13 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToUpcomingPreOrdersMessagesIfAlreadyAsked() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getNotificationMessages();
   }
 
@@ -113,13 +113,13 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -129,10 +129,10 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -142,10 +142,10 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnUpcomingPreOrderMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.pre_order_reminder_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.pre_order_reminder);
   }
@@ -155,10 +155,10 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnUpcomingPreOrderEmptyMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.pre_order_reminder_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.pre_order_reminder);
   }
@@ -168,10 +168,10 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnUpcomingPreOrderSpaceMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.pre_order_reminder_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.pre_order_reminder);
   }
@@ -183,13 +183,13 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void showUpcomingPreOrderMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showUpcomingPreOrderMessage("Message");
@@ -200,13 +200,13 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void doNotShowMessageOnError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -215,13 +215,13 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -230,13 +230,13 @@ public class UpcomingPreOrderMessageViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 }

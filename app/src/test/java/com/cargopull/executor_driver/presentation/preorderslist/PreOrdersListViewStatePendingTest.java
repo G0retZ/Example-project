@@ -29,13 +29,13 @@ public class PreOrdersListViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     viewState = new PreOrdersListViewStatePending(parentViewState);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPreOrdersListPending(true);
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -43,13 +43,13 @@ public class PreOrdersListViewStatePendingTest {
 
   @Test
   public void testNoActions() {
-    // Дано:
+      // Given:
     viewState = new PreOrdersListViewStatePending(null);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPreOrdersListPending(true);
     verifyNoMoreInteractions(viewActions);
     verifyNoInteractions(parentViewState);

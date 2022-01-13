@@ -60,14 +60,14 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun reportVehicleDataMappingError() {
-        // Дано:
+        // Given:
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(DataMappingException()))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verify(errorReporter, only()).reportError(any(DataMappingException::class.java))
     }
 
@@ -76,14 +76,14 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun reportNoNetworkErrorAgain() {
-        // Дано:
+        // Given:
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(ServerResponseException("403", "")))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verify(errorReporter, only()).reportError(any(ServerResponseException::class.java))
     }
 
@@ -92,14 +92,14 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun doNotReportOtherErrors() {
-        // Дано:
+        // Given:
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(Exception()))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(errorReporter)
     }
 
@@ -108,7 +108,7 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun doNotReportOtherNetworkErrors() {
-        // Дано:
+        // Given:
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(HttpException(
                     Response.error<Any>(
@@ -117,10 +117,10 @@ class NextExecutorStateViewModelTest {
                     )
                 )))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(errorReporter)
     }
 
@@ -131,13 +131,13 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun doNotTouchUseCaseOnSubscriptions() {
-        // Действие:
+        // Action:
         viewModel.viewStateLiveData
         viewModel.navigationLiveData
         viewModel.viewStateLiveData
         viewModel.navigationLiveData
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(nextExecutorStateUseCase)
     }
 
@@ -146,16 +146,16 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun askUseCaseToRouteToNextExecutorState() {
-        // Дано:
+        // Given:
         `when`(nextExecutorStateUseCase.proceedToNextState).thenReturn(Completable.complete())
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
         viewModel.routeToNextState()
         viewModel.routeToNextState()
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verify(nextExecutorStateUseCase, times(4)).proceedToNextState
     }
 
@@ -165,13 +165,13 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun doNotTouchUseCaseDuringRoutingToNextExecutorState() {
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
         viewModel.routeToNextState()
         viewModel.routeToNextState()
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verify(nextExecutorStateUseCase, only()).proceedToNextState
     }
 
@@ -182,13 +182,13 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun setPendingViewStateToLiveDataInitially() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(viewStateObserver)
 
-        // Действие:
+        // Action:
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
 
-        // Результат:
+        // Effect:
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStateIdle::class.java))
         verifyNoMoreInteractions(viewStateObserver)
     }
@@ -198,14 +198,14 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun setPendingViewStateWithEnRouteViewStateToLiveDataForCompleteTheOrder() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(viewStateObserver)
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStateIdle::class.java))
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStatePending::class.java))
         verifyNoMoreInteractions(viewStateObserver)
@@ -216,16 +216,16 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun setPendingViewStateWithNoRouteTrueViewStateToLiveDataForCompleteTheOrder() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(viewStateObserver)
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(Exception()))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStateIdle::class.java))
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStatePending::class.java))
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStateIdle::class.java))
@@ -237,15 +237,15 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun setPendingViewStateWithNoRouteFalseViewStateToLiveDataForCompleteTheOrder() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(viewStateObserver)
         viewModel.viewStateLiveData.observeForever(viewStateObserver)
         `when`(nextExecutorStateUseCase.proceedToNextState).thenReturn(Completable.complete())
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStateIdle::class.java))
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStatePending::class.java))
         inOrder.verify(viewStateObserver).onChanged(any(NextExecutorStateViewStateIdle::class.java))
@@ -259,15 +259,15 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun doNotTouchNavigationObserverBeforeResponse() {
-        // Дано:
+        // Given:
         viewModel.navigationLiveData.observeForever(navigateObserver)
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
         viewModel.routeToNextState()
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(navigateObserver)
     }
 
@@ -276,15 +276,15 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun setNavigateToServerDataError() {
-        // Дано:
+        // Given:
         viewModel.navigationLiveData.observeForever(navigateObserver)
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(DataMappingException()))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR)
     }
 
@@ -293,15 +293,15 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun navigateToNoConnectionForOtherErrors() {
-        // Дано:
+        // Given:
         viewModel.navigationLiveData.observeForever(navigateObserver)
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(Exception()))
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION)
     }
 
@@ -310,14 +310,14 @@ class NextExecutorStateViewModelTest {
      */
     @Test
     fun navigateToCorrespondingStates() {
-        // Дано:
+        // Given:
         `when`(nextExecutorStateUseCase.proceedToNextState).thenReturn(Completable.complete())
         viewModel.navigationLiveData.observeForever(navigateObserver)
 
-        // Действие:
+        // Action:
         viewModel.routeToNextState()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(navigateObserver)
     }
 
@@ -338,10 +338,10 @@ class NextExecutorStateViewStateIdleTest {
 
     @Test
     fun testActions() {
-        // Действие:
+        // Action:
         NextExecutorStateViewStateIdle().apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions, only()).unblockWithPending("NextExecutorState")
     }
 }
@@ -354,10 +354,10 @@ class NextExecutorStateViewStatePendingTest {
 
     @Test
     fun testActions() {
-        // Действие:
+        // Action:
         NextExecutorStateViewStatePending().apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions, only()).blockWithPending("NextExecutorState")
     }
 }

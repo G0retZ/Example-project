@@ -145,7 +145,7 @@ public class ExecutorStateApiMapperTest {
 
   @Before
   public void setUp() throws Exception {
-    // Дано:
+    // Given:
     when(payloadMapper.map(conditionStompFrame)).thenReturn(expectedMessage);
     if (expectedException != null) {
       thrown.expect(expectedException);
@@ -161,10 +161,10 @@ public class ExecutorStateApiMapperTest {
    */
   @Test
   public void shouldAskPayloadMapperToMapStompFrameToMessage() throws Exception {
-    // Действие:
+    // Action:
     mapper.map(conditionStompFrame);
 
-    // Результат:
+    // Effect:
     if (expectedException == null) {
       verify(payloadMapper, only()).map(conditionStompFrame);
     } else {
@@ -179,10 +179,10 @@ public class ExecutorStateApiMapperTest {
    */
   @Test
   public void mappingConditionsStompFrameToExpectedState() throws Exception {
-    // Действие:
+    // Action:
     ExecutorState executorState = mapper.map(conditionStompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(expectedExecutorState, executorState);
     assertEquals(expectedMessage, executorState.getData());
     assertEquals(expectedTimer, executorState.getCustomerTimer());

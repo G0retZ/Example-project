@@ -23,13 +23,13 @@ class BalanceViewStatePendingTest {
 
     @Test
     fun testActions() {
-        // Дано:
+        // Given:
         viewState = BalanceViewStatePending(parentViewState)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         //    verify(viewActions).showBalancePending(true);
         verify<ViewState<BalanceViewActions>>(parentViewState, only()).apply(viewActions)
         verify(viewActions).blockWithPending("BalanceViewState")
@@ -38,13 +38,13 @@ class BalanceViewStatePendingTest {
 
     @Test
     fun testActionsWithNull() {
-        // Дано:
+        // Given:
         viewState = BalanceViewStatePending(null)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).blockWithPending("BalanceViewState")
         verifyNoMoreInteractions(viewActions)
     }

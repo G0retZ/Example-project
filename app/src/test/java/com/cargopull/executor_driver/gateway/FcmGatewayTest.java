@@ -43,13 +43,13 @@ public class FcmGatewayTest {
    */
   @Test
   public void doNotTouchFilterIfNoDataYet() {
-    // Дано:
+    // Given:
     gateway = new FcmGateway<>(Observable.never(), filter, mapper);
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(filter);
   }
 
@@ -60,13 +60,13 @@ public class FcmGatewayTest {
    */
   @Test
   public void askFilterForCheck() throws Exception {
-    // Дано:
+    // Given:
     gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(filter, only()).test(dataMap);
   }
 
@@ -77,13 +77,13 @@ public class FcmGatewayTest {
    */
   @Test
   public void doNotTouchMapperIfFiltered() {
-    // Дано:
+    // Given:
     gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(mapper);
   }
 
@@ -94,14 +94,14 @@ public class FcmGatewayTest {
    */
   @Test
   public void askMapperForForDataMapping() throws Exception {
-    // Дано:
+    // Given:
     when(filter.test(dataMap)).thenReturn(true);
     gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
-    // Действие:
+    // Action:
     gateway.getData().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, only()).map(dataMap);
   }
 
@@ -113,13 +113,13 @@ public class FcmGatewayTest {
    */
   @Test
   public void ignoreFilteredMessages() {
-    // Дано:
+    // Given:
     gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
   }
@@ -131,15 +131,15 @@ public class FcmGatewayTest {
    */
   @Test
   public void answerNoStringAvailableForNoData() throws Exception {
-    // Дано:
+    // Given:
     doThrow(new DataMappingException()).when(mapper).map(dataMap);
     when(filter.test(dataMap)).thenReturn(true);
     gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNoValues();
   }
@@ -151,15 +151,15 @@ public class FcmGatewayTest {
    */
   @Test
   public void answerWithData() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(dataMap)).thenReturn("Data");
     when(filter.test(dataMap)).thenReturn(true);
     gateway = new FcmGateway<>(Observable.just(dataMap), filter, mapper);
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValue("Data");
     testSubscriber.assertNoErrors();
   }

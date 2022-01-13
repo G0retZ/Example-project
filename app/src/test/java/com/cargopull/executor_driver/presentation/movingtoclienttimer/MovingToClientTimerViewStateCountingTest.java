@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.FragmentViewActions;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,13 +23,13 @@ public class MovingToClientTimerViewStateCountingTest {
 
   @Test
   public void testPositive() {
-    // Дано:
+    // Given:
     viewState = new MovingToClientTimerViewStateCounting(4289080);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setText(R.id.timerText, "01:11:29");
     verify(viewActions).setTextColor(R.id.timerText, R.color.textColorPrimary);
     verify(viewActions).unblockWithPending("MovingToClientTimerViewState");
@@ -37,13 +38,13 @@ public class MovingToClientTimerViewStateCountingTest {
 
   @Test
   public void testZero() {
-    // Дано:
+      // Given:
     viewState = new MovingToClientTimerViewStateCounting(0);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setText(R.id.timerText, "00:00:00");
     verify(viewActions).setTextColor(R.id.timerText, R.color.colorError);
     verify(viewActions).unblockWithPending("MovingToClientTimerViewState");
@@ -52,13 +53,13 @@ public class MovingToClientTimerViewStateCountingTest {
 
   @Test
   public void testNegative() {
-    // Дано:
+      // Given:
     viewState = new MovingToClientTimerViewStateCounting(-7323089);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setText(R.id.timerText, "-02:02:03");
     verify(viewActions).setTextColor(R.id.timerText, R.color.colorError);
     verify(viewActions).unblockWithPending("MovingToClientTimerViewState");

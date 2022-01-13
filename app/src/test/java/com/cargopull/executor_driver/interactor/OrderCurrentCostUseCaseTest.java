@@ -52,13 +52,13 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void askOrderGatewayForOrders() {
-    // Действие:
+    // Action:
     useCase.getOrderCurrentCost().test().isDisposed();
     useCase.getOrderCurrentCost().test().isDisposed();
     useCase.getOrderCurrentCost().test().isDisposed();
     useCase.getOrderCurrentCost().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(orderUseCase, times(4)).getOrders();
     verifyNoMoreInteractions(orderUseCase);
   }
@@ -70,10 +70,10 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void doNotTouchCurrentCostGateway() {
-    // Действие:
+    // Action:
     useCase.getOrderCurrentCost().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(orderCurrentCostGateway);
   }
 
@@ -82,13 +82,13 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void askCurrentCostGatewayForCostUpdates() {
-    // Дано:
+    // Given:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order));
 
-    // Действие:
+    // Action:
     useCase.getOrderCurrentCost().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(orderCurrentCostGateway, only()).getData();
   }
 
@@ -99,13 +99,13 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void answerDataMappingError() {
-    // Дано:
+    // Given:
     when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
-    // Результат:
+    // Effect:
     test.assertError(DataMappingException.class);
     test.assertNoValues();
     test.assertNotComplete();
@@ -116,16 +116,16 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void answerDataMappingErrorInCurrentCost() {
-    // Дано:
+    // Given:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(101L);
     when(orderCurrentCostGateway.getData())
         .thenReturn(Flowable.error(new DataMappingException()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
-    // Результат:
+    // Effect:
     test.assertError(DataMappingException.class);
     test.assertValue(101L);
     test.assertNotComplete();
@@ -136,15 +136,15 @@ public class OrderCurrentCostUseCaseTest {
    */
   @Test
   public void answerWithOrdersCostsOnly() {
-    // Дано:
+    // Given:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(110L);
     when(order2.getTotalCost()).thenReturn(12173L);
 
-    // Действие:
+    // Action:
     TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
-    // Результат:
+    // Effect:
     test.assertValues(110L, 12173L);
     test.assertNotComplete();
     test.assertNoErrors();
@@ -156,7 +156,7 @@ public class OrderCurrentCostUseCaseTest {
   @SuppressWarnings("unchecked")
   @Test
   public void answerWithOrdersAndUpdatedCosts() {
-    // Дано:
+    // Given:
     when(orderUseCase.getOrders()).thenReturn(Flowable.just(order, order2));
     when(order.getTotalCost()).thenReturn(100L);
     when(order2.getTotalCost()).thenReturn(12173L);
@@ -165,10 +165,10 @@ public class OrderCurrentCostUseCaseTest {
         Flowable.just(8395L, 8937L, 17156L, 9228L)
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Long> test = useCase.getOrderCurrentCost().test();
 
-    // Результат:
+    // Effect:
     test.assertValues(100L, 123L, 145L, 139L, 198L, 202L, 12173L, 8395L, 8937L, 17156L, 9228L);
     test.assertComplete();
     test.assertNoErrors();

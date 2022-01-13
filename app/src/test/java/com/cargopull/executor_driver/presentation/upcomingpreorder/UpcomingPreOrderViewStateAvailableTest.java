@@ -16,13 +16,13 @@ public class UpcomingPreOrderViewStateAvailableTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     UpcomingPreOrderViewStateAvailable viewState = new UpcomingPreOrderViewStateAvailable();
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showUpcomingPreOrderAvailable(true);
     verifyNoMoreInteractions(viewActions);
   }

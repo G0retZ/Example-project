@@ -7,16 +7,18 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCostDetailsUseCaseTest {
@@ -47,13 +49,13 @@ public class OrderCostDetailsUseCaseTest {
    */
   @Test
   public void askGatewayForOrders() {
-    // Действие:
+    // Action:
     useCase.getOrderCostDetails().test().isDisposed();
     useCase.getOrderCostDetails().test().isDisposed();
     useCase.getOrderCostDetails().test().isDisposed();
     useCase.getOrderCostDetails().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -64,14 +66,14 @@ public class OrderCostDetailsUseCaseTest {
    */
   @Test
   public void answerWithOrderCostDetails() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.just(orderCostDetails,
         orderCostDetails1));
 
-    // Действие:
+    // Action:
     TestSubscriber<OrderCostDetails> test = useCase.getOrderCostDetails().test();
 
-    // Результат:
+    // Effect:
     test.assertValues(orderCostDetails, orderCostDetails1);
     test.assertComplete();
     test.assertNoErrors();
@@ -82,17 +84,17 @@ public class OrderCostDetailsUseCaseTest {
    */
   @Test
   public void valueUnchangedForRead() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(
         Flowable.just(orderCostDetails, orderCostDetails1).concatWith(Flowable.never())
     );
     TestSubscriber<OrderCostDetails> testObserver = useCase.getOrderCostDetails().test();
 
-    // Действие:
+    // Action:
     useCase.updateWith(orderCostDetails1);
     useCase.updateWith(orderCostDetails);
 
-    // Результат:
+    // Effect:
     testObserver
         .assertValues(orderCostDetails, orderCostDetails1, orderCostDetails1, orderCostDetails);
   }
@@ -102,13 +104,13 @@ public class OrderCostDetailsUseCaseTest {
    */
   @Test
   public void answerDataMappingError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(new DataMappingException()));
 
-    // Действие:
+    // Action:
     TestSubscriber<OrderCostDetails> test = useCase.getOrderCostDetails().test();
 
-    // Результат:
+    // Effect:
     test.assertError(DataMappingException.class);
     test.assertNoValues();
     test.assertNotComplete();
@@ -119,14 +121,14 @@ public class OrderCostDetailsUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<OrderCostDetails> testSubscriber = useCase.getOrderCostDetails().test();
     useCase.updateWith(orderCostDetails);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
@@ -137,12 +139,12 @@ public class OrderCostDetailsUseCaseTest {
    */
   @Test
   public void answerNothingAfterError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(
         Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER)
     );
 
-    // Действие:
+    // Action:
     Flowable<OrderCostDetails> orders = useCase.getOrderCostDetails();
     TestSubscriber<OrderCostDetails> testSubscriber = orders.test();
     emitter.onNext(orderCostDetails);
@@ -152,7 +154,7 @@ public class OrderCostDetailsUseCaseTest {
     emitter.onError(new Exception());
     TestSubscriber<OrderCostDetails> testSubscriber1 = orders.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(orderCostDetails, orderCostDetails1, orderCostDetails);
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertNotComplete();

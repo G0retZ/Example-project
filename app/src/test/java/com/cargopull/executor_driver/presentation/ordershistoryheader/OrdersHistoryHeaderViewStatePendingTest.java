@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,10 +18,10 @@ public class OrdersHistoryHeaderViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     new OrdersHistoryHeaderViewStatePending().apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setVisible(R.id.pendingIndicator, true);
     verify(viewActions).setVisible(R.id.networkErrorText, false);
     verify(viewActions).setVisible(R.id.retryButton, false);

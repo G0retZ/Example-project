@@ -10,22 +10,25 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.observers.TestObserver;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedOrderUseCaseImplTest {
@@ -60,13 +63,13 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void askUseCaseForOrdersListForGet() {
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(ordersUseCase, only()).getOrdersSet();
     verifyNoMoreInteractions(ordersUseCase);
   }
@@ -76,12 +79,12 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void askUseCaseForOrdersListForSet() {
-    // Действие:
+    // Action:
     useCase.setSelectedOrder(order1).test().isDisposed();
     useCase.setSelectedOrder(order2).test().isDisposed();
     useCase.setSelectedOrder(order3).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(ordersUseCase, times(3)).getOrdersSet();
     verifyNoMoreInteractions(ordersUseCase);
   }
@@ -93,16 +96,16 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void doNotAnswerForNoChoice() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -113,20 +116,20 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerWithSelectedOrders() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.setSelectedOrder(order1).test().isDisposed();
     useCase.setSelectedOrder(order2).test().isDisposed();
     useCase.setSelectedOrder(order1).test().isDisposed();
     useCase.setSelectedOrder(order).test().isDisposed();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order1, order2, order1, order);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -137,20 +140,20 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerWithLastSelectedOrder() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     useCase.setSelectedOrder(order1).test().isDisposed();
     useCase.setSelectedOrder(order2).test().isDisposed();
     useCase.setSelectedOrder(order1).test().isDisposed();
     useCase.setSelectedOrder(order).test().isDisposed();
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -161,16 +164,16 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerWithSelectOrdersSuccess() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
 
-    // Результат:
+    // Effect:
     useCase.setSelectedOrder(order1).test().assertComplete();
     useCase.setSelectedOrder(order2).test().assertComplete();
     useCase.setSelectedOrder(order1).test().assertComplete();
@@ -182,13 +185,13 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerWithSelectedOrder() {
-    // Дано:
+    // Given:
     PublishSubject<Set<Order>> publishSubject = PublishSubject.create();
     when(ordersUseCase.getOrdersSet()).thenReturn(
         publishSubject.toFlowable(BackpressureStrategy.BUFFER)
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test().isDisposed();
@@ -198,7 +201,7 @@ public class SelectedOrderUseCaseImplTest {
     publishSubject.onNext(new HashSet<>(Arrays.asList(order3, order1, order2)));
     publishSubject.onNext(new HashSet<>(Arrays.asList(order1, order3)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order1);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -209,13 +212,13 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerError() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -226,13 +229,13 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerErrorOnSelection() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestObserver testObserver = useCase.setSelectedOrder(order1).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
     testObserver.assertNotComplete();
     testObserver.assertNoValues();
@@ -243,17 +246,17 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void doNotBotherSubscribersWithWrongChoiceError() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order3)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.setSelectedOrder(order2).test().isDisposed();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -264,17 +267,17 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerWrongSelectionError() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order3)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     TestObserver<Void> testObserver = useCase.setSelectedOrder(order2).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(NoSuchElementException.class);
     testObserver.assertNotComplete();
     testObserver.assertNoValues();
@@ -285,20 +288,20 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerWrongSelectionErrorForNewList() {
-    // Дано:
+    // Given:
     PublishSubject<Set<Order>> publishSubject = PublishSubject.create();
     when(ordersUseCase.getOrdersSet()).thenReturn(
         publishSubject.toFlowable(BackpressureStrategy.BUFFER)
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     useCase.setSelectedOrder(order1).test().isDisposed();
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     publishSubject.onNext(new HashSet<>(Arrays.asList(order, order2, order3)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order1);
     testSubscriber.assertError(OrderCancelledException.class);
     testSubscriber.assertNotComplete();
@@ -309,13 +312,13 @@ public class SelectedOrderUseCaseImplTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
@@ -327,13 +330,13 @@ public class SelectedOrderUseCaseImplTest {
   @SuppressWarnings("unchecked")
   @Test
   public void answerNothingAfterError() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER),
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders();
     TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
@@ -345,7 +348,7 @@ public class SelectedOrderUseCaseImplTest {
     TestSubscriber<Order> testSubscriber1 = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertValues(order1, order, order2);
     testSubscriber.assertNotComplete();
@@ -363,14 +366,14 @@ public class SelectedOrderUseCaseImplTest {
   @SuppressWarnings("unchecked")
   @Test
   public void answerNothingAfterComplete() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER),
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders().doOnNext(System.out::println);
     TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
@@ -382,7 +385,7 @@ public class SelectedOrderUseCaseImplTest {
     TestSubscriber<Order> testSubscriber1 = orders.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoErrors();
     testSubscriber.assertValues(order1, order, order2);
     testSubscriber.assertComplete();

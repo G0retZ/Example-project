@@ -7,14 +7,16 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorBalanceUseCaseTest {
@@ -46,13 +48,13 @@ public class ExecutorBalanceUseCaseTest {
    */
   @Test
   public void askGatewayForExecutorBalance() {
-    // Действие:
+    // Action:
     useCase.getExecutorBalance().test().isDisposed();
     useCase.getExecutorBalance().test().isDisposed();
     useCase.getExecutorBalance().test().isDisposed();
     useCase.getExecutorBalance().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -63,14 +65,14 @@ public class ExecutorBalanceUseCaseTest {
    */
   @Test
   public void answerWithExecutorBalance() {
-    // Дано:
+    // Given:
     when(gateway.getData())
         .thenReturn(Flowable.just(executorBalance, executorBalance2, executorBalance1));
 
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorBalance> testSubscriber = useCase.getExecutorBalance().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(executorBalance, executorBalance2, executorBalance1);
     testSubscriber.assertNoErrors();
   }
@@ -80,13 +82,13 @@ public class ExecutorBalanceUseCaseTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorBalance> testSubscriber = useCase.getExecutorBalance().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -97,13 +99,13 @@ public class ExecutorBalanceUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorBalance> testSubscriber = useCase.getExecutorBalance().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();

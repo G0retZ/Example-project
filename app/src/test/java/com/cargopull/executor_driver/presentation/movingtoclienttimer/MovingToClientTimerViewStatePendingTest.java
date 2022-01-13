@@ -36,10 +36,10 @@ public class MovingToClientTimerViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).blockWithPending("MovingToClientTimerViewState");
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -47,13 +47,13 @@ public class MovingToClientTimerViewStatePendingTest {
 
   @Test
   public void testNoActions() {
-    // Дано:
+      // Given:
     viewState = new MovingToClientTimerViewStatePending(null);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).blockWithPending("MovingToClientTimerViewState");
     verifyNoMoreInteractions(viewActions);
     verifyNoInteractions(parentViewState);

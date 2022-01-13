@@ -10,20 +10,20 @@ public class ApiOrderDecisionTest {
 
   @Test
   public void testConstructorWithFalse() {
-    // Дано:
+    // Given:
     ApiOrderDecision apiOrderDecision = new ApiOrderDecision(1, false);
 
-    // Результат:
+      // Effect:
     assertEquals(apiOrderDecision.getId(), 1);
     assertFalse(apiOrderDecision.isApproved());
   }
 
   @Test
   public void testConstructorWithTrue() {
-    // Дано:
+      // Given:
     ApiOrderDecision apiOrderDecision = new ApiOrderDecision(5, true);
 
-    // Результат:
+      // Effect:
     assertEquals(apiOrderDecision.getId(), 5);
     assertTrue(apiOrderDecision.isApproved());
   }

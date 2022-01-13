@@ -50,10 +50,10 @@ class CompleteOrderGatewayTest {
      */
     @Test
     fun askApiToCompleteTheOrder() {
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(apiService, only()).completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER"))
     }
 
@@ -64,14 +64,14 @@ class CompleteOrderGatewayTest {
      */
     @Test
     fun doNotTouchMapperOnError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER")))
                 .thenReturn(Single.error(Exception()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(mapper)
     }
 
@@ -81,14 +81,14 @@ class CompleteOrderGatewayTest {
     @Test
     @Throws(Exception::class)
     fun askMapperToMapData() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(mapper, only()).map(any())
     }
 
@@ -100,18 +100,18 @@ class CompleteOrderGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, orderCostDetails))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValue(Pair(ExecutorState.ONLINE, orderCostDetails))
@@ -122,14 +122,14 @@ class CompleteOrderGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER")))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
     }
@@ -139,17 +139,17 @@ class CompleteOrderGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderDataErrorForWrongModel() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER")))
                 .thenReturn(Single.error(JsonParseException("")))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }
@@ -160,18 +160,18 @@ class CompleteOrderGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderDataErrorForMapperError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrder(Collections.singletonMap("status", "COMPLETE_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }

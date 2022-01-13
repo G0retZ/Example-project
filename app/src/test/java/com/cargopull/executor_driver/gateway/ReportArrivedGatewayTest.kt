@@ -50,10 +50,10 @@ class ReportArrivedGatewayTest {
      */
     @Test
     fun askApiToCompleteTheOrder() {
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(apiService, only()).reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED"))
     }
 
@@ -64,14 +64,14 @@ class ReportArrivedGatewayTest {
      */
     @Test
     fun doNotTouchMapperOnError() {
-        // Дано:
+        // Given:
         `when`(apiService.reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED")))
                 .thenReturn(Single.error(Exception()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(mapper)
     }
 
@@ -81,14 +81,14 @@ class ReportArrivedGatewayTest {
     @Test
     @Throws(Exception::class)
     fun askMapperToMapData() {
-        // Дано:
+        // Given:
         `when`(apiService.reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED")))
                 .thenReturn(Single.just(ApiSimpleResult()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(mapper, only()).map(any())
     }
 
@@ -100,18 +100,18 @@ class ReportArrivedGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, route))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValue(Pair(ExecutorState.ONLINE, route))
@@ -122,14 +122,14 @@ class ReportArrivedGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderError() {
-        // Дано:
+        // Given:
         `when`(apiService.reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED")))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
     }
@@ -139,17 +139,17 @@ class ReportArrivedGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderDataErrorForWrongModel() {
-        // Дано:
+        // Given:
         `when`(apiService.reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED")))
                 .thenReturn(Single.error(JsonParseException("")))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }
@@ -160,18 +160,18 @@ class ReportArrivedGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderDataErrorForMapperError() {
-        // Дано:
+        // Given:
         `when`(apiService.reportArrived(Collections.singletonMap("status", "DRIVER_ARRIVED")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }

@@ -11,17 +11,20 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.Problem;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Completable;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReportProblemUseCaseTest {
@@ -56,12 +59,12 @@ public class ReportProblemUseCaseTest {
    */
   @Test
   public void askGatewayForReportProblems() {
-    // Действие:
+    // Action:
     useCase.reportProblem(problem).test().isDisposed();
     useCase.reportProblem(problem1).test().isDisposed();
     useCase.reportProblem(problem2).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getProblems();
   }
 
@@ -70,12 +73,12 @@ public class ReportProblemUseCaseTest {
    */
   @Test
   public void doNotAskGatewayToReportProblemWithoutReportProblems() {
-    // Действие:
+    // Action:
     useCase.reportProblem(problem).test().isDisposed();
     useCase.reportProblem(problem1).test().isDisposed();
     useCase.reportProblem(problem2).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, never()).reportProblem(any(Problem.class));
   }
 
@@ -84,15 +87,15 @@ public class ReportProblemUseCaseTest {
    */
   @Test
   public void doNotAskGatewayToReportProblemIfSelectionInvalid() {
-    // Дано:
+    // Given:
     when(gateway.getProblems()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(problem, problem2, problem3))
     ));
 
-    // Действие:
+    // Action:
     useCase.reportProblem(problem1).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, never()).reportProblem(any(Problem.class));
   }
 
@@ -101,15 +104,15 @@ public class ReportProblemUseCaseTest {
    */
   @Test
   public void askGatewayToCancelOrderWithSelectedReason() {
-    // Дано:
+    // Given:
     when(gateway.getProblems()).thenReturn(Single.just(
         new ArrayList<>(Arrays.asList(problem, problem1, problem3))
     ));
 
-    // Действие:
+    // Action:
     useCase.reportProblem(problem1).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway).getProblems();
     verify(gateway).reportProblem(problem1);
     verifyNoMoreInteractions(gateway);
@@ -124,10 +127,10 @@ public class ReportProblemUseCaseTest {
   public void answerWithErrorIfGetSelectedReasonsError() {
     when(gateway.getProblems()).thenReturn(Single.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.reportProblem(problem2).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
     testObserver.assertNoValues();
   }
@@ -141,10 +144,10 @@ public class ReportProblemUseCaseTest {
         Arrays.asList(problem, problem1, problem3)
     ));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.reportProblem(problem2).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(IndexOutOfBoundsException.class);
   }
 
@@ -158,10 +161,10 @@ public class ReportProblemUseCaseTest {
     ));
     when(gateway.reportProblem(any())).thenReturn(Completable.error(NoNetworkException::new));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.reportProblem(problem2).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(NoNetworkException.class);
     testObserver.assertNoValues();
   }
@@ -176,11 +179,11 @@ public class ReportProblemUseCaseTest {
     ));
     when(gateway.reportProblem(any())).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver2 = useCase.reportProblem(problem2).test();
     TestObserver<Void> testObserver = useCase.reportProblem(problem).test();
 
-    // Результат:
+    // Effect:
     testObserver2.assertComplete();
     testObserver.assertComplete();
   }

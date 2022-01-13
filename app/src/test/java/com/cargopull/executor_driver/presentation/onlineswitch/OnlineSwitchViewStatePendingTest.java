@@ -6,6 +6,7 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -25,26 +26,26 @@ public class OnlineSwitchViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     viewState = new OnlineSwitchViewStatePending(parentViewState);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions, only()).showSwitchPending(true);
     verify(parentViewState, only()).apply(viewActions);
   }
 
   @Test
   public void testActionsWithNull() {
-    // Дано:
+      // Given:
     viewState = new OnlineSwitchViewStatePending(null);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions, only()).showSwitchPending(true);
   }
 

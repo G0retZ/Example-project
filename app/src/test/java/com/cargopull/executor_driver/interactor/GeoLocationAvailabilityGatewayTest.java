@@ -7,14 +7,16 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.gateway.GeoLocationAvailabilityGatewayImpl;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationAvailabilityGatewayTest {
@@ -40,10 +42,10 @@ public class GeoLocationAvailabilityGatewayTest {
    */
   @Test
   public void askGeolocationCenterForLocations() {
-    // Действие:
+    // Action:
     gateway.getData();
 
-    // Результат:
+    // Effect:
     verify(geolocationCenter, only()).getLocationsAvailability();
   }
 
@@ -54,13 +56,13 @@ public class GeoLocationAvailabilityGatewayTest {
    */
   @Test
   public void answerWithGeoLocationData() {
-    // Дано:
+    // Given:
     when(geolocationCenter.getLocationsAvailability()).thenReturn(Flowable.just(true, false, true));
 
-    // Действие:
+    // Action:
     TestSubscriber<Boolean> testSubscriber = gateway.getData().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(true, false, true);
     testSubscriber.assertComplete();
   }

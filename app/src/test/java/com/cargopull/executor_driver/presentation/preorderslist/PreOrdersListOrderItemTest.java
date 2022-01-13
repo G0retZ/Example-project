@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import android.content.res.Resources;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
-import java.text.DecimalFormat;
-import java.util.Arrays;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -18,6 +18,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.text.DecimalFormat;
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrdersListOrderItemTest {
@@ -43,58 +46,58 @@ public class PreOrdersListOrderItemTest {
 
   @Test
   public void testGetOrder() {
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getOrder(), order);
   }
 
   @Test
   public void testGetViewType() {
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getViewType(), PreOrdersListItem.TYPE_ITEM);
   }
 
   @Test
   public void testGetNextAddressIfAllQueued() {
-    // Дано:
+    // Given:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint.getAddress()).thenReturn("add0");
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getNextAddress(), "add0");
   }
 
   @Test
   public void testGetNextAddressIfAllClosed() {
-    // Дано:
+    // Given:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint2.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
     when(routePoint.getAddress()).thenReturn("add0");
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getNextAddress(), "add0");
   }
 
   @Test
   public void testGetNextAddressIfSecondActive() {
-    // Дано:
+    // Given:
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
     when(routePoint1.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
     when(routePoint1.getAddress()).thenReturn("add1");
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getNextAddress(), "add1");
   }
 
   @Test
   public void testGetEstimatedPrice() {
-    // Дано:
+    // Given:
     when(resources.getString(R.string.currency_format)).thenReturn("##,###,### ₽");
     when(order.getEstimatedPrice()).thenReturn(700000L);
 
-    // Результат:
+    // Effect:
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### ₽");
     decimalFormat.setMaximumFractionDigits(0);
     assertEquals(preOrdersListItem.getEstimatedPrice(resources), decimalFormat.format(7000));
@@ -102,20 +105,20 @@ public class PreOrdersListOrderItemTest {
 
   @Test
   public void testGetRouteLength() {
-    // Дано:
+    // Given:
     when(order.getEstimatedRouteLength()).thenReturn(33239L);
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getRouteLength(), 33.239f, 0);
   }
 
   @Test
   public void testGetOccupationTime() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(22792192L);
     when(order.getEstimatedTime()).thenReturn(3324339L);
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItem.getOccupationTime(),
         DateTimeFormat.forPattern("HH:mm").print(
             DateTime.now().withMillis(22792192L).withZone(DateTimeZone.forOffsetHours(3)))
@@ -127,19 +130,19 @@ public class PreOrdersListOrderItemTest {
 
   @Test
   public void testGetOccupationDayOfMonth() {
-    // Результат:
+    // Effect:
     assertEquals("", preOrdersListItem.getOccupationDayOfMonth());
   }
 
   @Test
   public void testGetOccupationMonth() {
-    // Результат:
+    // Effect:
     assertEquals("", preOrdersListItem.getOccupationMonth(resources));
   }
 
   @Test
   public void testGetOccupationDayOfWeekToday() {
-    // Результат:
+    // Effect:
     assertEquals("", preOrdersListItem.getOccupationDayOfWeek());
   }
 }

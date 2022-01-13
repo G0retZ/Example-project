@@ -15,17 +15,20 @@ import com.cargopull.executor_driver.entity.Service;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.ServicesGatewayImpl;
-import io.reactivex.Completable;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.Arrays;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServicesGatewayTest {
@@ -55,10 +58,10 @@ public class ServicesGatewayTest {
    */
   @Test
   public void askGatewayForSelectedServices() {
-    // Действие:
+    // Action:
     gateway.getServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(api).getMySelectedServices();
     verifyNoMoreInteractions(api);
   }
@@ -68,13 +71,13 @@ public class ServicesGatewayTest {
    */
   @Test
   public void askGatewayForServices() {
-    // Дано:
+    // Given:
     when(api.getMySelectedServices()).thenReturn(Single.just("5,6"));
 
-    // Действие:
+    // Action:
     gateway.getServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(api).getMySelectedServices();
     verify(api).getMyServices();
     verifyNoMoreInteractions(api);
@@ -85,7 +88,7 @@ public class ServicesGatewayTest {
    */
   @Test
   public void setServicesCompletableRequested() {
-    // Действие:
+    // Action:
     gateway.sendSelectedServices(
         Arrays.asList(
             new Service(0, "n", 100, false),
@@ -95,7 +98,7 @@ public class ServicesGatewayTest {
         )
     );
 
-    // Результат:
+    // Effect:
     verify(api, only()).setMyServices("0,3,65,1");
   }
 
@@ -108,7 +111,7 @@ public class ServicesGatewayTest {
    */
   @Test
   public void askMapperForMapping() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(any())).thenReturn(new Service(0, "n1", 100, false));
     when(api.getMySelectedServices()).thenReturn(Single.just("0,2"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
@@ -117,10 +120,10 @@ public class ServicesGatewayTest {
         new ApiServiceItem(2, "n3", 130)
     )));
 
-    // Действие:
+    // Action:
     gateway.getServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
     verify(mapper).map(new ApiServiceItem(1, "n2", 10).setSelected(false));
     verify(mapper).map(new ApiServiceItem(2, "n3", 130).setSelected(true));
@@ -134,7 +137,7 @@ public class ServicesGatewayTest {
    */
   @Test
   public void askMapperForFirstMappingOnly() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(any())).thenThrow(new DataMappingException());
     when(api.getMySelectedServices()).thenReturn(Single.just("0,1"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
@@ -143,10 +146,10 @@ public class ServicesGatewayTest {
         new ApiServiceItem(2, "n3", 130)
     )));
 
-    // Действие:
+    // Action:
     gateway.getServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, only()).map(new ApiServiceItem(0, "n1", 100).setSelected(true));
   }
 
@@ -157,10 +160,10 @@ public class ServicesGatewayTest {
    */
   @Test
   public void answerNoNetworkErrorForSelectedServices() {
-    // Действие:
+    // Action:
     when(api.getMySelectedServices()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Результат:
+    // Effect:
     gateway.getServices().test().assertError(NoNetworkException.class);
   }
 
@@ -169,11 +172,11 @@ public class ServicesGatewayTest {
    */
   @Test
   public void answerNoNetworkErrorForServices() {
-    // Действие:
+    // Action:
     when(api.getMySelectedServices()).thenReturn(Single.just("0,1"));
     when(api.getMyServices()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Результат:
+    // Effect:
     gateway.getServices().test().assertError(NoNetworkException.class);
   }
 
@@ -182,7 +185,7 @@ public class ServicesGatewayTest {
    */
   @Test
   public void answerDataMappingErrorForServices() throws Exception {
-    // Действие:
+    // Action:
     when(mapper.map(any())).thenThrow(new DataMappingException());
     when(api.getMySelectedServices()).thenReturn(Single.just("0,1"));
     when(api.getMyServices()).thenReturn(Single.just(Arrays.asList(
@@ -191,7 +194,7 @@ public class ServicesGatewayTest {
         new ApiServiceItem()
     )));
 
-    // Результат:
+    // Effect:
     gateway.getServices().test().assertError(DataMappingException.class);
   }
 
@@ -200,7 +203,7 @@ public class ServicesGatewayTest {
    */
   @Test
   public void answerWithServices() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(any())).thenReturn(
         new Service(0, "n1", 100, false),
         new Service(1, "n2", 10, true),
@@ -213,10 +216,10 @@ public class ServicesGatewayTest {
         new ApiServiceItem()
     )));
 
-    // Действие:
+    // Action:
     TestObserver<List<Service>> testObserver = gateway.getServices().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertValue(Arrays.asList(
         new Service(0, "n1", 100, false),
@@ -230,10 +233,10 @@ public class ServicesGatewayTest {
    */
   @Test
   public void answerNoNetworkErrorForSetServices() {
-    // Дано:
+    // Given:
     when(api.setMyServices(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.sendSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, false),
@@ -248,10 +251,10 @@ public class ServicesGatewayTest {
    */
   @Test
   public void answerServicesSetSuccessful() {
-    // Дано:
+    // Given:
     when(api.setMyServices(anyString())).thenReturn(Completable.complete());
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.sendSelectedServices(
         Arrays.asList(
             new Service(0, "n1", 100, false),

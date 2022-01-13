@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,10 +37,10 @@ public class VehicleOptionsViewStateResolvableErrorTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(parentViewState, only()).apply(viewActions);
     verify(viewActions).showPersistentDialog(123, action);
     verifyNoMoreInteractions(viewActions);

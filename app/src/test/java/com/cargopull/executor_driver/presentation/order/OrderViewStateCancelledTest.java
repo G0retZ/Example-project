@@ -34,13 +34,13 @@ public class OrderViewStateCancelledTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     viewState = new OrderViewStateCancelled(parentViewState, action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPersistentDialog(R.string.order_cancelled, action);
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -48,13 +48,13 @@ public class OrderViewStateCancelledTest {
 
   @Test
   public void testNoActions() {
-    // Дано:
+      // Given:
     viewState = new OrderViewStateCancelled(null, action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPersistentDialog(R.string.order_cancelled, action);
     verifyNoMoreInteractions(viewActions);
     verifyNoInteractions(parentViewState);

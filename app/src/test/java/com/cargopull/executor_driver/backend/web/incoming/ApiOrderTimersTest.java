@@ -12,40 +12,40 @@ public class ApiOrderTimersTest {
 
   @Test
   public void testConstructor() {
-    // Дано:
+    // Given:
     ApiOrderTimers apiOrderTimers = new ApiOrderTimers(9876543210L, 12312412L);
 
-    // Результат
+      // Effect
     assertEquals(apiOrderTimers.getOverPackageTimer(), new Long(9876543210L));
     assertEquals(apiOrderTimers.getOverPackagePeriod(), new Long(12312412L));
   }
 
   @Test
   public void testConstructorWithFirstNull() {
-    // Дано:
+      // Given:
     ApiOrderTimers apiOrderTimers = new ApiOrderTimers(null, 12312412L);
 
-    // Результат
+      // Effect
     assertNull(apiOrderTimers.getOverPackageTimer());
     assertEquals(apiOrderTimers.getOverPackagePeriod(), new Long(12312412L));
   }
 
   @Test
   public void testConstructorWithSecondNull() {
-    // Дано:
+      // Given:
     ApiOrderTimers apiOrderTimers = new ApiOrderTimers(9876543210L, null);
 
-    // Результат
+      // Effect
     assertEquals(apiOrderTimers.getOverPackageTimer(), new Long(9876543210L));
     assertNull(apiOrderTimers.getOverPackagePeriod());
   }
 
   @Test
   public void testConstructorWithNulls() {
-    // Дано:
+      // Given:
     ApiOrderTimers apiOrderTimers = new ApiOrderTimers(null, null);
 
-    // Результат
+      // Effect
     assertNull(apiOrderTimers.getOverPackageTimer());
     assertNull(apiOrderTimers.getOverPackagePeriod());
   }

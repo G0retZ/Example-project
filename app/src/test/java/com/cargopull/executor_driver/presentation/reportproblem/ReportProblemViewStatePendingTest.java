@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -26,13 +27,13 @@ public class ReportProblemViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     viewState = new ReportProblemViewStatePending(parentViewState);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showReportProblemPending(true);
     verify(viewActions).showAvailableProblems(true);
     verify(parentViewState, only()).apply(viewActions);
@@ -41,13 +42,13 @@ public class ReportProblemViewStatePendingTest {
 
   @Test
   public void testActionsWithNull() {
-    // Дано:
+      // Given:
     viewState = new ReportProblemViewStatePending(null);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showReportProblemPending(true);
     verify(viewActions).showAvailableProblems(false);
     verifyNoMoreInteractions(viewActions);

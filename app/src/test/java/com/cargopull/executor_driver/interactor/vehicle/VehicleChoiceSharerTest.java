@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.interactor.vehicle;
 
 import com.cargopull.executor_driver.entity.Vehicle;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,10 +19,10 @@ public class VehicleChoiceSharerTest {
    */
   @Test
   public void valueUnchangedForRead() {
-    // Дано:
+    // Given:
     vehicleChoiceSharer.updateWith(new Vehicle(1, "man", "mod", "col", "pla", false));
 
-    // Действие и Результат:
+    // Action и Effect:
     vehicleChoiceSharer.get().test().assertValue(new Vehicle(1, "man", "mod", "col", "pla", false));
   }
 }

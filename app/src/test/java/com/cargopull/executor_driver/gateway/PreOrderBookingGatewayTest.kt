@@ -53,15 +53,15 @@ class PreOrderBookingGatewayTest {
      */
     @Test
     fun askApiServiceToSendDecisions() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(apiService)
         `when`(order.id).thenReturn(7L)
 
-        // Действие:
+        // Action:
         gateway.sendDecision(order, false).test()
         gateway.sendDecision(order, true).test()
 
-        // Результат:
+        // Effect:
         inOrder.verify<ApiService>(apiService, times(2)).sendPreOrderDecision(orderDecisionCaptor.kCapture())
         verifyNoMoreInteractions(apiService)
         assertEquals(orderDecisionCaptor.allValues[0].id, 7)
@@ -78,15 +78,15 @@ class PreOrderBookingGatewayTest {
      */
     @Test
     fun answerSendDecisionServerSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("200")
         `when`(apiSimpleResult.message).thenReturn("message")
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValueCount(1)
@@ -100,14 +100,14 @@ class PreOrderBookingGatewayTest {
      */
     @Test
     fun answerSendDecisionServerSuccessWithoutMessage() {
-        // Дано:
+        // Given:
         `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("200")
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValueCount(1)
@@ -121,15 +121,15 @@ class PreOrderBookingGatewayTest {
      */
     @Test
     fun answerSendDecisionServerError() {
-        // Дано:
+        // Given:
         `when`(apiService.sendPreOrderDecision(any())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.code).thenReturn("409")
         `when`(apiSimpleResult.message).thenReturn("error")
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(OrderConfirmationFailedException::class.java)
         testObserver.assertNoValues()
@@ -142,14 +142,14 @@ class PreOrderBookingGatewayTest {
      */
     @Test
     fun answerSendDecisionError() {
-        // Дано:
+        // Given:
         `when`(apiService.sendPreOrderDecision(any()))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
         testObserver.assertNoValues()

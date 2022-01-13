@@ -74,7 +74,7 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void askGatewayForOrdersOnlyOnce() {
-    // Действие:
+    // Action:
     useCase.getOrdersSet().test().isDisposed();
     useCase.getOrdersSet().test().isDisposed();
     useCase.addOrder(order1);
@@ -82,7 +82,7 @@ public class OrdersUseCaseTest {
     useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -94,7 +94,7 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void doNotAskUseCaseForChangedOrders() {
-    // Действие:
+    // Action:
     useCase.getOrdersSet().test().isDisposed();
     useCase.getOrdersSet().test().isDisposed();
     useCase.addOrder(order1);
@@ -102,7 +102,7 @@ public class OrdersUseCaseTest {
     useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(changedOrdersUseCase);
   }
 
@@ -111,7 +111,7 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void askUseCaseForChangedOrdersForEveryAdd() {
-    // Действие:
+    // Action:
     useCase.getOrdersSet().test().isDisposed();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     useCase.getOrdersSet().test().isDisposed();
@@ -120,7 +120,7 @@ public class OrdersUseCaseTest {
     useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     verify(changedOrdersUseCase, only()).getOrders();
   }
 
@@ -132,7 +132,7 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void doNotAskUseCaseForCancelledOrders() {
-    // Действие:
+    // Action:
     useCase.getOrdersSet().test().isDisposed();
     useCase.getOrdersSet().test().isDisposed();
     useCase.addOrder(order1);
@@ -140,7 +140,7 @@ public class OrdersUseCaseTest {
     useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(cancelledOrdersUseCase);
   }
 
@@ -149,7 +149,7 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void askUseCaseForCancelledOrdersForEveryAdd() {
-    // Действие:
+    // Action:
     useCase.getOrdersSet().test().isDisposed();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     useCase.getOrdersSet().test().isDisposed();
@@ -158,7 +158,7 @@ public class OrdersUseCaseTest {
     useCase.getOrdersSet().test().isDisposed();
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     verify(cancelledOrdersUseCase, times(2)).getOrders();
     verifyNoMoreInteractions(cancelledOrdersUseCase);
   }
@@ -170,11 +170,11 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithOrders() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(1);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2)));
     testSubscriber.assertNoErrors();
@@ -186,11 +186,11 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerError() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -201,13 +201,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnUnSchedule() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     useCase.removeOrder(order2);
     useCase.removeOrder(order);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
@@ -220,13 +220,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnChangedOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     changedEmitter.onNext(order2);
     changedEmitter.onNext(order);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
@@ -239,13 +239,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnCancelledOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     cancelledEmitter.onNext(order2);
     cancelledEmitter.onNext(order);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
@@ -258,13 +258,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnUnScheduleAndChangedOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     changedEmitter.onNext(order2);
     useCase.removeOrder(order);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
@@ -277,13 +277,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnUnScheduleAndCancelledOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     cancelledEmitter.onNext(order2);
     useCase.removeOrder(order);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
@@ -296,13 +296,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnSchedule() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order3)));
     useCase.addOrder(order2);
     useCase.addOrder(order1);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order3, order2)));
@@ -316,13 +316,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnUnScheduleThenSchedule() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     useCase.removeOrder(order2);
     useCase.addOrder(order2);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order3)));
@@ -336,13 +336,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithUpdatedListOnScheduleThenUnSchedule() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order3)));
     useCase.addOrder(order2);
     useCase.removeOrder(order2);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order3, order2)));
@@ -355,7 +355,7 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithNewListAfterSchedulesAndUnSchedules() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order3)));
     useCase.addOrder(order2);
@@ -371,7 +371,7 @@ public class OrdersUseCaseTest {
     cancelledEmitter.onNext(order1);
     emitter.onNext(new HashSet<>(Arrays.asList(order1, order2)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(13);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order3)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order3, order2)));
@@ -394,13 +394,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithSameListOnUnSchedule() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
     useCase.removeOrder(order2);
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1)));
@@ -413,13 +413,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithSameListOnCancelledOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
     cancelledEmitter.onNext(order2);
     cancelledEmitter.onNext(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1)));
@@ -432,13 +432,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithSameListOnUnScheduleAndCancelledOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
     cancelledEmitter.onNext(order2);
     useCase.removeOrder(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1)));
@@ -451,13 +451,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithSameListOnSchedule() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
     useCase.addOrder(order);
     useCase.addOrder(order1);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1)));
@@ -470,13 +470,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithAddedListOnChangedOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
     changedEmitter.onNext(order2);
     changedEmitter.onNext(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2)));
@@ -490,13 +490,13 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerWithAddedListOnScheduleAndChangedOrder() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1)));
     changedEmitter.onNext(order2);
     useCase.addOrder(order1);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(3);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1)));
     testSubscriber.assertValueAt(1, new HashSet<>(Arrays.asList(order, order1, order2)));
@@ -509,11 +509,11 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Действие:
+    // Action:
     TestSubscriber<Set<Order>> testSubscriber = useCase.getOrdersSet().test();
     emitter.onComplete();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
@@ -524,14 +524,14 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerNothingAfterError() {
-    // Действие:
+    // Action:
     Flowable<Set<Order>> ordersSet = useCase.getOrdersSet();
     TestSubscriber<Set<Order>> testSubscriber = ordersSet.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     emitter.onError(new Exception());
     TestSubscriber<Set<Order>> testSubscriber1 = ordersSet.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(1);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2)));
     testSubscriber.assertError(Exception.class);
@@ -546,14 +546,14 @@ public class OrdersUseCaseTest {
    */
   @Test
   public void answerNothingAfterPreOrderExpiredError() {
-    // Действие:
+    // Action:
     Flowable<Set<Order>> ordersSet = useCase.getOrdersSet();
     TestSubscriber<Set<Order>> testSubscriber = ordersSet.test();
     emitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
     emitter.onComplete();
     TestSubscriber<Set<Order>> testSubscriber1 = ordersSet.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValueCount(1);
     testSubscriber.assertValueAt(0, new HashSet<>(Arrays.asList(order, order1, order2)));
     testSubscriber.assertNoErrors();

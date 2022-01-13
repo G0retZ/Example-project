@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,10 +26,10 @@ public class ClientOrderConfirmationTimeViewStateNotCountingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setWaitingForClientTimeText(R.string.client_confirmation_problem);
     verify(viewActions).showWaitingForClientTimer(false);
     verifyNoMoreInteractions(viewActions);

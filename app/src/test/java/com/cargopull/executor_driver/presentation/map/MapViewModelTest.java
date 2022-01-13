@@ -59,7 +59,7 @@ public class MapViewModelTest {
    */
   @Test
   public void doNotTouchErrorReporter() {
-    // Результат:
+    // Effect:
     verifyNoInteractions(errorReporter);
   }
 
@@ -68,13 +68,13 @@ public class MapViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     when(heatMapUseCase.loadHeatMap()).thenReturn(Flowable.error(new Exception()));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(Exception.class));
   }
 
@@ -85,10 +85,10 @@ public class MapViewModelTest {
    */
   @Test
   public void askUseCaseToSubscribeToHeatMapUpdates() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
 
-    // Результат:
+    // Effect:
     verify(heatMapUseCase, only()).loadHeatMap();
   }
 
@@ -97,12 +97,12 @@ public class MapViewModelTest {
    */
   @Test
   public void DoNotTouchUseCaseAfterFirstSubscription() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getViewStateLiveData();
 
-    // Результат:
+    // Effect:
     verify(heatMapUseCase, only()).loadHeatMap();
   }
 
@@ -113,10 +113,10 @@ public class MapViewModelTest {
    */
   @Test
   public void setViewStateWithNullToLiveData() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new MapViewState(null));
   }
 
@@ -125,20 +125,20 @@ public class MapViewModelTest {
    */
   @Test
   public void setViewStatesWithDataToLiveData() {
-    // Дано:
+    // Given:
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(heatMapUseCase.loadHeatMap())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     publishSubject.onNext("heat map 1");
     publishSubject.onNext("heat map 2");
     publishSubject.onNext("heat map 3");
     publishSubject.onNext("heat map 4");
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new MapViewState(null));
     inOrder.verify(viewStateObserver).onChanged(new MapViewState("heat map 1"));
     inOrder.verify(viewStateObserver).onChanged(new MapViewState("heat map 2"));

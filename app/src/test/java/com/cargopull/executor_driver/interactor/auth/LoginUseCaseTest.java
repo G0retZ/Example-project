@@ -44,10 +44,10 @@ public class LoginUseCaseTest {
    */
   @Test
   public void askLoginValidatorForResult() throws Exception {
-    // Действие:
+    // Action:
     useCase.validateLogin("").test().isDisposed();
 
-    // Результат:
+      // Effect:
     verify(loginValidator, only()).validate("");
   }
 
@@ -58,7 +58,7 @@ public class LoginUseCaseTest {
    */
   @Test
   public void answerErrorIfLoginInvalid() {
-    // Действие и Результат:
+      // Action и Effect:
     useCase.validateLogin("12").test().assertError(ValidationException.class);
   }
 
@@ -69,10 +69,10 @@ public class LoginUseCaseTest {
    */
   @Test
   public void answerSuccessIfLoginValid() throws Exception {
-    // Дано:
+      // Given:
     doNothing().when(loginValidator).validate(anyString());
 
-    // Действие и Результат:
+      // Action и Effect:
     useCase.validateLogin("").test().assertComplete();
   }
 
@@ -85,12 +85,12 @@ public class LoginUseCaseTest {
    */
   @Test
   public void doNotTouchDataSharer() throws Exception {
-    // Действие:
+      // Action:
     useCase.validateLogin("checkLogin").test().isDisposed();
     doNothing().when(loginValidator).validate(anyString());
     useCase.validateLogin("checkLogin").test().isDisposed();
 
-    // Результат:
+      // Effect:
     verifyNoInteractions(loginObserver);
   }
 
@@ -101,15 +101,15 @@ public class LoginUseCaseTest {
    */
   @Test
   public void askDataSharerToShareLogin() throws Exception {
-    // Дано:
+      // Given:
     doNothing().when(loginValidator).validate(anyString());
 
-    // Действие:
+      // Action:
     useCase.rememberLogin().test().assertComplete();
     useCase.validateLogin("checkLogin").test().isDisposed();
     useCase.rememberLogin().test().assertComplete();
 
-    // Результат:
+      // Effect:
     verify(loginObserver).reset();
     verify(loginObserver).updateWith("checkLogin");
     verifyNoMoreInteractions(loginObserver);

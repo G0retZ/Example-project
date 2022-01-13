@@ -68,13 +68,13 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void askPublisherForNetworkState() {
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(networkConnectionGateway, only()).getData();
   }
 
@@ -83,16 +83,16 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void doNotAskLoginPublisherForLogin() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(false));
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(appSettings);
   }
 
@@ -101,16 +101,16 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void askLoginPublisherForLogin() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(appSettings, only()).getData("authorizationLogin");
   }
 
@@ -120,7 +120,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void doNotAskLoginPublisherForLoginOnError() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -130,10 +130,10 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(appSettings, only()).getData("authorizationLogin");
   }
 
@@ -143,7 +143,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void doNotAskLoginPublisherForLoginOnComplete() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -153,10 +153,10 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(appSettings, only()).getData("authorizationLogin");
   }
 
@@ -167,7 +167,7 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void askStompClientForTopicSubscription() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(stompClient);
     when(networkConnectionGateway.getData()).thenReturn(
         Flowable.fromArray(true, false, true, false, false, true, true, false, true, false, true)
@@ -176,13 +176,13 @@ public class PersonalQueueListenerTest {
     when(appSettings.getData("authorizationLogin"))
         .thenReturn("1234567890", "0987654321", null, "123454321", "09876567890");
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     inOrder.verify(stompClient).listenToDestination("/queue/1234567890", 2000, 2F);
     inOrder.verify(stompClient).listenToDestination("/queue/0987654321", 2000, 2F);
     inOrder.verify(stompClient).listenToDestination("/queue/", 2000, 2F);
@@ -197,7 +197,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void askStompClientForTopicMessagesOnError() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -207,11 +207,11 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     verify(stompClient, times(4)).listenToDestination("/queue/1234567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
@@ -222,7 +222,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void doNotAskStompClientForTopicMessagesOnDeprecatedVersionError() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -232,11 +232,11 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     verify(stompClient, only()).listenToDestination("/queue/1234567890", 2000, 2F);
   }
 
@@ -246,7 +246,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void doNotAskStompClientForTopicMessagesOnAuthorizationError() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -256,11 +256,11 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     verify(stompClient, only()).listenToDestination("/queue/1234567890", 2000, 2F);
   }
 
@@ -270,7 +270,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void askStompClientForTopicMessagesOnAuthorizationErrorReset() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -280,12 +280,12 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     queueListener.restart();
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     verify(stompClient, times(4)).listenToDestination("/queue/1234567890", 2000, 2F);
     verifyNoMoreInteractions(stompClient);
   }
@@ -296,7 +296,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void askStompClientForTopicMessagesOnComplete() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -306,10 +306,10 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(stompClient, only()).listenToDestination("/queue/1234567890", 2000, 2F);
   }
 
@@ -318,20 +318,20 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void unSubscribeFromPreviousRequestsToStompClient() throws Exception {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(
         Flowable.fromArray(true, false, true, false, true, false, true).concatWith(Flowable.never())
     );
     when(stompClient.listenToDestination(anyString(), eq(2000), eq(2F)))
         .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
-    // Действие:
+    // Action:
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
     queueListener.getMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(action, times(3)).run();
   }
 
@@ -340,19 +340,19 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void unSubscribeFromTopicIfNoMoreSubscribers() throws Exception {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F))
         .thenReturn(Flowable.<StompFrame>never().doOnCancel(action));
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
     TestSubscriber<StompFrame> testSubscriber1 = queueListener.getMessages().test();
     TestSubscriber<StompFrame> testSubscriber2 = queueListener.getMessages().test();
     TestSubscriber<StompFrame> testSubscriber3 = queueListener.getMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.dispose();
     testSubscriber1.dispose();
     testSubscriber2.dispose();
@@ -368,16 +368,16 @@ public class PersonalQueueListenerTest {
    */
   @Test
   public void answerWithStompFrame() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F))
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValue(stompFrame);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -389,7 +389,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void ignoreErrors() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -399,10 +399,10 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoErrors();
     testSubscriber.assertNoValues();
     testSubscriber.assertNotComplete();
@@ -414,7 +414,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void answerWithDeprecatedVersionError() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -422,10 +422,10 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DeprecatedVersionException.class);
     testSubscriber.assertNoValues();
     testSubscriber.assertNotComplete();
@@ -437,7 +437,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void doNotAnswer() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -445,10 +445,10 @@ public class PersonalQueueListenerTest {
         Flowable.never()
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoErrors();
     testSubscriber.assertNoValues();
     testSubscriber.assertNotComplete();
@@ -460,7 +460,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void answerWithStompFrameAfterErrors() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -470,11 +470,11 @@ public class PersonalQueueListenerTest {
         Flowable.just(stompFrame).concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
     testScheduler.advanceTimeBy(5, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValue(stompFrame);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -486,7 +486,7 @@ public class PersonalQueueListenerTest {
   @SuppressWarnings("unchecked")
   @Test
   public void answerWithStompFrameAfterCompletions() {
-    // Дано:
+    // Given:
     when(networkConnectionGateway.getData()).thenReturn(Flowable.<Boolean>never().startWith(true));
     when(appSettings.getData("authorizationLogin")).thenReturn("1234567890");
     when(stompClient.listenToDestination("/queue/1234567890", 2000, 2F)).thenReturn(
@@ -496,11 +496,11 @@ public class PersonalQueueListenerTest {
         Flowable.just(stompFrame).concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<StompFrame> testSubscriber = queueListener.getMessages().test();
     testScheduler.advanceTimeBy(6, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValue(stompFrame);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();

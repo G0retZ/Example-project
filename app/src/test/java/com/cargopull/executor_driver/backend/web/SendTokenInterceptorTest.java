@@ -5,8 +5,6 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import okhttp3.Interceptor;
-import okhttp3.Request;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +12,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import okhttp3.Interceptor;
+import okhttp3.Request;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendTokenInterceptorTest {
@@ -41,17 +42,17 @@ public class SendTokenInterceptorTest {
    */
   @Test
   public void askTokenKeeperToSaveToken() throws Exception {
-    // Дано:
+    // Given:
     when(chain.request()).thenReturn(
         new Request.Builder()
             .url("http://www.cargopull.com")
             .build()
     );
 
-    // Действие:
+    // Action:
     sendTokenInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verify(tokenKeeper, only()).getToken();
   }
 
@@ -62,13 +63,13 @@ public class SendTokenInterceptorTest {
    */
   @Test
   public void doNotInjectTokenIfNull() throws Exception {
-    // Дано:
+    // Given:
     when(chain.request()).thenReturn(new Request.Builder().url("http://www.cargopull.com").build());
 
-    // Действие:
+    // Action:
     sendTokenInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verify(chain).proceed(request.capture());
     assertEquals(request.getValue().headers("Authorization").size(), 0);
   }
@@ -80,14 +81,14 @@ public class SendTokenInterceptorTest {
    */
   @Test
   public void doNotInjectTokenIfLogin() throws Exception {
-    // Дано:
+    // Given:
     when(chain.request())
         .thenReturn(new Request.Builder().url("http://www.cargopull.com/login").build());
 
-    // Действие:
+    // Action:
     sendTokenInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verify(chain).proceed(request.capture());
     assertEquals(request.getValue().headers("Authorization").size(), 0);
   }
@@ -99,14 +100,14 @@ public class SendTokenInterceptorTest {
    */
   @Test
   public void injectToken() throws Exception {
-    // Дано:
+    // Given:
     when(chain.request()).thenReturn(new Request.Builder().url("http://www.cargopull.com").build());
     when(tokenKeeper.getToken()).thenReturn("token");
 
-    // Действие:
+    // Action:
     sendTokenInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verify(chain).proceed(request.capture());
     assertEquals(request.getValue().headers("Authorization").size(), 1);
     assertEquals(request.getValue().headers("Authorization").get(0), "token");

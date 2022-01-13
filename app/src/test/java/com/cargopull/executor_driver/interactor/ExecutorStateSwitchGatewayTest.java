@@ -9,14 +9,16 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.ExecutorStateSwitchGatewayImpl;
-import io.reactivex.Completable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateSwitchGatewayTest {
@@ -42,10 +44,10 @@ public class ExecutorStateSwitchGatewayTest {
    */
   @Test
   public void askApiToSwitchStatus() {
-    // Действие:
+    // Action:
     gateway.sendNewExecutorState(ExecutorState.ONLINE).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(apiService, only()).switchStatus(ExecutorState.ONLINE);
   }
 
@@ -56,13 +58,13 @@ public class ExecutorStateSwitchGatewayTest {
    */
   @Test
   public void answerSuccessIfConnected() {
-    // Дано:
+    // Given:
     when(apiService.switchStatus(any(ExecutorState.class))).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
   }
 
@@ -71,14 +73,14 @@ public class ExecutorStateSwitchGatewayTest {
    */
   @Test
   public void answerErrorIfConnected() {
-    // Дано:
+    // Given:
     when(apiService.switchStatus(any(ExecutorState.class)))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.sendNewExecutorState(ExecutorState.ONLINE).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(IllegalArgumentException.class);
   }
 }

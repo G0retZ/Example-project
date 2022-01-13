@@ -2,17 +2,18 @@ package com.cargopull.executor_driver.backend.vibro;
 
 import static org.junit.Assert.assertArrayEquals;
 
-import java.util.Arrays;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class NewPatternMapperTest {
 
   @Test
   public void testComplex() {
-    // Дано:
+    // Given:
     NewPatternMapper newPatternMapper = new NewPatternMapper();
 
-    // Действие:
+    // Action:
     VibeBeats vibeBeats = newPatternMapper.map(
         Arrays.asList(
             new VibeBeat(193L, -1),
@@ -33,7 +34,7 @@ public class NewPatternMapperTest {
         )
     );
 
-    // Результат:
+    // Effect:
     assertArrayEquals(
         new long[]{193, 384, 929, 3094, 8572, 4830, 198, 283, 790, 939, 120, 399, 781, 920, 495},
         vibeBeats.durations

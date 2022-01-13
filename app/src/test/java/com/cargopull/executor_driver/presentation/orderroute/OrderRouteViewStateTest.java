@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderRouteViewStateTest {
@@ -31,10 +32,10 @@ public class OrderRouteViewStateTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions)
         .setRoutePointItems(Arrays.asList(routePointItems, routePointItems1));
     verify(viewActions).showOrderRoutePending(false);

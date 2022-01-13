@@ -70,11 +70,11 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun askOrderUseCaseForOrdersOnSendDecision() {
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify<OrderUseCase>(orderUseCase, times(2)).orders
         verifyNoMoreInteractions(orderUseCase)
     }
@@ -84,11 +84,11 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun askOrderUseCaseForOrdersOnGetTimeout() {
-        // Действие:
+        // Action:
         useCase.orderDecisionTimeout.test()
         useCase.orderDecisionTimeout.test()
 
-        // Результат:
+        // Effect:
         verify<OrderUseCase>(orderUseCase, times(2)).orders
         verifyNoMoreInteractions(orderUseCase)
     }
@@ -100,7 +100,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun shouldNotCrashIfNoDecisionUseCaseSet() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
@@ -109,11 +109,11 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway, null,
                 ordersUseCase, updateExecutorStateUseCase, updateDataUseCase)
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(orderDecisionUseCase)
     }
 
@@ -122,16 +122,16 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun askOrderDecisionUseCaseToSetCurrentOrderExpired() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify<OrderDecisionUseCase>(orderDecisionUseCase, times(2)).setOrderOfferDecisionMade()
         verifyNoMoreInteractions(orderDecisionUseCase)
     }
@@ -143,14 +143,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun askGatewayToSendDecisionsForOrders() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify(orderConfirmationGateway).sendDecision(order, true)
         verify(orderConfirmationGateway).sendDecision(order, false)
         verifyNoMoreInteractions(orderConfirmationGateway)
@@ -161,15 +161,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun askGatewayToSendDecisionsForFirstOrderOnly() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify(orderConfirmationGateway, times(2)).sendDecision(eq(order), anyBoolean())
         verifyNoMoreInteractions(orderConfirmationGateway)
     }
@@ -179,18 +179,18 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun ignoreForSameNextOrder() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(orderConfirmationGateway)
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.never<Pair<ExecutorState?, String?>>().doOnDispose(action))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         inOrder.verify(orderConfirmationGateway).sendDecision(order, true)
         inOrder.verify(orderConfirmationGateway).sendDecision(order, false)
         verifyNoMoreInteractions(orderConfirmationGateway, action)
@@ -202,18 +202,18 @@ class OrderConfirmationUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun cancelGatewayToSendDecisionsForNextOrder() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(orderConfirmationGateway, action)
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.never<Pair<ExecutorState?, String?>>().doOnDispose(action))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         inOrder.verify(orderConfirmationGateway).sendDecision(order, true)
         inOrder.verify(action).run()
         inOrder.verify(orderConfirmationGateway).sendDecision(order, false)
@@ -227,18 +227,18 @@ class OrderConfirmationUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun cancelGatewayToSendDecisionsForOrderExpired() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(orderConfirmationGateway, action)
         `when`(orderUseCase.orders).thenReturn(
                 Flowable.just(order).concatWith(Flowable.error(OrderOfferExpiredException(""))))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.never<Pair<ExecutorState?, String?>>().doOnDispose(action))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         inOrder.verify(orderConfirmationGateway).sendDecision(order, true)
         inOrder.verify(action).run()
         inOrder.verify(orderConfirmationGateway).sendDecision(order, false)
@@ -253,7 +253,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun shouldNotCrashIfNoUseCaseSet() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
@@ -262,11 +262,11 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
                 orderDecisionUseCase, null, updateExecutorStateUseCase, updateDataUseCase)
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(ordersUseCase)
     }
 
@@ -275,15 +275,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun passRefusedOrderToOrdersUseCase() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify<OrdersUseCase>(ordersUseCase, only()).removeOrder(order)
     }
 
@@ -292,15 +292,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun passConfirmedOrderToOrdersUseCase() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, true))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verify<OrdersUseCase>(ordersUseCase, only()).addOrder(order)
     }
 
@@ -309,14 +309,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchOrdersUseCaseIfNextOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(ordersUseCase)
     }
 
@@ -325,14 +325,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchOrdersUseCaseIfOrderExpired() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(
                 Flowable.just(order).concatWith(Flowable.error(OrderOfferExpiredException(""))))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(ordersUseCase)
     }
 
@@ -343,7 +343,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun shouldNotCrashIfNoUpdateExecutorStateUseCaseSet() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
@@ -352,11 +352,11 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
                 orderDecisionUseCase, ordersUseCase, null, updateDataUseCase)
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateExecutorStateUseCase)
     }
 
@@ -365,15 +365,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateExecutorStateUseCaseIfNoExecutorStateReturnedForRefusedOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(null, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateExecutorStateUseCase)
     }
 
@@ -382,15 +382,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateExecutorStateUseCaseIfNoExecutorStateReturnedForConfirmedOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, true))
                 .thenReturn(Single.just(Pair(null, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateExecutorStateUseCase)
     }
 
@@ -399,15 +399,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun passStatusForRefusedOrderToUpdateExecutorStateUseCase() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify(updateExecutorStateUseCase, only()).updateWith(ExecutorState.ONLINE)
     }
 
@@ -416,15 +416,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun passStatusForConfirmedOrderToUpdateExecutorStateUseCase() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, true))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verify(updateExecutorStateUseCase, only()).updateWith(ExecutorState.ONLINE)
     }
 
@@ -433,14 +433,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateExecutorStateUseCaseIfNextOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateExecutorStateUseCase)
     }
 
@@ -449,14 +449,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateExecutorStateUseCaseIfOrderExpired() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(
                 Flowable.just(order).concatWith(Flowable.error(OrderOfferExpiredException(""))))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateExecutorStateUseCase)
     }
 
@@ -467,7 +467,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun shouldNotCrashIfNoUpdateDataUseCaseSet() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
@@ -476,11 +476,11 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateDataUseCase)
     }
 
@@ -489,15 +489,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateDataUseCaseIfNoExecutorStateReturnedForRefusedOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, null)))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateDataUseCase)
     }
 
@@ -506,15 +506,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateDataUseCaseIfNoExecutorStateReturnedForConfirmedOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, true))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, null)))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateDataUseCase)
     }
 
@@ -523,15 +523,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun passStatusForRefusedOrderToUpdateDataUseCase() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, false))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         verify(updateDataUseCase, only()).updateWith("success")
     }
 
@@ -540,15 +540,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun passStatusForConfirmedOrderToUpdateDataUseCase() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(order, true))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verify(updateDataUseCase, only()).updateWith("success")
     }
 
@@ -557,14 +557,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateDataUseCaseIfNextOrder() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateDataUseCase)
     }
 
@@ -573,14 +573,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateDataUseCaseIfOrderExpired() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(
                 Flowable.just(order).concatWith(Flowable.error(OrderOfferExpiredException(""))))
 
-        // Действие:
+        // Action:
         useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(updateDataUseCase)
     }
 
@@ -591,13 +591,13 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerDataMappingErrorForGetTimeouts() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.error(DataMappingException()))
 
-        // Действие:
+        // Action:
         val test = useCase.orderDecisionTimeout.test()
 
-        // Результат:
+        // Effect:
         test.assertError(DataMappingException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -608,17 +608,17 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerOrderExpiredErrorForGetTimeoutsIfErrorAfterValue() {
-        // Дано:
+        // Given:
         `when`(order.id).thenReturn(101L)
         `when`(order.timeout).thenReturn(12345L)
         `when`(orderUseCase.orders).thenReturn(
                 Flowable.just(order).concatWith(Flowable.error(OrderOfferExpiredException("")))
         )
 
-        // Действие:
+        // Action:
         val test = useCase.orderDecisionTimeout.test()
 
-        // Результат:
+        // Effect:
         test.assertError(OrderOfferExpiredException::class.java)
         test.assertValue(Pair(101L, 12345L))
         test.assertNotComplete()
@@ -629,7 +629,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerWithTimeoutsForGetTimeouts() {
-        // Дано:
+        // Given:
         `when`(order.id).thenReturn(101L, 202L)
         `when`(order.timeout).thenReturn(12345L, 54321L)
         `when`(order2.id).thenReturn(303L)
@@ -637,10 +637,10 @@ class OrderConfirmationUseCaseTest {
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2, order).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         val test = useCase.orderDecisionTimeout.test()
 
-        // Результат:
+        // Effect:
         test.assertNoErrors()
         test.assertValueCount(3)
         test.assertValueAt(0, Pair(101L, 12345L))
@@ -654,13 +654,13 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerDataMappingErrorForAccept() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.error(DataMappingException()))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertError(DataMappingException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -671,14 +671,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun ingonreSameSecondSecondValue() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertNoErrors()
         test.assertNoValues()
         test.assertNotComplete()
@@ -689,14 +689,14 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerOrderExpiredErrorForAcceptIfSecondValue() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertError(OrderOfferDecisionException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -707,15 +707,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerOrderExpiredErrorForAcceptIfErrorAfterValue() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(
                 Flowable.just(order).concatWith(Flowable.error(OrderOfferExpiredException("")))
         )
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertError(OrderOfferExpiredException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -726,15 +726,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerNoNetworkErrorForAccept() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.error(NoNetworkException()))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertError(NoNetworkException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -745,15 +745,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerNoNetworkErrorForDecline() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.error(NoNetworkException()))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertError(NoNetworkException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -764,16 +764,16 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerSendAcceptSuccessful() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("success")
@@ -784,16 +784,16 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerSendDeclineSuccessful() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, "success")))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("success")
@@ -804,16 +804,16 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerSendAcceptSuccessfulWithEmptyMessage() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, null)))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("successor")
@@ -824,16 +824,16 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerSendDeclineSuccessfulWithEmptyMessage() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, null)))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("successor")
@@ -844,15 +844,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerSendAcceptSuccessfulIfExecutorStateIsNull() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(null, "success")))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("success")
@@ -863,15 +863,15 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerSendDeclineSuccessfulIfExecutorStateIsNull() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(null, "success")))
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("success")
@@ -882,7 +882,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerAcceptedSuccessfulWithDataFromExecutorState() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
@@ -890,10 +890,10 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("successor")
@@ -904,7 +904,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerDeclinedSuccessfulWithDataFromExecutorState() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
@@ -912,10 +912,10 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("successor")
@@ -926,7 +926,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerAcceptedSuccessfulWithEmptyMessageIfExecutorStateAndResultAreNull() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
@@ -934,10 +934,10 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("successor")
@@ -948,7 +948,7 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerDeclinedSuccessfulWithEmptyMessageIfExecutorStateAndResultAreNull() {
-        // Дано:
+        // Given:
         ExecutorState.ONLINE.data = "successor"
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
@@ -956,10 +956,10 @@ class OrderConfirmationUseCaseTest {
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("successor")
@@ -970,17 +970,17 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerAcceptedSuccessfulWithEmptyMessageIfDataInExecutorStateIsNull() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, 0)))
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("")
@@ -991,17 +991,17 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerDeclinedSuccessfulWithEmptyMessageIfDataInExecutorStateIsNull() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(ExecutorState.ONLINE, 0)))
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("")
@@ -1012,17 +1012,17 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerAcceptedSuccessfulWithEmptyMessageIfExecutorStateIsNull() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(null, 0)))
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(true).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("")
@@ -1033,17 +1033,17 @@ class OrderConfirmationUseCaseTest {
      */
     @Test
     fun answerDeclinedSuccessfulWithEmptyMessageIfExecutorStateIsNull() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order).concatWith(Flowable.never()))
         `when`(orderConfirmationGateway2.sendDecision(any(), anyBoolean()))
                 .thenReturn(Single.just(Pair(null, 0)))
         useCase = OrderConfirmationUseCaseImpl(orderUseCase, orderConfirmationGateway2,
                 orderDecisionUseCase, ordersUseCase, updateExecutorStateUseCase, null)
 
-        // Действие:
+        // Action:
         val test = useCase.sendDecision(false).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
         test.assertValue("")

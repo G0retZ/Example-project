@@ -17,11 +17,11 @@ public class OrderConfirmationViewStateExpiredTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     InOrder inOrder = Mockito.inOrder(viewActions);
     new OrderConfirmationViewStateExpired().apply(viewActions);
 
-    // Результат:
+      // Effect:
     inOrder.verify(viewActions).showDriverOrderConfirmationPending(false);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);

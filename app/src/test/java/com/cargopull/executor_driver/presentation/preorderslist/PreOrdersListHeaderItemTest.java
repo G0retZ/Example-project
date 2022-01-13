@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 import android.content.res.Resources;
+
 import com.cargopull.executor_driver.R;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Before;
@@ -30,31 +32,31 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOrder() {
-    // Результат:
+    // Effect:
     assertNull(preOrdersListItem.getOrder());
   }
 
   @Test
   public void testGetViewType() {
-    // Результат:
+      // Effect:
     assertEquals(preOrdersListItem.getViewType(), PreOrdersListItem.TYPE_HEADER);
   }
 
   @Test
   public void testGetNextAddressIfAllQueued() {
-    // Результат:
+      // Effect:
     assertEquals(preOrdersListItem.getNextAddress(), "");
   }
 
   @Test
   public void testGetNextAddressIfAllClosed() {
-    // Результат:
+      // Effect:
     assertEquals(preOrdersListItem.getNextAddress(), "");
   }
 
   @Test
   public void testGetNextAddressIfSecondActive() {
-    // Результат:
+      // Effect:
     assertEquals(preOrdersListItem.getNextAddress(), "");
   }
 
@@ -65,7 +67,7 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetRouteLength() {
-    // Результат:
+      // Effect:
     assertEquals(preOrdersListItem.getRouteLength(), 0, 0);
   }
 
@@ -76,10 +78,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationDayOfMonthToday() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(0);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("d HH:mm")
         .print(DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis()));
     assertEquals("", preOrdersListItem.getOccupationDayOfMonth());
@@ -87,10 +89,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationDayOfMonthTomorrow() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(1);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("d HH:mm")
         .print(DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis()));
     assertEquals("", preOrdersListItem.getOccupationDayOfMonth());
@@ -98,10 +100,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationDayOfMonthDayAfterTomorrow() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(2);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("d HH:mm")
         .print(DateTime.now().plusDays(2).withMillisOfDay(0).getMillis()));
     assertEquals(
@@ -114,11 +116,11 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationMonthToday() {
-    // Дано:
+      // Given:
     when(resources.getString(R.string.today)).thenReturn("today 1");
     preOrdersListItem = new PreOrdersListHeaderItem(0);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("MMMM HH:mm").print(
         DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis())
     );
@@ -127,11 +129,11 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationMonthTomorrow() {
-    // Дано:
+      // Given:
     when(resources.getString(R.string.tomorrow)).thenReturn("tomorrow 1");
     preOrdersListItem = new PreOrdersListHeaderItem(1);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("MMMM HH:mm").print(
         DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis())
     );
@@ -140,10 +142,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationMonthDayAfterTomorrow() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(2);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("MMMM HH:mm").print(
         DateTime.now().plusDays(2).withMillisOfDay(0).getMillis())
     );
@@ -157,10 +159,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationDayOfWeekToday() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(0);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("EEEE HH:mm").print(
         DateTime.now().plusDays(1).withMillisOfDay(0).minusMillis(1).getMillis())
     );
@@ -174,10 +176,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationDayOfWeekTomorrow() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(1);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("EEEE HH:mm").print(
         DateTime.now().plusDays(2).withMillisOfDay(0).minusMillis(1).getMillis())
     );
@@ -191,10 +193,10 @@ public class PreOrdersListHeaderItemTest {
 
   @Test
   public void testGetOccupationDayOfWeekDayAfterTomorrow() {
-    // Дано:
+      // Given:
     preOrdersListItem = new PreOrdersListHeaderItem(2);
 
-    // Результат:
+      // Effect:
     System.out.println(DateTimeFormat.forPattern("EEEE HH:mm").print(
         DateTime.now().plusDays(2).withMillisOfDay(0).getMillis())
     );

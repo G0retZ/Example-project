@@ -7,14 +7,16 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExecutorStateUseCaseTest {
@@ -40,13 +42,13 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void askGatewayForExecutorState() {
-    // Действие:
+    // Action:
     useCase.getExecutorStates().test().isDisposed();
     useCase.getExecutorStates().test().isDisposed();
     useCase.getExecutorStates().test().isDisposed();
     useCase.getExecutorStates().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -57,7 +59,7 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithExecutorStateFromOthers() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(
         Flowable.just(ExecutorState.BLOCKED, ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
             ExecutorState.ONLINE, ExecutorState.DRIVER_ORDER_CONFIRMATION,
@@ -66,10 +68,10 @@ public class ExecutorStateUseCaseTest {
             ExecutorState.PAYMENT_CONFIRMATION)
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(
         ExecutorState.BLOCKED, ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
         ExecutorState.ONLINE, ExecutorState.DRIVER_ORDER_CONFIRMATION,
@@ -85,7 +87,7 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithExecutorState() {
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
     useCase.updateWith(ExecutorState.BLOCKED);
     useCase.updateWith(ExecutorState.SHIFT_CLOSED);
@@ -98,7 +100,7 @@ public class ExecutorStateUseCaseTest {
     useCase.updateWith(ExecutorState.ORDER_FULFILLMENT);
     useCase.updateWith(ExecutorState.PAYMENT_CONFIRMATION);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(
         ExecutorState.BLOCKED, ExecutorState.SHIFT_CLOSED, ExecutorState.SHIFT_OPENED,
         ExecutorState.ONLINE, ExecutorState.DRIVER_ORDER_CONFIRMATION,
@@ -114,13 +116,13 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -131,13 +133,13 @@ public class ExecutorStateUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<ExecutorState> testSubscriber = useCase.getExecutorStates().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();

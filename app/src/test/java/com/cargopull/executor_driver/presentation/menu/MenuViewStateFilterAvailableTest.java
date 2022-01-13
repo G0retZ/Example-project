@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.FragmentViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,13 +22,13 @@ public class MenuViewStateFilterAvailableTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     ViewState<FragmentViewActions> viewState = new MenuViewStateFilterAvailable(action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setEnabled(R.id.filter, true);
     verify(viewActions).setClickAction(R.id.filter, action);
     verifyNoMoreInteractions(viewActions);

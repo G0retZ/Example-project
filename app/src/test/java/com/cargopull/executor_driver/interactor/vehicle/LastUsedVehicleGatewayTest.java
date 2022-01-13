@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.gateway.LastUsedVehicleGatewayImpl;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +33,10 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void askSettingsForLasUsedVehicleId() {
-    // Действие:
+    // Action:
     gateway.getLastUsedVehicleId().test().isDisposed();
 
-    // Результат:
+      // Effect:
     verify(appSettings, only()).getData("lastUsedVehicle");
   }
 
@@ -44,14 +45,14 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void doNotAskSettingsForLasUsedVehicleIdAfterFirstRequest() {
-    // Действие:
+      // Action:
     gateway.getLastUsedVehicleId().test().isDisposed();
     gateway.getLastUsedVehicleId().test().isDisposed();
     gateway.getLastUsedVehicleId().test().isDisposed();
     gateway.getLastUsedVehicleId().test().isDisposed();
     gateway.getLastUsedVehicleId().test().isDisposed();
 
-    // Результат:
+      // Effect:
     verify(appSettings, only()).getData("lastUsedVehicle");
   }
 
@@ -60,12 +61,12 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void askSettingsForSaveLasUsedVehicleId() {
-    // Действие:
+      // Action:
     gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     ).test().isDisposed();
 
-    // Результат:
+      // Effect:
     verify(appSettings, only()).saveData(eq("lastUsedVehicle"), eq("123456"));
   }
 
@@ -74,7 +75,7 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void doNotAskSettingsForLasUsedVehicleIdAfterSave() {
-    // Действие:
+      // Action:
     gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     ).test().isDisposed();
@@ -84,7 +85,7 @@ public class LastUsedVehicleGatewayTest {
     gateway.getLastUsedVehicleId().test().isDisposed();
     gateway.getLastUsedVehicleId().test().isDisposed();
 
-    // Результат:
+      // Effect:
     verify(appSettings, only()).saveData(eq("lastUsedVehicle"), eq("123456"));
   }
 
@@ -93,10 +94,10 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void returnValueUnchanged() {
-    // Дано:
+      // Given:
     when(appSettings.getData("lastUsedVehicle")).thenReturn("654321");
 
-    // Действие и Результат:
+      // Action и Effect:
     gateway.getLastUsedVehicleId().test().assertValue(654321L);
   }
 
@@ -105,7 +106,7 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void returnDefaultValueIfNoSuch() {
-    // Действие и Результат:
+      // Action и Effect:
     gateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
@@ -114,10 +115,10 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void returnDefaultValueIfEmpty() {
-    // Дано:
+      // Given:
     when(appSettings.getData("lastUsedVehicle")).thenReturn("");
 
-    // Действие и Результат:
+      // Action и Effect:
     gateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
@@ -126,10 +127,10 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void returnDefaultValueIfMalformed() {
-    // Дано:
+      // Given:
     when(appSettings.getData("lastUsedVehicle")).thenReturn("as32as");
 
-    // Действие и Результат:
+      // Action и Effect:
     gateway.getLastUsedVehicleId().test().assertValue(-1L);
   }
 
@@ -138,7 +139,7 @@ public class LastUsedVehicleGatewayTest {
    */
   @Test
   public void returnComplete() {
-    // Действие и Результат:
+      // Action и Effect:
     gateway.saveLastUsedVehicleId(
         new Vehicle(123456, "manufacturer", "model", "color", "license", false)
     ).test().assertComplete();

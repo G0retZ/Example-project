@@ -9,14 +9,16 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.stomp.StompClient;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.gateway.GeoTrackingGatewayImpl;
-import io.reactivex.Completable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GeoTrackingGatewayTest {
@@ -42,10 +44,10 @@ public class GeoTrackingGatewayTest {
    */
   @Test
   public void askStompClientToSendMessage() {
-    // Действие:
+    // Action:
     gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(stompClient, only())
         .send("/mobile/online", "{\"latitude\":1.0,\"longitude\":2.0,\"regDate\":3}");
   }
@@ -57,13 +59,13 @@ public class GeoTrackingGatewayTest {
    */
   @Test
   public void answerSuccess() {
-    // Дано:
+    // Given:
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
   }
 
@@ -72,14 +74,14 @@ public class GeoTrackingGatewayTest {
    */
   @Test
   public void answerError() {
-    // Дано:
+    // Given:
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.sendGeoLocation(new GeoLocation(1, 2, 3)).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(IllegalArgumentException.class);
   }
 }

@@ -26,10 +26,10 @@ public class ChooseVehicleViewStateErrorTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showVehicleList(false);
     verify(viewActions).showVehicleListPending(false);
     verify(viewActions).showVehicleListErrorMessage(true);

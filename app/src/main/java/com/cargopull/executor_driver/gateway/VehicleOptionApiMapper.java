@@ -1,10 +1,12 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
+
 import javax.inject.Inject;
 
 /**
@@ -20,10 +22,10 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
   @Override
   public Option map(@NonNull ApiOptionItem from) throws Exception {
     if (from.getValue() == null) {
-      throw new DataMappingException("Ошибка маппинга: значение опции не должно быть null!");
+      throw new DataMappingException("Mapping error: option must not be null!");
     }
     if (from.getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: имя опции не должно быть null!");
+      throw new DataMappingException("Mapping error: option name must not be null!");
     }
     Option option;
     if (from.isNumeric()) {
@@ -31,11 +33,11 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
       int maxValue = 0;
       if (from.isDynamic()) {
         if (from.getMinValue() == null || from.getMaxValue() == null) {
-          throw new DataMappingException("Ошибка маппинга: пределы не должны быть null!");
+          throw new DataMappingException("Mapping error: пределы не должны быть null!");
         }
         if (from.getMinValue() >= from.getMaxValue()) {
           throw new DataMappingException(
-              "Ошибка маппинга: минимальное значение должно быть меньше максимального!");
+                  "Mapping error: минимальное значение должно быть меньше максимального!");
         }
         minValue = from.getMinValue();
         maxValue = from.getMaxValue();
@@ -45,25 +47,25 @@ public class VehicleOptionApiMapper implements Mapper<ApiOptionItem, Option> {
       }
       try {
         option = new OptionNumeric(
-            from.getId(),
-            from.getName(),
-            from.getDescription(),
-            Integer.valueOf(from.getValue()),
-            minValue,
-            maxValue
+                from.getId(),
+                from.getName(),
+                from.getDescription(),
+                Integer.parseInt(from.getValue()),
+                minValue,
+                maxValue
         );
       } catch (NumberFormatException nfe) {
-        throw new DataMappingException("Ошибка маппинга: неверный формат числового значения!", nfe);
+        throw new DataMappingException("Mapping error: wrong number format!", nfe);
       }
     } else {
       if (!from.getValue().equalsIgnoreCase("true") && !from.getValue().equalsIgnoreCase("false")) {
-        throw new DataMappingException("Ошибка маппинга: неверный формат двоичного значения!");
+        throw new DataMappingException("Mapping error: wrong boolean format!");
       }
       option = new OptionBoolean(
           from.getId(),
           from.getName(),
           from.getDescription(),
-          Boolean.valueOf(from.getValue())
+              Boolean.parseBoolean(from.getValue())
       );
     }
     return option;

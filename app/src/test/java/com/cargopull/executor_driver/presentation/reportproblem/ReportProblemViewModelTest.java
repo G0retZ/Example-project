@@ -80,10 +80,10 @@ public class ReportProblemViewModelTest {
     when(useCase.reportProblem(problem1))
         .thenReturn(Completable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     viewModel.selectItem(problem1);
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -95,10 +95,10 @@ public class ReportProblemViewModelTest {
     when(useCase.reportProblem(problem2))
         .thenReturn(Completable.error(IndexOutOfBoundsException::new));
 
-    // Действие:
+    // Action:
     viewModel.selectItem(problem2);
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(IndexOutOfBoundsException.class));
   }
 
@@ -109,7 +109,7 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void askUseCaseForReportProblemsInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getAvailableProblems();
   }
 
@@ -118,13 +118,13 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getAvailableProblems();
   }
 
@@ -133,10 +133,10 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void askUseCaseToReportProblem() {
-    // Действие:
+    // Action:
     viewModel.selectItem(problem1);
 
-    // Результат:
+    // Effect:
     verify(useCase).getAvailableProblems();
     verify(useCase).reportProblem(problem1);
     verifyNoMoreInteractions(useCase);
@@ -147,12 +147,12 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void DoNotTouchUseCaseDuringReportProblem() {
-    // Дано:
+    // Given:
     viewModel.selectItem(problem);
     viewModel.selectItem(problem1);
     viewModel.selectItem(problem2);
 
-    // Результат:
+    // Effect:
     verify(useCase).getAvailableProblems();
     verify(useCase).reportProblem(problem);
     verifyNoMoreInteractions(useCase);
@@ -166,13 +166,13 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new ReportProblemViewStatePending(null));
   }
 
@@ -181,14 +181,14 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setReportProblemViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onSuccess(Arrays.asList(problem, problem1, problem2));
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewState(
         Arrays.asList(problem, problem1, problem2)
@@ -201,15 +201,15 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setPendingViewStateStateToLiveDataForReportProblem() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onSuccess(Arrays.asList(problem, problem1, problem2));
     viewModel.selectItem(problem1);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewState(
         Arrays.asList(problem, problem1, problem2)
@@ -226,16 +226,16 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setReportProblemViewStateToLiveDataAfterPendingForReportProblemError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.reportProblem(any())).thenReturn(Completable.error(Exception::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onSuccess(Arrays.asList(problem, problem1, problem2));
     viewModel.selectItem(problem1);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewState(
         Arrays.asList(problem, problem1, problem2)
@@ -256,16 +256,16 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setReportProblemViewStateToLiveDataAfterPendingForReportProblemSuccess() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(useCase.reportProblem(any())).thenReturn(Completable.complete());
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onSuccess(Arrays.asList(problem, problem1, problem2));
     viewModel.selectItem(problem1);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new ReportProblemViewState(
         Arrays.asList(problem, problem1, problem2)
@@ -288,14 +288,14 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForReportProblems() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onSuccess(Arrays.asList(problem, problem1, problem2));
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -304,14 +304,14 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void navigateToNothingForError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onError(new NoNetworkException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -320,14 +320,14 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void navigateToNothingForAuthorize() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onError(new AuthorizationException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -336,14 +336,14 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -352,15 +352,15 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForOtherError() {
-    // Дано:
+    // Given:
     when(useCase.reportProblem(any())).thenReturn(Completable.error(new DataMappingException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.selectItem(problem);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -369,16 +369,16 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForWrongChoice() {
-    // Дано:
+    // Given:
     when(useCase.reportProblem(any()))
         .thenReturn(Completable.error(new IndexOutOfBoundsException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.selectItem(problem);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -387,15 +387,15 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setNoConnectionToLiveData() {
-    // Дано:
+    // Given:
     when(useCase.reportProblem(any())).thenReturn(Completable.error(new IllegalStateException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.selectItem(problem);
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
@@ -404,15 +404,15 @@ public class ReportProblemViewModelTest {
    */
   @Test
   public void setNavigateToOrderCanceledToLiveData() {
-    // Дано:
+    // Given:
     when(useCase.reportProblem(any())).thenReturn(Completable.complete());
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.selectItem(problem);
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(ReportProblemNavigate.ORDER_CANCELED);
   }
 }

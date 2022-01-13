@@ -85,10 +85,10 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     emitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -99,7 +99,7 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void askUseCaseForOrdersInitially() {
-    // Результат:
+    // Effect:
     verify(orderUseCase, only()).getOrders();
   }
 
@@ -108,13 +108,13 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotAskUseCaseForOrdersOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(orderUseCase, only()).getOrders();
   }
 
@@ -125,13 +125,13 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -141,10 +141,10 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnError() {
-    // Действие:
+    // Action:
     emitter.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -154,12 +154,12 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSound() {
-    // Действие:
+    // Action:
     emitter.onNext(order);
     emitter.onNext(order1);
     emitter.onNext(order2);
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, times(3)).shakeIt(R.raw.preliminary_order_notify_vibro);
     verify(ringTonePlayer, times(3)).playRingTone(R.raw.preliminary_order_notify);
     verifyNoMoreInteractions(shakeItPlayer);
@@ -171,10 +171,10 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnDataMappingError() {
-    // Действие:
+    // Action:
     emitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -184,10 +184,10 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnOrderOfferDecision() {
-    // Действие:
+    // Action:
     emitter.onError(new OrderOfferDecisionException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -197,10 +197,10 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnOrderOfferExpired() {
-    // Действие:
+    // Action:
     emitter.onError(new OrderOfferExpiredException(""));
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -210,10 +210,10 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnOrderOfferCancelled() {
-    // Действие:
+    // Action:
     emitter.onError(new OrderCancelledException(""));
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -225,13 +225,13 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setUnAvailableViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -241,13 +241,13 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     emitter.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(any(PreOrderViewStateUnAvailable.class));
   }
 
@@ -256,16 +256,16 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setIdleViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     emitter.onNext(order);
     emitter.onNext(order1);
     emitter.onNext(order2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
     inOrder.verify(viewStateObserver, times(3)).onChanged(any(PreOrderViewStateAvailable.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -276,19 +276,19 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setExpiredViewStateToLiveDataForOrderOfferDecision() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
         ringTonePlayer);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     emitter.onNext(order);
     emitter.onError(new OrderOfferDecisionException());
     emitter.onNext(order2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -301,19 +301,19 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setExpiredViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
         ringTonePlayer);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     emitter.onNext(order);
     emitter.onError(new OrderOfferExpiredException(""));
     emitter.onNext(order2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -326,19 +326,19 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setCancelledViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel = new PreOrderViewModelImpl(errorReporter, orderUseCase, shakeItPlayer,
         ringTonePlayer);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     emitter.onNext(order);
     emitter.onError(new OrderCancelledException(""));
     emitter.onNext(order2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateAvailable.class));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrderViewStateUnAvailable.class));
@@ -353,14 +353,14 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     emitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -369,14 +369,14 @@ public class PreOrderViewModelTest {
    */
   @Test
   public void setNavigateToCloseForMessageConsumed() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.preOrderConsumed();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(PreOrderNavigate.ORDER_APPROVAL);
   }
 }

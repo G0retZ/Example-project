@@ -18,13 +18,13 @@ class OrderCostDetailsApiMapper : Mapper<ApiOrderCostDetails, OrderCostDetails> 
         try {
             apiOrderOverPackage = from.apiOrderOverPackage!!
         } catch (e: NullPointerException) {
-            throw DataMappingException("Ошибка маппинга: Нет данных детализации и сверх пакета!")
+            throw DataMappingException("Mapping error: no over package details!")
         }
         val apiOrderOptionsCostDetails: ApiOrderOptionsCostDetails
         try {
             apiOrderOptionsCostDetails = from.apiOrderOptionsCostDetails!!
         } catch (e: NullPointerException) {
-            throw DataMappingException("Ошибка маппинга: Нет данных детализации по опциям!")
+            throw DataMappingException("Mapping error: no options details!")
         }
         val estimatedOptions = ArrayList<Pair<String, Long>>()
         apiOrderOptionsCostDetails.optionsCosts?.let {
@@ -33,7 +33,7 @@ class OrderCostDetailsApiMapper : Mapper<ApiOrderCostDetails, OrderCostDetails> 
                 try {
                     optionName = apiOrderOptionCost.optionName!!
                 } catch (e: NullPointerException) {
-                    throw DataMappingException("Ошибка маппинга: Имя опциии не должно быть нуль!")
+                    throw DataMappingException("Mapping error: option name must not be null!")
                 }
                 estimatedOptions.add(Pair(optionName, apiOrderOptionCost.optionPrice))
             }

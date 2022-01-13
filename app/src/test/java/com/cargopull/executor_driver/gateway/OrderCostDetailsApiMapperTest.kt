@@ -24,7 +24,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -61,10 +61,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -114,7 +114,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutTotalAmountToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"estimatedAmount\": 310000,"
@@ -150,10 +150,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 0)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -203,7 +203,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutPackageTimeToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -239,10 +239,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 0)
@@ -292,7 +292,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutPackageDistanceToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -328,10 +328,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -381,7 +381,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutEstimatedAmountToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -417,10 +417,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNull(executorOrderCostDetails.estimatedCost)
         assertNotNull(executorOrderCostDetails.overPackageCost)
@@ -453,7 +453,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutServicePackageCostToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -489,10 +489,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -542,7 +542,7 @@ class OrderCostDetailsApiMapperTest {
     @Test(expected = DataMappingException::class)
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOptionsBlockToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -563,7 +563,7 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         mapper.map(apiOrderCostDetails)
     }
 
@@ -575,7 +575,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOptionsToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -597,10 +597,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -638,7 +638,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithEmptyOptionsToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -662,10 +662,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -703,7 +703,7 @@ class OrderCostDetailsApiMapperTest {
     @Test(expected = DataMappingException::class)
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOptionNameToOrderCostDetailsFail() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -739,7 +739,7 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         mapper.map(apiOrderCostDetails)
     }
 
@@ -751,7 +751,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOptionPriceToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -787,10 +787,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -840,7 +840,7 @@ class OrderCostDetailsApiMapperTest {
     @Test(expected = DataMappingException::class)
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOverPackageToOrderCostDetailsFail() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -867,7 +867,7 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         mapper.map(apiOrderCostDetails)
     }
 
@@ -879,7 +879,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOverPackageTimeToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -915,10 +915,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -968,7 +968,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOverPackageCostToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -1004,10 +1004,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -1048,7 +1048,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutPorterOverPackageNameToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -1084,10 +1084,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -1133,7 +1133,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutPorterOverPackageCostToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -1169,10 +1169,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -1218,7 +1218,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutOverPackageTariffToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -1254,10 +1254,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -1299,7 +1299,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutPorterOverPackageTariffNameToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -1335,10 +1335,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)
@@ -1384,7 +1384,7 @@ class OrderCostDetailsApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingJsonStringWithoutPorterOverPackageTariffToOrderCostDetailsSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson(
                 "{"
                         + "  \"totalAmount\": 320000,"
@@ -1420,10 +1420,10 @@ class OrderCostDetailsApiMapperTest {
                 ApiOrderCostDetails::class.java
         )
 
-        // Действие:
+        // Action:
         val executorOrderCostDetails = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         assertEquals(executorOrderCostDetails.orderCost, 320000)
         assertNotNull(executorOrderCostDetails.estimatedCost)
         assertEquals(executorOrderCostDetails.estimatedCost!!.packageTime, 12345678900L)

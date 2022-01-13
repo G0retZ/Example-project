@@ -63,13 +63,13 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun askGatewayForRoutes() {
-        // Действие:
+        // Action:
         useCase.orderRoutePoints.test().isDisposed
         useCase.orderRoutePoints.test().isDisposed
         useCase.orderRoutePoints.test().isDisposed
         useCase.orderRoutePoints.test().isDisposed
 
-        // Результат:
+        // Effect:
         verify<OrderUseCase>(orderUseCase, only()).orders
     }
 
@@ -80,10 +80,10 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun doNotTouchGateway() {
-        // Действие:
+        // Action:
         useCase.updateWith(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4))
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(orderRouteGateway)
     }
 
@@ -92,10 +92,10 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun askGatewayToCheckRoutePoint() {
-        // Действие:
+        // Action:
         useCase.closeRoutePoint(routePoint).test().isDisposed
 
-        // Результат:
+        // Effect:
         verify<OrderRouteGateway>(orderRouteGateway, only()).closeRoutePoint(routePoint)
     }
 
@@ -104,10 +104,10 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun askGatewayToUseNextRoutePoint() {
-        // Действие:
+        // Action:
         useCase.nextRoutePoint(routePoint).test().isDisposed
 
-        // Результат:
+        // Effect:
         verify<OrderRouteGateway>(orderRouteGateway, only()).nextRoutePoint(routePoint)
     }
 
@@ -118,13 +118,13 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerDataMappingError() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.error(DataMappingException()))
 
-        // Действие:
+        // Action:
         val test = useCase.orderRoutePoints.test()
 
-        // Результат:
+        // Effect:
         test.assertError(DataMappingException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -135,17 +135,17 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerWithRoutesBeforeComplete() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders).thenReturn(Flowable.just(order, order2))
         `when`(order.routePath).thenReturn(Arrays.asList<RoutePoint>(routePoint1, routePoint2, routePoint3))
         `when`(order2.routePath).thenReturn(Arrays.asList<RoutePoint>(routePoint4, routePoint, routePoint3))
 
-        // Действие:
+        // Action:
         val test = useCase.orderRoutePoints.test()
         useCase.updateWith(Arrays.asList<RoutePoint>(routePoint4, routePoint3))
         useCase.updateWith(Arrays.asList<RoutePoint>(routePoint, routePoint2))
 
-        // Результат:
+        // Effect:
         test.assertValueCount(2)
         test.assertValueAt(0, Arrays.asList<RoutePoint>(routePoint1, routePoint2, routePoint3))
         test.assertValueAt(1, Arrays.asList<RoutePoint>(routePoint4, routePoint, routePoint3))
@@ -158,18 +158,18 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerWithAllRoutes() {
-        // Дано:
+        // Given:
         `when`(orderUseCase.orders)
                 .thenReturn(Flowable.just(order, order2).concatWith(Flowable.never()))
         `when`(order.routePath).thenReturn(Arrays.asList<RoutePoint>(routePoint1, routePoint2, routePoint3))
         `when`(order2.routePath).thenReturn(Arrays.asList<RoutePoint>(routePoint4, routePoint, routePoint3))
 
-        // Действие:
+        // Action:
         val test = useCase.orderRoutePoints.test()
         useCase.updateWith(Arrays.asList<RoutePoint>(routePoint4, routePoint3))
         useCase.updateWith(Arrays.asList<RoutePoint>(routePoint, routePoint2))
 
-        // Результат:
+        // Effect:
         test.assertValueCount(4)
         test.assertValueAt(0, Arrays.asList<RoutePoint>(routePoint1, routePoint2, routePoint3))
         test.assertValueAt(1, Arrays.asList<RoutePoint>(routePoint4, routePoint, routePoint3))
@@ -186,14 +186,14 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerNoNetworkErrorForCloseRoutePoint() {
-        // Дано:
+        // Given:
         `when`(orderRouteGateway.closeRoutePoint(any()))
                 .thenReturn(Single.error(NoNetworkException()))
 
-        // Действие:
+        // Action:
         val test = useCase.closeRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         test.assertError(NoNetworkException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -204,14 +204,14 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerNoNetworkErrorForUseNextRoutePoint() {
-        // Дано:
+        // Given:
         `when`(orderRouteGateway.nextRoutePoint(any()))
                 .thenReturn(Single.error(NoNetworkException()))
 
-        // Действие:
+        // Action:
         val test = useCase.nextRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         test.assertError(NoNetworkException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -222,13 +222,13 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerSendCloseRoutePointSuccessful() {
-        // Дано:
+        // Given:
         `when`(orderRouteGateway.closeRoutePoint(any())).thenReturn(Single.just(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4)))
 
-        // Действие:
+        // Action:
         val test = useCase.closeRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
     }
@@ -238,13 +238,13 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerSendUseNextRoutePointSuccessful() {
-        // Дано:
+        // Given:
         `when`(orderRouteGateway.nextRoutePoint(any())).thenReturn(Single.just(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4)))
 
-        // Действие:
+        // Action:
         val test = useCase.nextRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         test.assertComplete()
         test.assertNoErrors()
     }
@@ -254,14 +254,14 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerWithAllRoutesSendCloseRoutePointSuccessful() {
-        // Дано:
+        // Given:
         `when`(orderRouteGateway.closeRoutePoint(any())).thenReturn(Single.just(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4)))
 
-        // Действие:
+        // Action:
         val test = useCase.orderRoutePoints.test()
         useCase.closeRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         test.assertValue(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4))
         test.assertNotComplete()
         test.assertNoErrors()
@@ -272,14 +272,14 @@ class OrderRouteUseCaseTest {
      */
     @Test
     fun answerWithAllRoutesSendUseNextRoutePointSuccessful() {
-        // Дано:
+        // Given:
         `when`(orderRouteGateway.nextRoutePoint(any())).thenReturn(Single.just(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4)))
 
-        // Действие:
+        // Action:
         val test = useCase.orderRoutePoints.test()
         useCase.nextRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         test.assertValue(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4))
         test.assertNotComplete()
         test.assertNoErrors()

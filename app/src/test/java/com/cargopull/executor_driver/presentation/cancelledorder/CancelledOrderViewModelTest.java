@@ -73,10 +73,10 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -87,7 +87,7 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToUpcomingPreOrdersMessages() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getNotificationMessages();
   }
 
@@ -96,13 +96,13 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToUpcomingPreOrdersMessagesIfAlreadyAsked() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getNotificationMessages();
   }
 
@@ -113,13 +113,13 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -129,10 +129,10 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -142,10 +142,10 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnOrderCanceledWithMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
   }
@@ -155,10 +155,10 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnOrderCanceledWithEmptyMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
   }
@@ -168,10 +168,10 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnOrderCanceledWithSpaceMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
   }
@@ -183,13 +183,13 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void showUpcomingPreOrderMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showCancelledOrderMessage("Message");
@@ -200,13 +200,13 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void doNotShowMessageOnError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -215,13 +215,13 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -230,13 +230,13 @@ public class CancelledOrderViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 }

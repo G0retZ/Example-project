@@ -19,11 +19,11 @@ public class OrderCostDetailsTest {
 
   @Test
   public void testConstructor() {
-    // Дано:
+    // Given:
     OrderCostDetails orderCostDetails =
         new OrderCostDetails(123, estimatedCost, overPackageCost, overPackageTariff);
 
-    // Результат:
+      // Effect:
     assertEquals(orderCostDetails.getOrderCost(), 123);
     assertEquals(orderCostDetails.getEstimatedCost(), estimatedCost);
     assertEquals(orderCostDetails.getOverPackageCost(), overPackageCost);

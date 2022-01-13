@@ -15,14 +15,17 @@ import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.gateway.CurrentVehicleOptionsGatewayImpl;
-import io.reactivex.Completable;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+
+import io.reactivex.Completable;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentVehicleOptionsGatewayTest {
@@ -48,7 +51,7 @@ public class CurrentVehicleOptionsGatewayTest {
    */
   @Test
   public void askApiToOccupyVehicleWithOptions() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -57,7 +60,7 @@ public class CurrentVehicleOptionsGatewayTest {
         new OptionBoolean(3, "name3", "desc3", true)
     );
 
-    // Действие:
+    // Action:
     gateway.sendVehicleOptions(vehicle, Arrays.asList(
         new OptionNumeric(5, "name0", "desc0", -1, -5, 20),
         new OptionNumeric(6, "name1", "desc1", 2, -18, 5),
@@ -65,7 +68,7 @@ public class CurrentVehicleOptionsGatewayTest {
         new OptionBoolean(8, "name3", "desc3", false)
     ));
 
-    // Результат:
+    // Effect:
     verify(api, only()).setSelectedVehicleOptions(new ApiOptionItems(
         Arrays.asList(
             new ApiOptionItem(0, "10"),
@@ -89,7 +92,7 @@ public class CurrentVehicleOptionsGatewayTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -113,7 +116,7 @@ public class CurrentVehicleOptionsGatewayTest {
     ))))
         .thenReturn(Completable.error(NoNetworkException::new));
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.sendVehicleOptions(vehicle, Arrays.asList(
         new OptionNumeric(5, "name0", "desc0", -1, -5, 20),
         new OptionNumeric(6, "name1", "desc1", 2, -18, 5),
@@ -128,7 +131,7 @@ public class CurrentVehicleOptionsGatewayTest {
    */
   @Test
   public void answerVehicleOccupiedSuccessfully() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(11, "manufacturer2", "models", "colors", "lic", true);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -151,7 +154,7 @@ public class CurrentVehicleOptionsGatewayTest {
         )
     )))).thenReturn(Completable.complete());
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.sendVehicleOptions(vehicle, Arrays.asList(
         new OptionNumeric(5, "name0", "desc0", -1, -5, 20),
         new OptionNumeric(6, "name1", "desc1", 2, -18, 5),

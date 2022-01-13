@@ -60,10 +60,10 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     completableSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -74,7 +74,7 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void askUseCaseToSubscribeToServerTimeInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getServerTime();
   }
 
@@ -83,13 +83,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getServerTime();
   }
 
@@ -100,13 +100,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void doNotTouchViewActionsOnComplete() {
-    // Дано:
+    // Given:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     completableSubject.onComplete();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -115,13 +115,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void doNotTouchViewActionsOnMappingError() {
-    // Дано:
+    // Given:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     completableSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -130,13 +130,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void doNotTouchViewActionsOnOtherError() {
-    // Дано:
+    // Given:
     currentCostPollingViewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     completableSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -147,13 +147,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void navigateToServerDataError() {
-    // Дано:
+    // Given:
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     completableSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -162,13 +162,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void doNotNavigateForOtherError() {
-    // Дано:
+    // Given:
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     completableSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigationObserver);
   }
 
@@ -177,13 +177,13 @@ public class ServerTimeViewModelTest {
    */
   @Test
   public void doNotNavigateForComplete() {
-    // Дано:
+    // Given:
     currentCostPollingViewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     completableSubject.onComplete();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigationObserver);
   }
 }

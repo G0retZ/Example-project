@@ -69,10 +69,10 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -83,7 +83,7 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void askUseCaseToSubscribeToUpdateMessagesInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getUpdateMessages();
   }
 
@@ -92,13 +92,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getUpdateMessages();
   }
 
@@ -109,13 +109,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void showUpdateMessageMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showUpdateMessage("Message");
@@ -126,14 +126,14 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void showOnlineMessageThenNull() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
     viewModel.messageConsumed();
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
@@ -147,13 +147,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -162,13 +162,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 }

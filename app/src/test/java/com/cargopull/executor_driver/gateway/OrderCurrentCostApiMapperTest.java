@@ -4,9 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.backend.stomp.Command;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
-import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 public class OrderCurrentCostApiMapperTest {
 
@@ -24,11 +26,11 @@ public class OrderCurrentCostApiMapperTest {
    */
   @Test
   public void mappingPayLoadToInteger() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     long excessiveCost = mapper.map(new StompFrame(Command.MESSAGE,
         Collections.singletonMap("TotalAmount", "1234567890"), "\n"));
 
-    // Результат:
+    // Effect:
     assertEquals(excessiveCost, 1234567890L);
   }
 
@@ -39,7 +41,7 @@ public class OrderCurrentCostApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullPayloadFail() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     mapper.map(new StompFrame(Command.MESSAGE, Collections.emptyMap(), "\n"));
   }
 
@@ -50,7 +52,7 @@ public class OrderCurrentCostApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyPayloadFail() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     mapper.map(new StompFrame(Command.MESSAGE,
         Collections.singletonMap("TotalAmount", ""), "\n"));
   }
@@ -62,7 +64,7 @@ public class OrderCurrentCostApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingFloatPayloadFail() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     mapper.map(new StompFrame(Command.MESSAGE,
         Collections.singletonMap("TotalAmount", "123.345"), "\n"));
   }
@@ -74,7 +76,7 @@ public class OrderCurrentCostApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingLongNumberPayloadFail() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     mapper.map(new StompFrame(Command.MESSAGE,
         Collections.singletonMap("TotalAmount", "9999999999999999999999"), "\n"));
   }
@@ -86,7 +88,7 @@ public class OrderCurrentCostApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNotANumberPayloadFail() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     mapper.map(new StompFrame(Command.MESSAGE,
         Collections.singletonMap("TotalAmount", "a9876543210"), "\n"));
   }

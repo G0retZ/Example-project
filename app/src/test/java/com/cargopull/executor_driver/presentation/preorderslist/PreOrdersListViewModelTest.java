@@ -94,10 +94,10 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -106,14 +106,14 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void reportErrorOnSet() {
-    // Дано:
+    // Given:
     when(selectedOrderUseCase.setSelectedOrder(any()))
         .thenReturn(Completable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -122,14 +122,14 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void reportErrorOnSetWrong() {
-    // Дано:
+    // Given:
     when(selectedOrderUseCase.setSelectedOrder(any()))
         .thenReturn(Completable.error(NoSuchElementException::new));
 
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(NoSuchElementException.class));
   }
 
@@ -140,7 +140,7 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void askOrdersUseCaseForPreOrdersListInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getOrdersSet();
   }
 
@@ -149,16 +149,16 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void doNotTouchOrdersUseCaseOnSubscriptions() {
-    // Дано:
+    // Given:
     publishSubject.onNext(orderSet);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getOrdersSet();
   }
 
@@ -169,16 +169,16 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void doNotTouchSelectedOrdersUseCaseOnSubscriptions() {
-    // Дано:
+    // Given:
     publishSubject.onNext(orderSet);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(selectedOrderUseCase);
   }
 
@@ -187,10 +187,10 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void askSelectedOrdersUseCaseForSetSelectedOrder() {
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verify(selectedOrderUseCase, only()).setSelectedOrder(order);
   }
 
@@ -201,7 +201,7 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void doNotTouchMapperWithoutResults() {
-    // Результат:
+    // Effect:
     verifyNoInteractions(preOrdersListItemsMapper);
   }
 
@@ -210,10 +210,10 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void askMapperToMapTheList() {
-    // Действие:
+    // Action:
     publishSubject.onNext(orderSet);
 
-    // Результат:
+    // Effect:
     verify(preOrdersListItemsMapper, only()).apply(orderSet);
   }
 
@@ -222,16 +222,16 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void doNotTouchMapperOnSubscriptions() {
-    // Дано:
+    // Given:
     publishSubject.onNext(orderSet);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(preOrdersListItemsMapper, only()).apply(orderSet);
   }
 
@@ -242,13 +242,13 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new PreOrdersListViewStatePending(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -258,16 +258,16 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setReadyViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(orderSet);
     publishSubject.onNext(orderSet1);
     publishSubject.onNext(orderSet2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new PreOrdersListViewStatePending(null));
     inOrder.verify(viewStateObserver)
         .onChanged(new PreOrdersListViewStateReady(preOrdersListItems));
@@ -283,15 +283,15 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNoViewStateToLiveDataForSelectionFail() {
-    // Дано:
+    // Given:
     when(selectedOrderUseCase.setSelectedOrder(any()))
         .thenReturn(Completable.error(NoSuchElementException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new PreOrdersListViewStatePending(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -301,14 +301,14 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNoViewStateToLiveDataForSelectionSuccess() {
-    // Дано:
+    // Given:
     when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.complete());
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new PreOrdersListViewStatePending(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -318,15 +318,15 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setEmptyViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(preOrdersListItems.isEmpty()).thenReturn(true);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(orderSet);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new PreOrdersListViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrdersListViewStateEmpty.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -339,15 +339,15 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForData() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(orderSet);
     publishSubject.onNext(orderSet1);
     publishSubject.onNext(orderSet2);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -356,13 +356,13 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForComplete() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onComplete();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -371,13 +371,13 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNavigateToNoConnectionToLiveData() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.NO_CONNECTION);
   }
 
@@ -386,13 +386,13 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNavigateToServerDataErrorToLiveData() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -401,15 +401,15 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForSelectionFail() {
-    // Дано:
+    // Given:
     when(selectedOrderUseCase.setSelectedOrder(any()))
         .thenReturn(Completable.error(NoSuchElementException::new));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -418,14 +418,14 @@ public class PreOrdersListViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForSelectionSuccess() {
-    // Дано:
+    // Given:
     when(selectedOrderUseCase.setSelectedOrder(any())).thenReturn(Completable.complete());
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.setSelectedOrder(order);
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(PreOrdersListNavigate.PRE_ORDER);
   }
 }

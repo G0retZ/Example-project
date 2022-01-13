@@ -66,10 +66,10 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void askUseCaseToConnectServer() {
-    // Действие:
+    // Action:
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(executorStateUseCase, only()).connect();
   }
 
@@ -78,12 +78,12 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void doNotAskUseCaseToConnectServerIfAlreadyConnected() {
-    // Действие:
+    // Action:
     viewModel.connectServer();
     viewModel.connectServer();
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(executorStateUseCase, only()).connect();
   }
 
@@ -94,14 +94,14 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void disposeConnectionToServer() throws Exception {
-    // Дано:
+    // Given:
     when(executorStateUseCase.connect())
         .thenReturn(Flowable.<Boolean>never().doOnCancel(disposableAction));
 
-    // Действие:
+    // Action:
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(executorStateUseCase, only()).connect();
     verifyNoInteractions(disposableAction);
     viewModel.disconnectServer();
@@ -115,16 +115,16 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void showServerConnectionStatus() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect())
         .thenReturn(Flowable.just(true, false, false, true).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, times(4)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
       value.apply(viewActions);
@@ -140,17 +140,17 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void showNoServerConnectionForDisconnect() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect())
         .thenReturn(Flowable.just(true, false, false, true).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.connectServer();
     viewModel.disconnectServer();
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, times(5)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
       value.apply(viewActions);
@@ -171,11 +171,11 @@ public class ServerConnectionViewModelTest {
     when(executorStateUseCase.connect())
         .thenReturn(Flowable.just(true, false).concatWith(Flowable.error(NoNetworkException::new)));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
       value.apply(viewActions);
@@ -190,15 +190,15 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void showNothingOnCompletion() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewActions);
     when(executorStateUseCase.connect()).thenReturn(Flowable.just(true, false));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     for (ViewState<ServerConnectionViewActions> value : viewStateCaptor.getAllValues()) {
       value.apply(viewActions);
@@ -215,14 +215,14 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void navigateToAuthorize() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.connect()).thenReturn(Flowable.error(AuthorizationException::new));
 
-    // Действие:
+    // Action:
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(ServerConnectionNavigate.AUTHORIZE);
   }
 
@@ -231,14 +231,14 @@ public class ServerConnectionViewModelTest {
    */
   @Test
   public void navigateToNoNetwork() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.connect()).thenReturn(Flowable.error(Exception::new));
 
-    // Действие:
+    // Action:
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.connectServer();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigationObserver);
   }
 }

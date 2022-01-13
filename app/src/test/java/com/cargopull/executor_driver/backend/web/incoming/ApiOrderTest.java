@@ -3,11 +3,12 @@ package com.cargopull.executor_driver.backend.web.incoming;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApiOrderTest {
@@ -27,7 +28,7 @@ public class ApiOrderTest {
 
   @Test
   public void testConstructor() {
-    // Дано:
+    // Given:
     ApiOrder apiOrder = new ApiOrder(
         432,
         "CASH",
@@ -49,7 +50,7 @@ public class ApiOrderTest {
         Arrays.asList(apiOptionItem, apiOptionItem1)
     );
 
-    // Результат
+    // Effect
     assertEquals(apiOrder.getId(), 432);
     assertEquals(apiOrder.getPaymentType(), "CASH");
     assertEquals(apiOrder.getEstimatedAmountText(), "More than $3000");

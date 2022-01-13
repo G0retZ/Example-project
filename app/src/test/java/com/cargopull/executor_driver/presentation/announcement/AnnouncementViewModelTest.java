@@ -67,13 +67,13 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void showUpdateMessageMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showPersistentDialog(eq("Message"), runnableCaptor.capture());
@@ -84,7 +84,7 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void showOnlineMessageThenNull() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     publishSubject.onNext("Message");
@@ -93,10 +93,10 @@ public class AnnouncementViewModelTest {
     viewStateCaptor.getAllValues().get(0).apply(viewActions);
     verify(viewActions, only()).showPersistentDialog(eq("Message"), runnableCaptor.capture());
 
-    // Действие:
+    // Action:
     runnableCaptor.getValue().run();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(viewStateCaptor.capture());
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
@@ -108,13 +108,13 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -123,13 +123,13 @@ public class AnnouncementViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("  ");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 }

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,14 +31,14 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test
   public void mappingJsonStringToBalanceSuccess() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":3}");
 
-    // Действие:
+    // Action:
     ExecutorBalance executorBalance = mapper.map(stompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(executorBalance.getMainAccount(), 1);
     assertEquals(executorBalance.getBonusAccount(), 2);
     assertEquals(executorBalance.getCashlessAccount(), 3);
@@ -50,13 +51,13 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutMainAccountToBalanceSuccess() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("{\"bonusAccount\":2,\"nonCashAccount\":3}");
 
-    // Действие:
+    // Action:
     ExecutorBalance executorBalance = mapper.map(stompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(executorBalance.getMainAccount(), 0);
     assertEquals(executorBalance.getBonusAccount(), 2);
     assertEquals(executorBalance.getCashlessAccount(), 3);
@@ -69,13 +70,13 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutBonusAccountToBalanceSuccess() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("{\"mainAccount\":1,\"nonCashAccount\":3}");
 
-    // Действие:
+    // Action:
     ExecutorBalance executorBalance = mapper.map(stompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(executorBalance.getMainAccount(), 1);
     assertEquals(executorBalance.getBonusAccount(), 0);
     assertEquals(executorBalance.getCashlessAccount(), 3);
@@ -88,13 +89,13 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test
   public void mappingJsonStringWithoutCashlessAccountToBalanceSuccess() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("{\"mainAccount\":1,\"bonusAccount\":2}");
 
-    // Действие:
+    // Action:
     ExecutorBalance executorBalance = mapper.map(stompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(executorBalance.getMainAccount(), 1);
     assertEquals(executorBalance.getBonusAccount(), 2);
     assertEquals(executorBalance.getCashlessAccount(), 0);
@@ -107,11 +108,11 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithMainAccountStringToBalanceFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":\"a\",\"bonusAccount\":2,\"nonCashAccount\":3}");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -122,11 +123,11 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithBonusAccountStringToBalanceFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":1,\"bonusAccount\":\"b\",\"nonCashAccount\":3}");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -138,11 +139,11 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithCashlessAccountStringToBalanceFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody())
         .thenReturn("{\"mainAccount\":1,\"bonusAccount\":2,\"nonCashAccount\":\"c\"}");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -153,7 +154,7 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -164,10 +165,10 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("\n");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -178,10 +179,10 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("dasie");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -192,10 +193,10 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("12");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -206,10 +207,10 @@ public class ExecutorBalanceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn("[]");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 }

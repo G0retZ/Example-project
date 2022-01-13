@@ -665,7 +665,7 @@ class PresentationComponent(
             vClass: Class<V>,
             viewModel: V): V {
         if (fragment == null) {
-            throw NullPointerException("Фрагмент не должен быть null")
+            throw NullPointerException("Фрагмент must not be null")
         }
         return ViewModelProvider(
             fragment,
@@ -678,7 +678,7 @@ class PresentationComponent(
             vClass: Class<V>,
             viewModel: V): V {
         if (appCompatActivity == null) {
-            throw NullPointerException("Активити не должно быть null")
+            throw NullPointerException("Активити must not be null")
         }
         return ViewModelProvider(
             appCompatActivity,

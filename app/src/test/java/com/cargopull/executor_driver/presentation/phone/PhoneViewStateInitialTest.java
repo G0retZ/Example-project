@@ -24,10 +24,10 @@ public class PhoneViewStateInitialTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).enableButton(false);
     verifyNoMoreInteractions(viewActions);
   }

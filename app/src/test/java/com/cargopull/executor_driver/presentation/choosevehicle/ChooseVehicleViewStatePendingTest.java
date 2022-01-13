@@ -24,10 +24,10 @@ public class ChooseVehicleViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showVehicleListErrorMessage(false);
     verify(viewActions).showVehicleList(false);
     verify(viewActions).showVehicleListPending(true);

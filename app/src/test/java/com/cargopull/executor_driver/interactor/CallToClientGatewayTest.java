@@ -8,15 +8,18 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.gateway.CallToClientGatewayImpl;
-import io.reactivex.Completable;
-import io.reactivex.observers.TestObserver;
-import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
+
+import io.reactivex.Completable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CallToClientGatewayTest {
@@ -43,10 +46,10 @@ public class CallToClientGatewayTest {
    */
   @Test
   public void askStompClientToSendCallToClient() {
-    // Действие:
+    // Action:
     gateway.callToClient().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(apiService, only())
         .callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT"));
   }
@@ -58,14 +61,14 @@ public class CallToClientGatewayTest {
    */
   @Test
   public void answerCallToClientSuccess() {
-    // Дано:
+    // Given:
     when(apiService.callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT")))
         .thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.callToClient().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertComplete();
   }
@@ -75,14 +78,14 @@ public class CallToClientGatewayTest {
    */
   @Test
   public void answerCallToClientError() {
-    // Дано:
+    // Given:
     when(apiService.callToClient(Collections.singletonMap("status", "CALL_TO_CLIENT")))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.callToClient().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNotComplete();
     testObserver.assertError(IllegalArgumentException.class);
   }

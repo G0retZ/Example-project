@@ -26,10 +26,10 @@ public class VehicleOptionsViewStateErrorTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).enableReadyButton(false);
     verify(viewActions).showVehicleOptionsList(false);
     verify(viewActions).showVehicleOptionsPending(false);

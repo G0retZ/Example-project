@@ -26,10 +26,10 @@ public class OrderCostViewStateTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions, only()).setOrderCostText(12345);
   }
 

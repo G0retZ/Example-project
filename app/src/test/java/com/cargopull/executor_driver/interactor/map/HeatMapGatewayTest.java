@@ -8,13 +8,15 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.gateway.HeatMapGatewayImpl;
-import io.reactivex.Single;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Single;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HeatMapGatewayTest {
@@ -40,10 +42,10 @@ public class HeatMapGatewayTest {
    */
   @Test
   public void askGatewayForHeatMap() {
-    // Действие:
+    // Action:
     gateway.getHeatMap();
 
-    // Результат:
+    // Effect:
     verify(api, only()).getHeatMap();
   }
 
@@ -54,10 +56,10 @@ public class HeatMapGatewayTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Действие:
+    // Action:
     when(api.getHeatMap()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Результат:
+    // Effect:
     gateway.getHeatMap().test().assertError(NoNetworkException.class);
   }
 
@@ -66,10 +68,10 @@ public class HeatMapGatewayTest {
    */
   @Test
   public void answerWithHeatMapData() {
-    // Действие:
+    // Action:
     when(api.getHeatMap()).thenReturn(Single.just("12"));
 
-    // Результат:
+    // Effect:
     gateway.getHeatMap().test().assertComplete();
     gateway.getHeatMap().test().assertValue("12");
   }

@@ -63,10 +63,10 @@ public class PasswordUseCaseTest {
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotTouchDataSharer() {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
-    // Действие:
+    // Action:
     useCase.authorize("passwor", Completable.complete()).test().isDisposed();
     useCase.authorize("password", Completable.never()).test().isDisposed();
     useCase.authorize("password", Completable.complete()).test().isDisposed();
@@ -76,7 +76,7 @@ public class PasswordUseCaseTest {
     when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
     useCase.authorize("password", Completable.complete()).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(loginReceiver, times(5)).get();
   }
 
@@ -89,13 +89,13 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void askPasswordValidatorForResult() throws Exception {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
-    // Действие:
+    // Action:
     useCase.authorize("", Completable.complete()).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(passwordValidator, only()).validate("");
   }
 
@@ -106,13 +106,13 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerErrorIfPasswordInvalid() {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.authorize("", Completable.complete()).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(ValidationException.class);
   }
 
@@ -121,10 +121,10 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerSuccessIfPasswordValid() {
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.authorize("password", Completable.complete()).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
   }
@@ -137,10 +137,10 @@ public class PasswordUseCaseTest {
   @SuppressWarnings("SpellCheckingInspection")
   @Test
   public void doNotAskGatewayForAuth() {
-    // Действие:
+    // Action:
     useCase.authorize("passwor", Completable.complete()).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(gateway);
   }
 
@@ -150,10 +150,10 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForAuthIfAfterValidationNotComplete() {
-    // Действие:
+    // Action:
     useCase.authorize("password", Completable.never()).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(gateway);
   }
 
@@ -163,10 +163,10 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForAuthIfAfterValidationFailed() {
-    // Действие:
+    // Action:
     useCase.authorize("password", Completable.error(new Exception())).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(gateway);
   }
 
@@ -176,14 +176,14 @@ public class PasswordUseCaseTest {
   @SuppressWarnings("unchecked")
   @Test
   public void askGatewayForAuth() {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just("login"), Observable.never());
     useCase = new PasswordUseCaseImpl(gateway, loginReceiver, passwordValidator);
 
-    // Действие:
+    // Action:
     useCase.authorize("password", Completable.complete()).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).authorize(new LoginData("login", "password"));
   }
 
@@ -194,15 +194,15 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
     when(gateway.authorize(any(LoginData.class)))
         .thenReturn(Completable.error(new NoNetworkException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.authorize("password", Completable.complete()).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNotComplete();
     testObserver.assertError(NoNetworkException.class);
   }
@@ -212,14 +212,14 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerAfterValidationFailed() {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver =
         useCase.authorize("password", Completable.error(new Exception())).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNotComplete();
     testObserver.assertError(Exception.class);
   }
@@ -229,14 +229,14 @@ public class PasswordUseCaseTest {
    */
   @Test
   public void answerAuthSuccessful() {
-    // Дано:
+    // Given:
     when(loginReceiver.get()).thenReturn(Observable.just(""));
     when(gateway.authorize(any(LoginData.class))).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.authorize("password", Completable.complete()).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertNoErrors();
   }

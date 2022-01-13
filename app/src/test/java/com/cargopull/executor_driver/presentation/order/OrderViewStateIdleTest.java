@@ -13,10 +13,7 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RouteType;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -25,6 +22,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderViewStateIdleTest {
@@ -52,7 +54,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentForCashInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -72,10 +74,10 @@ public class OrderViewStateIdleTest {
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -117,7 +119,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentForCashInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -144,10 +146,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -189,7 +191,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentFreeRideForCashInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -215,10 +217,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -260,7 +262,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentFreeRideForCashInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -286,10 +288,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -331,7 +333,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentForCashlessInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -351,10 +353,10 @@ public class OrderViewStateIdleTest {
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -396,7 +398,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentForCashlessInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -423,10 +425,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -468,7 +470,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentFreeRideForCashlessInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -494,10 +496,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -539,7 +541,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentFreeRideForCashlessInCity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -565,10 +567,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.city);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -610,7 +612,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentForCashInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -630,10 +632,10 @@ public class OrderViewStateIdleTest {
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -675,7 +677,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentForCashInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -702,10 +704,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -747,7 +749,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentFreeRideForCashInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -773,10 +775,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -818,7 +820,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentFreeRideForCashInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -844,10 +846,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -889,7 +891,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentForCashlessInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -909,10 +911,10 @@ public class OrderViewStateIdleTest {
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -954,7 +956,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentForCashlessInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -981,10 +983,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1026,7 +1028,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentFreeRideForCashlessInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1052,10 +1054,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1097,7 +1099,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentFreeRideForCashlessInCountry() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1123,10 +1125,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.country);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1168,7 +1170,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentForCashIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1188,10 +1190,10 @@ public class OrderViewStateIdleTest {
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1233,7 +1235,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentForCashIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1260,10 +1262,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1305,7 +1307,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentFreeRideForCashIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1331,10 +1333,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1376,7 +1378,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentFreeRideForCashIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1402,10 +1404,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, false);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1447,7 +1449,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentForCashlessIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1467,10 +1469,10 @@ public class OrderViewStateIdleTest {
     when(order.getComment()).thenReturn("comm");
     when(order.getOptions()).thenReturn(new ArrayList<>());
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1512,7 +1514,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentForCashlessIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1539,10 +1541,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1584,7 +1586,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithCommentFreeRideForCashlessIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(false);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,### ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1610,10 +1612,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);
@@ -1655,7 +1657,7 @@ public class OrderViewStateIdleTest {
 
   @Test
   public void testActionsWithoutCommentFreeRideForCashlessIntercity() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     when(viewActions.getCurrencyFormat()).thenReturn("##,###,###.## ₽");
     when(routePoint.getAddress()).thenReturn("address");
@@ -1681,10 +1683,10 @@ public class OrderViewStateIdleTest {
         new OptionNumeric(5, "num2", "nd", 7, 0, 5)
     )));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setVisible(R.id.paymentTypeSign, true);
     verify(viewActions).setText(R.id.routeType, R.string.intercity);
     verify(viewActions).setFormattedText(R.id.distanceText, R.string.km, 12.239d);

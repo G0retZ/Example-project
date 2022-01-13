@@ -2,11 +2,12 @@ package com.cargopull.executor_driver.gateway;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
 
 public class MessageFcmMapperTest {
 
@@ -24,10 +25,10 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractNullStringSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper.map(new HashMap<>());
 
-    // Результат:
+    // Effect:
     assertEquals("", message);
   }
 
@@ -38,10 +39,10 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractEmptyStringSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper.map(Collections.singletonMap("body", ""));
 
-    // Результат:
+    // Effect:
     assertEquals("", message);
   }
 
@@ -52,10 +53,10 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractEmptyStringWithoutSpaceSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper.map(Collections.singletonMap("body", " "));
 
-    // Результат:
+    // Effect:
     assertEquals("", message);
   }
 
@@ -66,10 +67,10 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractEmptyStringWithoutNewLineSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper.map(Collections.singletonMap("body", "\n"));
 
-    // Результат:
+    // Effect:
     assertEquals("", message);
   }
 
@@ -80,10 +81,10 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractStringSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper.map(Collections.singletonMap("body", "Message test super nova"));
 
-    // Результат:
+    // Effect:
     assertEquals("Message test super nova", message);
   }
 
@@ -94,11 +95,11 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractTrimmedStringSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper
         .map(Collections.singletonMap("body", "  \n Message test super nova  \n "));
 
-    // Результат:
+    // Effect:
     assertEquals("Message test super nova", message);
   }
 
@@ -109,10 +110,10 @@ public class MessageFcmMapperTest {
    */
   @Test
   public void extractStringWithQuotesSuccess() throws Exception {
-    // Действие:
+    // Action:
     String message = mapper.map(Collections.singletonMap("body", "Message \"test super\" nova"));
 
-    // Результат:
+    // Effect:
     assertEquals("Message \"test super\" nova", message);
   }
 }

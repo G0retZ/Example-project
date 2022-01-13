@@ -4,14 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderTest {
@@ -107,14 +108,14 @@ public class OrderTest {
 
   @Test
   public void testWithEtaToStartPoint() {
-    // Дано:
+    // Given:
     order.setOptions(option1, option2, option3);
     order.setRoutePoints(routePoint1, routePoint2, routePoint3);
 
-    // Действие:
+    // Action:
     Order order1 = order.withEtaToStartPoint(800);
 
-    // Результат:
+    // Effect:
     assertEquals(order1.getId(), 7);
     assertEquals(order.getPaymentType(), PaymentType.CASH);
     assertEquals(order1.getComment(), "com");

@@ -207,10 +207,10 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -221,7 +221,7 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void askUseCaseToSubscribeToExecutorStateUpdatesInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -230,13 +230,13 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -245,12 +245,12 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseForMessageReadEvent() {
-    // Действие:
+    // Action:
     viewModel.messageConsumed();
     viewModel.messageConsumed();
     viewModel.messageConsumed();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -261,16 +261,16 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void showOrNotTheMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(conditionDataSet.conditionExecutorState);
     if (conditionDataSet.expectedMessage != null) {
       viewModel.messageConsumed();
     }
 
-    // Результат:
+    // Effect:
     assertFalse(conditionDataSet.expectedMessage != null && conditionDataSet.expectedInfo != null);
     if (conditionDataSet.expectedMessage != null) {
       verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
@@ -296,10 +296,10 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void interactWithSoundAndVibrations() {
-    // Действие:
+    // Action:
     publishSubject.onNext(conditionDataSet.conditionExecutorState);
 
-    // Результат:
+    // Effect:
     assertFalse(conditionDataSet.expectedToRingAndVibrateSkip && conditionDataSet.expectedToRingAndVibrateOrder);
     if (conditionDataSet.expectedToRingAndVibrateSkip) {
       verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
@@ -320,14 +320,14 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void navigateToNowhere() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.messageConsumed();
     viewModel.messageConsumed();
     viewModel.messageConsumed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigationObserver);
   }
 
@@ -336,14 +336,14 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void navigateToNoNetwork() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -352,14 +352,14 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void navigateToExpectedDestination() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(conditionDataSet.conditionExecutorState);
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(conditionDataSet.expectedNavigation);
   }
 

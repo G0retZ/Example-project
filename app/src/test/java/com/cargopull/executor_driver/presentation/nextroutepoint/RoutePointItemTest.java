@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.RoutePoint;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,13 +29,13 @@ public class RoutePointItemTest {
 
   @Test
   public void testGetters() {
-    // Дано:
+    // Given:
     when(routePoint.getAddress()).thenReturn("add");
     when(routePoint.getComment()).thenReturn("com");
     when(routePoint.getLatitude()).thenReturn(5.421);
     when(routePoint.getLongitude()).thenReturn(10.2341);
 
-    // Результат:
+      // Effect:
     assertEquals(routeItem.getCoordinatesString(), "5.421,10.2341");
     assertEquals(routeItem.getAddress(), "add");
     assertEquals(routeItem.getComment(), "com");

@@ -17,13 +17,13 @@ public class OrderConfirmationViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewActions);
 
-    // Действие:
+      // Action:
     new OrderConfirmationViewStatePending().apply(viewActions);
 
-    // Результат:
+      // Effect:
     inOrder.verify(viewActions).showDriverOrderConfirmationPending(true);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);

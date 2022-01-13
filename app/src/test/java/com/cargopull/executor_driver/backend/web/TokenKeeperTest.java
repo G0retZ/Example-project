@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,10 +39,10 @@ public class TokenKeeperTest {
    */
   @Test
   public void askSettingsForToken() {
-    // Действие:
+    // Action:
     tokenKeeper.getToken();
 
-    // Результат:
+      // Effect:
     verify(appSettings, only()).getEncryptedData(any(byte[].class), any(byte[].class), eq("token"));
   }
 
@@ -50,10 +51,10 @@ public class TokenKeeperTest {
    */
   @Test
   public void askSettingsForSaveToken() {
-    // Действие:
+      // Action:
     tokenKeeper.saveToken("123456");
 
-    // Результат:
+      // Effect:
     verify(appSettings, only())
         .saveEncryptedData(any(byte[].class), any(byte[].class), eq("token"), eq("123456"));
   }
@@ -63,11 +64,11 @@ public class TokenKeeperTest {
    */
   @Test
   public void sameBytesForEncryption() {
-    // Действие:
+      // Action:
     tokenKeeper.saveToken("123456");
     tokenKeeper.getToken();
 
-    // Результат:
+      // Effect:
     verify(appSettings)
         .saveEncryptedData(rawCaptor.capture(), rawCaptor.capture(), eq("token"), eq("123456"));
     verify(appSettings).getEncryptedData(rawCaptor.capture(), rawCaptor.capture(), eq("token"));
@@ -80,11 +81,11 @@ public class TokenKeeperTest {
    */
   @Test
   public void valueUnchangedForRead() {
-    // Действие:
+      // Action:
     when(appSettings.getEncryptedData(any(byte[].class), any(byte[].class), eq("token")))
         .thenReturn("654321");
 
-    // Результат:
+      // Effect:
     assertEquals(tokenKeeper.getToken(), "654321");
   }
 }

@@ -33,13 +33,13 @@ public class OrderViewStateExpiredTest {
 
   @Test
   public void testActionsWithParent() {
-    // Дано:
+    // Given:
     viewState = new OrderViewStateExpired(parentViewState, "message", action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPersistentDialog("message", action);
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -47,13 +47,13 @@ public class OrderViewStateExpiredTest {
 
   @Test
   public void testNoActionsWithoutParent() {
-    // Дано:
+      // Given:
     viewState = new OrderViewStateExpired(null, "mess", action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPersistentDialog("mess", action);
     verifyNoMoreInteractions(viewActions);
     verifyNoInteractions(parentViewState);

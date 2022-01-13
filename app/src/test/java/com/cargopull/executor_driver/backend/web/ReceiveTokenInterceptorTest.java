@@ -40,7 +40,7 @@ public class ReceiveTokenInterceptorTest {
    */
   @Test
   public void doNotTouchTokenKeeper() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(200)
@@ -52,10 +52,10 @@ public class ReceiveTokenInterceptorTest {
             ).build()
     );
 
-    // Действие:
+    // Action:
     receiveTokenInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(tokenKeeper);
   }
 
@@ -67,7 +67,7 @@ public class ReceiveTokenInterceptorTest {
    */
   @Test
   public void askTokenKeeperToSaveToken() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(200)
@@ -80,10 +80,10 @@ public class ReceiveTokenInterceptorTest {
             ).build()
     );
 
-    // Действие:
+    // Action:
     receiveTokenInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verify(tokenKeeper, only()).saveToken("123456");
   }
 }

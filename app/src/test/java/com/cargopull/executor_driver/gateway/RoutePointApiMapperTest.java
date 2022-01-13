@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,13 +25,13 @@ public class RoutePointApiMapperTest {
    */
   @Test
   public void mappingCompletedSuccess() throws Exception {
-    // Дано:
+    // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address", "COMPLETED");
 
-    // Действие:
+      // Action:
     RoutePoint routePoint = mapper.map(apiRoutePoint);
 
-    // Результат:
+      // Effect:
     assertEquals(routePoint.getId(), 7);
     assertEquals(routePoint.getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(routePoint.getLongitude(), 456, Double.MIN_VALUE);
@@ -46,14 +47,14 @@ public class RoutePointApiMapperTest {
    */
   @Test
   public void mappingActiveSuccess() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address",
         "IN_PROGRESS");
 
-    // Действие:
+      // Action:
     RoutePoint routePoint = mapper.map(apiRoutePoint);
 
-    // Результат:
+      // Effect:
     assertEquals(routePoint.getId(), 7);
     assertEquals(routePoint.getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(routePoint.getLongitude(), 456, Double.MIN_VALUE);
@@ -69,13 +70,13 @@ public class RoutePointApiMapperTest {
    */
   @Test
   public void mappingQueuedSuccess() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address", "WAITING");
 
-    // Действие:
+      // Action:
     RoutePoint routePoint = mapper.map(apiRoutePoint);
 
-    // Результат:
+      // Effect:
     assertEquals(routePoint.getId(), 7);
     assertEquals(routePoint.getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(routePoint.getLongitude(), 456, Double.MIN_VALUE);
@@ -91,13 +92,13 @@ public class RoutePointApiMapperTest {
    */
   @Test
   public void mappingWithoutCommentSuccess() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, null, "address", "COMPLETED");
 
-    // Действие:
+      // Action:
     RoutePoint routePoint = mapper.map(apiRoutePoint);
 
-    // Результат:
+      // Effect:
     assertEquals(routePoint.getId(), 7);
     assertEquals(routePoint.getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(routePoint.getLongitude(), 456, Double.MIN_VALUE);
@@ -113,13 +114,13 @@ public class RoutePointApiMapperTest {
    */
   @Test
   public void mappingWithEmptyCommentSuccess() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "", "address", "COMPLETED");
 
-    // Действие:
+      // Action:
     RoutePoint routePoint = mapper.map(apiRoutePoint);
 
-    // Результат:
+      // Effect:
     assertEquals(routePoint.getId(), 7);
     assertEquals(routePoint.getLatitude(), 123, Double.MIN_VALUE);
     assertEquals(routePoint.getLongitude(), 456, Double.MIN_VALUE);
@@ -135,10 +136,10 @@ public class RoutePointApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithoutAddressFail() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", null, "COMPLETED");
 
-    // Действие:
+      // Action:
     mapper.map(apiRoutePoint);
   }
 
@@ -149,10 +150,10 @@ public class RoutePointApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithEmptyAddressFail() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "", "COMPLETED");
 
-    // Действие:
+      // Action:
     mapper.map(apiRoutePoint);
   }
 
@@ -163,10 +164,10 @@ public class RoutePointApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithEmptyStatusFail() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address", "");
 
-    // Действие:
+      // Action:
     mapper.map(apiRoutePoint);
   }
 
@@ -177,10 +178,10 @@ public class RoutePointApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithNullStatusFail() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address", null);
 
-    // Действие:
+      // Action:
     mapper.map(apiRoutePoint);
   }
 
@@ -191,10 +192,10 @@ public class RoutePointApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithWrongStatusFail() throws Exception {
-    // Дано:
+      // Given:
     ApiRoutePoint apiRoutePoint = new ApiRoutePoint(7, 123, 456, "comment", "address", "waiting");
 
-    // Действие:
+      // Action:
     mapper.map(apiRoutePoint);
   }
 }

@@ -63,12 +63,12 @@ class ServerConnectionUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun askGatewayToGetNetworkConnectionState() {
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
 
-        // Результат:
+        // Effect:
         verify(networkConnectionGateway, only()).data
         verify(networkSubscriptionConsumer, times(3)).accept(any())
         verifyNoMoreInteractions(networkSubscriptionConsumer)
@@ -83,12 +83,12 @@ class ServerConnectionUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun doNotAskGatewayToOpenSocket() {
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
 
-        // Результат:
+        // Effect:
         verify(serverConnectionGateway, only()).socketState
         verifyNoInteractions(serverSubscriptionConsumer)
     }
@@ -98,13 +98,13 @@ class ServerConnectionUseCaseTest {
      */
     @Test
     fun doNotTouchGatewayIfNotConnected() {
-        // Дано:
+        // Given:
         `when`(networkConnectionGateway.data).thenReturn(Flowable.just(false))
 
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(serverSubscriptionConsumer)
     }
 
@@ -114,15 +114,15 @@ class ServerConnectionUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun askGatewayToOpenSocket() {
-        // Дано:
+        // Given:
         `when`(networkConnectionGateway.data).thenReturn(Flowable.just(true))
 
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
 
-        // Результат:
+        // Effect:
         verify(serverConnectionGateway, only()).socketState
         verify(serverSubscriptionConsumer, times(3)).accept(any())
         verifyNoMoreInteractions(serverSubscriptionConsumer)
@@ -134,7 +134,7 @@ class ServerConnectionUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun doNotAskGatewayToCloseAndOpenSocketAgain() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(action, serverSubscriptionConsumer)
         `when`(networkConnectionGateway.data).thenReturn(Flowable.just(true, false, true))
         `when`(serverConnectionGateway.socketState).thenReturn(
@@ -143,10 +143,10 @@ class ServerConnectionUseCaseTest {
                         .doOnCancel(action)
         )
 
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
 
-        // Результат:
+        // Effect:
         inOrder.verify(serverSubscriptionConsumer).accept(any())
         inOrder.verify(action).run()
         inOrder.verify(serverSubscriptionConsumer).accept(any())
@@ -160,19 +160,19 @@ class ServerConnectionUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun askGatewayToOpenSocketAgainAfterAuthorizationErrors() {
-        // Дано:
+        // Given:
         `when`(networkConnectionGateway.data).thenReturn(Flowable.just(true))
         `when`(serverConnectionGateway.socketState).thenReturn(
                 Flowable.error<Boolean>(AuthorizationException())
                         .doOnSubscribe(serverSubscriptionConsumer)
         )
 
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
         useCase.connect().test().isDisposed
 
-        // Результат:
+        // Effect:
         verify(serverSubscriptionConsumer, times(3)).accept(any())
         verifyNoMoreInteractions(serverSubscriptionConsumer)
     }
@@ -185,7 +185,7 @@ class ServerConnectionUseCaseTest {
     @Test
     @Throws(Exception::class)
     fun retryOpenSocket() {
-        // Дано:
+        // Given:
         lateinit var emitter: FlowableEmitter<Boolean>
         `when`(networkConnectionGateway.data).thenReturn(Flowable.just(true))
         `when`(serverConnectionGateway.socketState).thenReturn(
@@ -193,7 +193,7 @@ class ServerConnectionUseCaseTest {
                         .doOnSubscribe(serverSubscriptionConsumer)
         )
 
-        // Действие:
+        // Action:
         useCase.connect().test().isDisposed
         emitter.onError(Exception())
         emitter.onError(Exception())
@@ -201,7 +201,7 @@ class ServerConnectionUseCaseTest {
         emitter.onError(Exception())
         emitter.onError(Exception())
 
-        // Результат:
+        // Effect:
         verify(serverSubscriptionConsumer, times(5)).accept(any())
     }
 
@@ -212,16 +212,16 @@ class ServerConnectionUseCaseTest {
      */
     @Test
     fun answerAuthorizationError() {
-        // Дано:
+        // Given:
         `when`(networkConnectionGateway.data)
                 .thenReturn(Flowable.just(true).concatWith(Flowable.never()))
         `when`(serverConnectionGateway.socketState)
                 .thenReturn(Flowable.error(AuthorizationException()))
 
-        // Действие:
+        // Action:
         val testSubscriber = useCase.connect().test()
 
-        // Результат:
+        // Effect:
         testSubscriber.assertError(AuthorizationException::class.java)
         testSubscriber.assertNoValues()
         testSubscriber.assertNotComplete()
@@ -232,7 +232,7 @@ class ServerConnectionUseCaseTest {
      */
     @Test
     fun ignoreOtherError() {
-        // Дано:
+        // Given:
         lateinit var emitter: FlowableEmitter<Boolean>
         `when`(networkConnectionGateway.data)
                 .thenReturn(Flowable.just(true).concatWith(Flowable.never()))
@@ -240,7 +240,7 @@ class ServerConnectionUseCaseTest {
                 Flowable.create({ e -> emitter = e }, BackpressureStrategy.BUFFER)
         )
 
-        // Действие:
+        // Action:
         val testSubscriber = useCase.connect().test()
         emitter.onError(Exception())
         emitter.onError(Exception())
@@ -248,7 +248,7 @@ class ServerConnectionUseCaseTest {
         emitter.onError(Exception())
         emitter.onError(Exception())
 
-        // Результат:
+        // Effect:
         testSubscriber.assertNoErrors()
         testSubscriber.assertNoValues()
         testSubscriber.assertNotComplete()
@@ -259,7 +259,7 @@ class ServerConnectionUseCaseTest {
      */
     @Test
     fun answerConnectionStates() {
-        // Дано:
+        // Given:
         `when`(networkConnectionGateway.data)
                 .thenReturn(Flowable.just(true).concatWith(Flowable.never()))
         `when`(serverConnectionGateway.socketState).thenReturn(
@@ -268,11 +268,11 @@ class ServerConnectionUseCaseTest {
                         .concatWith(Flowable.never())
         )
 
-        // Действие:
+        // Action:
         val testSubscriber = useCase.connect().test()
         testScheduler.advanceTimeBy(989, TimeUnit.SECONDS)
 
-        // Результат:
+        // Effect:
         testSubscriber.assertNotComplete()
         testSubscriber.assertNoErrors()
         testSubscriber.assertValues(true, false, true, false, true, false)
@@ -283,15 +283,15 @@ class ServerConnectionUseCaseTest {
      */
     @Test
     fun answerConnectionClosed() {
-        // Дано:
+        // Given:
         `when`(networkConnectionGateway.data).thenReturn(Flowable.just(true))
         `when`(serverConnectionGateway.socketState).thenReturn(Flowable.empty())
 
-        // Действие:
+        // Action:
         val testSubscriber = useCase.connect().test()
         testScheduler.advanceTimeBy(45, TimeUnit.MINUTES)
 
-        // Результат:
+        // Effect:
         testSubscriber.assertComplete()
         testSubscriber.assertNoErrors()
         testSubscriber.assertNoValues()

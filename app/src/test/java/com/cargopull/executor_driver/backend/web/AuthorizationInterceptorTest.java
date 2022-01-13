@@ -4,15 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
-import okhttp3.Interceptor;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import okhttp3.Interceptor;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorizationInterceptorTest {
@@ -34,7 +35,7 @@ public class AuthorizationInterceptorTest {
    */
   @Test
   public void doNotThrowUnauthorizedError() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(200)
@@ -46,10 +47,10 @@ public class AuthorizationInterceptorTest {
             ).build()
     );
 
-    // Действие:
+    // Action:
     Response response = authorizationInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     assertEquals(response, chain.proceed(chain.request()));
   }
 
@@ -60,7 +61,7 @@ public class AuthorizationInterceptorTest {
    */
   @Test
   public void doNotThrowUnauthorizedErrorWithCodeHeader401_0() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
@@ -73,10 +74,10 @@ public class AuthorizationInterceptorTest {
             ).build()
     );
 
-    // Действие:
+    // Action:
     Response response = authorizationInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     assertEquals(response, chain.proceed(chain.request()));
   }
 
@@ -87,7 +88,7 @@ public class AuthorizationInterceptorTest {
    */
   @Test(expected = AuthorizationException.class)
   public void throwUnauthorizedErrorWithAnyOtherCodeHeader() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
@@ -100,7 +101,7 @@ public class AuthorizationInterceptorTest {
             ).build()
     );
 
-    // Действие и Результат:
+    // Action и Effect:
     authorizationInterceptor.intercept(chain);
   }
 
@@ -111,7 +112,7 @@ public class AuthorizationInterceptorTest {
    */
   @Test(expected = AuthorizationException.class)
   public void throwUnauthorizedErrorWithoutCodeHeader() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(401)
@@ -123,7 +124,7 @@ public class AuthorizationInterceptorTest {
             ).build()
     );
 
-    // Действие и Результат:
+    // Action и Effect:
     authorizationInterceptor.intercept(chain);
   }
 }

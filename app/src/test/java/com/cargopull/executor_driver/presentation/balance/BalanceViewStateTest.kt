@@ -31,7 +31,7 @@ class BalanceViewStateTest {
 
     @Test
     fun testActionsWithCentsWithPositive() {
-        // Дано:
+        // Given:
         `when`(viewActions.isShowCents).thenReturn(true)
         `when`(viewActions.currencyFormat).thenReturn("##,###,###.## ₽")
         `when`(executorBalance.summary).thenReturn(1231233)
@@ -39,10 +39,10 @@ class BalanceViewStateTest {
         `when`(executorBalance.cashlessAccount).thenReturn(32180)
         `when`(executorBalance.bonusAccount).thenReturn(12093)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setTextColor(R.id.balanceSummaryTitle, R.color.textColorSecondary)
         verify(viewActions).setTextColor(R.id.balanceSummary, R.color.textColorPrimary)
         verify(viewActions).setTextColor(R.id.balanceAmountTitle, R.color.textColorPrimary)
@@ -62,7 +62,7 @@ class BalanceViewStateTest {
 
     @Test
     fun testActionsWithoutCentsWithPositive() {
-        // Дано:
+        // Given:
         `when`(viewActions.isShowCents).thenReturn(false)
         `when`(viewActions.currencyFormat).thenReturn("##,###,### ₽")
         `when`(executorBalance.summary).thenReturn(1231233)
@@ -70,10 +70,10 @@ class BalanceViewStateTest {
         `when`(executorBalance.cashlessAccount).thenReturn(32180)
         `when`(executorBalance.bonusAccount).thenReturn(12093)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setTextColor(R.id.balanceSummaryTitle, R.color.textColorSecondary)
         verify(viewActions).setTextColor(R.id.balanceSummary, R.color.textColorPrimary)
         verify(viewActions).setTextColor(R.id.balanceAmountTitle, R.color.textColorPrimary)
@@ -93,7 +93,7 @@ class BalanceViewStateTest {
 
     @Test
     fun testActionsWithCentsWithNegative() {
-        // Дано:
+        // Given:
         `when`(viewActions.isShowCents).thenReturn(true)
         `when`(viewActions.currencyFormat).thenReturn("##,###,###.## ₽")
         `when`(executorBalance.summary).thenReturn(1231233)
@@ -101,10 +101,10 @@ class BalanceViewStateTest {
         `when`(executorBalance.cashlessAccount).thenReturn(32180)
         `when`(executorBalance.bonusAccount).thenReturn(12093)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setTextColor(R.id.balanceSummaryTitle, R.color.textColorSecondary)
         verify(viewActions).setTextColor(R.id.balanceSummary, R.color.textColorPrimary)
         verify(viewActions).setTextColor(R.id.balanceAmountTitle, R.color.colorError)
@@ -124,7 +124,7 @@ class BalanceViewStateTest {
 
     @Test
     fun testActionsWithoutCentsWithNegative() {
-        // Дано:
+        // Given:
         `when`(viewActions.isShowCents).thenReturn(false)
         `when`(viewActions.currencyFormat).thenReturn("##,###,### ₽")
         `when`(executorBalance.summary).thenReturn(1231233)
@@ -132,10 +132,10 @@ class BalanceViewStateTest {
         `when`(executorBalance.cashlessAccount).thenReturn(32180)
         `when`(executorBalance.bonusAccount).thenReturn(12093)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setTextColor(R.id.balanceSummaryTitle, R.color.textColorSecondary)
         verify(viewActions).setTextColor(R.id.balanceSummary, R.color.textColorPrimary)
         verify(viewActions).setTextColor(R.id.balanceAmountTitle, R.color.colorError)
@@ -155,7 +155,7 @@ class BalanceViewStateTest {
 
     @Test
     fun testActionsWithCentsWithDoubleNegative() {
-        // Дано:
+        // Given:
         `when`(viewActions.isShowCents).thenReturn(true)
         `when`(viewActions.currencyFormat).thenReturn("##,###,###.## ₽")
         `when`(executorBalance.summary).thenReturn(-1231233)
@@ -163,10 +163,10 @@ class BalanceViewStateTest {
         `when`(executorBalance.cashlessAccount).thenReturn(32180)
         `when`(executorBalance.bonusAccount).thenReturn(12093)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setTextColor(R.id.balanceSummaryTitle, R.color.colorError)
         verify(viewActions).setTextColor(R.id.balanceSummary, R.color.colorError)
         verify(viewActions).setTextColor(R.id.balanceAmountTitle, R.color.colorError)
@@ -186,7 +186,7 @@ class BalanceViewStateTest {
 
     @Test
     fun testActionsWithoutCentsWithDoubleNegative() {
-        // Дано:
+        // Given:
         `when`(viewActions.isShowCents).thenReturn(false)
         `when`(viewActions.currencyFormat).thenReturn("##,###,### ₽")
         `when`(executorBalance.summary).thenReturn(-1231233)
@@ -194,10 +194,10 @@ class BalanceViewStateTest {
         `when`(executorBalance.cashlessAccount).thenReturn(32180)
         `when`(executorBalance.bonusAccount).thenReturn(12093)
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setTextColor(R.id.balanceSummaryTitle, R.color.colorError)
         verify(viewActions).setTextColor(R.id.balanceSummary, R.color.colorError)
         verify(viewActions).setTextColor(R.id.balanceAmountTitle, R.color.colorError)

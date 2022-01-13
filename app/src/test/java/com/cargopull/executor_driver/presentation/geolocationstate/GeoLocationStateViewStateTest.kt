@@ -17,13 +17,13 @@ class GeoLocationStateViewStateTest {
 
     @Test
     fun testNoGpsDetectionActions() {
-        // Дано:
+        // Given:
         val viewState = GeoLocationStateNoGpsDetectionViewState()
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setVisible(-1, true)
         verify(viewActions).setImage(R.id.geoIcon, R.drawable.ic_gps_detection_icon)
         verify(viewActions).setText(R.id.geoTitleText, R.string.turn_on_geo_detection)
@@ -33,13 +33,13 @@ class GeoLocationStateViewStateTest {
 
     @Test
     fun testNoLocationActions() {
-        // Дано:
+        // Given:
         val viewState = GeoLocationStateNoLocationViewState()
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setVisible(-1, true)
         verify(viewActions).setImage(R.id.geoIcon, R.drawable.ic_geolocation_icon)
         verify(viewActions).setText(R.id.geoTitleText, R.string.turn_on_geolocation)
@@ -49,13 +49,13 @@ class GeoLocationStateViewStateTest {
 
     @Test
     fun testNoNetworkDetectionActions() {
-        // Дано:
+        // Given:
         val viewState = GeoLocationStateNoNetworkDetectionViewState()
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setVisible(-1, true)
         verify(viewActions).setImage(R.id.geoIcon, R.drawable.ic_network_detection_icon)
         verify(viewActions).setText(R.id.geoTitleText, R.string.turn_on_geo_detection)
@@ -65,13 +65,13 @@ class GeoLocationStateViewStateTest {
 
     @Test
     fun testReadyActions() {
-        // Дано:
+        // Given:
         val viewState = GeoLocationStateReadyViewState()
 
-        // Действие:
+        // Action:
         viewState.apply(viewActions)
 
-        // Результат:
+        // Effect:
         verify(viewActions).setVisible(-1, false)
         verifyNoMoreInteractions(viewActions)
     }

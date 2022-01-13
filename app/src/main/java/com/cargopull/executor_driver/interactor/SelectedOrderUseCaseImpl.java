@@ -2,14 +2,18 @@ package com.cargopull.executor_driver.interactor;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
+
+import java.util.NoSuchElementException;
+
+import javax.inject.Inject;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.subjects.PublishSubject;
-import java.util.NoSuchElementException;
-import javax.inject.Inject;
 
 public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseCase {
 
@@ -69,7 +73,7 @@ public class SelectedOrderUseCaseImpl implements OrderUseCase, SelectedOrderUseC
         .firstOrError()
         .flatMapCompletable(orders -> Completable.fromAction(() -> {
           if (!orders.contains(order)) {
-            throw new NoSuchElementException("Нет такого заказа в списке");
+              throw new NoSuchElementException("No such order in the list");
           }
           lastOrder = order;
           publishSubject.onNext(order);

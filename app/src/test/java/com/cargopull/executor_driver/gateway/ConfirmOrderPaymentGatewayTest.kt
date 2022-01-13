@@ -46,10 +46,10 @@ class ConfirmOrderPaymentGatewayTest {
      */
     @Test
     fun askApiToCompleteTheOrder() {
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(apiService, only()).completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION"))
     }
 
@@ -60,14 +60,14 @@ class ConfirmOrderPaymentGatewayTest {
      */
     @Test
     fun doNotTouchMapperOnError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")))
                 .thenReturn(Single.error(Exception()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(mapper)
     }
 
@@ -77,14 +77,14 @@ class ConfirmOrderPaymentGatewayTest {
     @Test
     @Throws(Exception::class)
     fun askMapperToMapData() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")))
                 .thenReturn(Single.just(ApiSimpleResult()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(mapper, only()).map(any())
     }
 
@@ -96,18 +96,18 @@ class ConfirmOrderPaymentGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, null))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValue(Pair(ExecutorState.ONLINE, null))
@@ -118,14 +118,14 @@ class ConfirmOrderPaymentGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
     }
@@ -135,17 +135,17 @@ class ConfirmOrderPaymentGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderDataErrorForWrongModel() {
-        // Дано:
+        // Given:
         `when`(apiService.completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")))
                 .thenReturn(Single.error(JsonParseException("")))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }
@@ -156,7 +156,7 @@ class ConfirmOrderPaymentGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderDataErrorForMapperError() {
-        // Дано:
+        // Given:
         `when`(
             apiService.completeOrderPayment(
                 Collections.singletonMap(
@@ -168,13 +168,13 @@ class ConfirmOrderPaymentGatewayTest {
             .thenReturn(Single.just(ApiSimpleResult()))
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }

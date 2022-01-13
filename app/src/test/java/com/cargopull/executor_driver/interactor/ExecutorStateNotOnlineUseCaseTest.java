@@ -97,10 +97,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    */
   @Test
   public void getExecutorStates() {
-    // Действие:
+    // Action:
     useCase.setExecutorNotOnline().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(executorStateUseCase, only()).getExecutorStates();
   }
 
@@ -111,23 +111,23 @@ public class ExecutorStateNotOnlineUseCaseTest {
    */
   @Test
   public void DoNotTouchGatewayWithoutStatus() {
-    // Действие:
+    // Action:
     useCase.setExecutorNotOnline().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(gateway);
   }
 
   @Test
   public void touchOrNotGateway() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     useCase.setExecutorNotOnline().test().isDisposed();
 
-    // Результат:
+    // Effect:
     if (expectedGatewayInvocation) {
       // Должен отправить статус "смена открыта" через гейтвей передачи статусов.
       verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
@@ -141,14 +141,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
 
   @Test
   public void answerIllegalArgumentErrorOrComplete() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     if (expectedArgumentException) {
       // Должен вернуть ошибку неподходящего статуса
@@ -166,16 +166,16 @@ public class ExecutorStateNotOnlineUseCaseTest {
    */
   @Test
   public void answerWithErrorIfSendFailed() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(ExecutorState.SHIFT_OPENED))
         .thenReturn(Completable.error(new Exception()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
     testObserver

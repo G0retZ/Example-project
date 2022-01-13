@@ -73,10 +73,10 @@ public class BalanceViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -87,7 +87,7 @@ public class BalanceViewModelTest {
    */
   @Test
   public void askUseCaseForExecutorBalancesInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorBalance();
   }
 
@@ -96,13 +96,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorBalance();
   }
 
@@ -113,13 +113,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -129,13 +129,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new BalanceViewStatePending(null));
   }
 
@@ -144,16 +144,16 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setBalanceViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(executorBalance);
     publishSubject.onNext(executorBalance1);
     publishSubject.onNext(executorBalance2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewState(executorBalance));
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewState(executorBalance1));
@@ -168,15 +168,15 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setPendingViewStateStateToLiveDataForReplenishAccount() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(executorBalance);
     viewModel.replenishAccount();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewState(executorBalance));
     verifyNoMoreInteractions(viewStateObserver);
@@ -189,16 +189,16 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForBalanceUpdates() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
-    // Действие:
+    // Action:
+    // Action:
     publishSubject.onNext(executorBalance);
     publishSubject.onNext(executorBalance1);
     publishSubject.onNext(executorBalance2);
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(navigateObserver);
   }
 
@@ -207,13 +207,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setNavigateToReplenishAccountToLiveData() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.replenishAccount();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(BalanceNavigate.PAYMENT_OPTIONS);
   }
 
@@ -222,13 +222,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.google.gson.Gson;
 
@@ -23,17 +24,17 @@ public class StompMapper<F, T> implements Mapper<StompFrame, T> {
   @Override
   public T map(@NonNull StompFrame from) throws Exception {
     if (from.getBody() == null) {
-      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
+      throw new DataMappingException("Mapping error: data must not be null!");
     }
     if (from.getBody().trim().isEmpty()) {
-      throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
+        throw new DataMappingException("Mapping error: data must not be empty!");
     }
     Gson gson = new Gson();
     F from1;
     try {
       from1 = gson.fromJson(from.getBody(), type);
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
+        throw new DataMappingException("Mapping error: failed to parse JSON: " + from, e);
     }
     return ftMapper.map(from1);
   }

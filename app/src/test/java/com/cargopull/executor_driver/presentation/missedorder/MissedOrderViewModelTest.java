@@ -72,10 +72,10 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -86,7 +86,7 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessages() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getNotificationMessages();
   }
 
@@ -95,13 +95,13 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToMissedOrdersMessagesIfAlreadyAsked() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getNotificationMessages();
   }
 
@@ -112,13 +112,13 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -128,10 +128,10 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void doNotTouchVibrationAndSoundOnError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(shakeItPlayer);
     verifyNoInteractions(ringTonePlayer);
   }
@@ -141,10 +141,10 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnOrderMissedWithMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
   }
@@ -154,10 +154,10 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnOrderMissedWithEmptyMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
   }
@@ -167,10 +167,10 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void useVibrationAndSoundOnOrderMissedWithSpaceMessage() {
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verify(shakeItPlayer, only()).shakeIt(R.raw.skip_order_vibro);
     verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
   }
@@ -182,13 +182,13 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void showMissedOrderMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showMissedOrderMessage("Message");
@@ -199,13 +199,13 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void doNotShowMessageOnError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -214,13 +214,13 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 
@@ -229,13 +229,13 @@ public class MissedOrderViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
+    // Effect:
     verifyNoInteractions(viewStateObserver);
   }
 }

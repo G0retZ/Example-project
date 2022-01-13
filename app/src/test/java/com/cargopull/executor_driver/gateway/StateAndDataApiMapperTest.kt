@@ -34,7 +34,7 @@ class StateAndDataApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingApiSimpleResultSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson<ApiSimpleResult<String>>("{"
                 + "  \"code\": 200,"
                 + "  \"message\": \"lalala\","
@@ -45,10 +45,10 @@ class StateAndDataApiMapperTest {
         )
         `when`(dataMapper.map("lololo")).thenReturn(12345)
 
-        // Действие:
+        // Action:
         val pair = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         verify(dataMapper, only()).map("lololo")
         assertEquals(pair.first, ExecutorState.ONLINE)
         assertEquals(pair.first.data, "lalala")
@@ -64,7 +64,7 @@ class StateAndDataApiMapperTest {
     @Test
     @Throws(Exception::class)
     fun mappingApiSimpleResultWithoutDataSuccess() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson<ApiSimpleResult<String>>("{"
                 + "  \"code\": 200,"
                 + "  \"message\": \"lalala\","
@@ -73,10 +73,10 @@ class StateAndDataApiMapperTest {
                 type
         )
 
-        // Действие:
+        // Action:
         val pair = mapper.map(apiOrderCostDetails)
 
-        // Результат:
+        // Effect:
         verifyNoInteractions(dataMapper)
         assertEquals(pair.first, ExecutorState.ONLINE)
         assertEquals(pair.first.data, "lalala")
@@ -91,7 +91,7 @@ class StateAndDataApiMapperTest {
     @Test(expected = DataMappingException::class)
     @Throws(Exception::class)
     fun mappingJsonStringWithoutStatusFailed() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson<ApiSimpleResult<String>>("{"
                 + "  \"code\": 200,"
                 + "  \"message\": \"lalala\","
@@ -100,7 +100,7 @@ class StateAndDataApiMapperTest {
                 type
         )
 
-        // Действие:
+        // Action:
         mapper.map(apiOrderCostDetails)
     }
 
@@ -112,7 +112,7 @@ class StateAndDataApiMapperTest {
     @Test(expected = DataMappingException::class)
     @Throws(Exception::class)
     fun mappingJsonStringWithWrongStatusFailed() {
-        // Дано
+        // Given
         val apiOrderCostDetails = Gson().fromJson<ApiSimpleResult<String>>("{"
                 + "  \"code\": 200,"
                 + "  \"message\": \"lalala\","
@@ -122,7 +122,7 @@ class StateAndDataApiMapperTest {
                 type
         )
 
-        // Действие:
+        // Action:
         mapper.map(apiOrderCostDetails)
     }
 }

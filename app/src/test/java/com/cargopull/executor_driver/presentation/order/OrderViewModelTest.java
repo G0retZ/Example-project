@@ -9,8 +9,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import androidx.annotation.NonNull;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
@@ -21,11 +23,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -38,6 +36,12 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderViewModelTest {
@@ -85,10 +89,10 @@ public class OrderViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -99,7 +103,7 @@ public class OrderViewModelTest {
    */
   @Test
   public void askUseCaseForOrdersInitially() {
-    // Результат:
+    // Effect:
     verify(orderUseCase, only()).getOrders();
   }
 
@@ -108,13 +112,13 @@ public class OrderViewModelTest {
    */
   @Test
   public void doNotAskUseCaseForOrdersOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(orderUseCase, only()).getOrders();
   }
 
@@ -125,13 +129,13 @@ public class OrderViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(OrderViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -141,13 +145,13 @@ public class OrderViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new OrderViewStatePending(null));
   }
 
@@ -156,16 +160,16 @@ public class OrderViewModelTest {
    */
   @Test
   public void setIdleViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(order);
     publishSubject.onNext(order1);
     publishSubject.onNext(order2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order1));
@@ -178,7 +182,7 @@ public class OrderViewModelTest {
    */
   @Test
   public void setExpiredViewStateToLiveDataForExpiredError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders()).thenReturn(
@@ -187,7 +191,7 @@ public class OrderViewModelTest {
               private boolean run;
 
               @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
+              public void subscribe(@NonNull ObservableEmitter<Order> emitter) {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
@@ -204,10 +208,10 @@ public class OrderViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onComplete();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateExpired(
@@ -226,7 +230,7 @@ public class OrderViewModelTest {
    */
   @Test
   public void setCancelledViewStateToLiveDataForExpiredError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders()).thenReturn(
@@ -235,7 +239,7 @@ public class OrderViewModelTest {
               private boolean run;
 
               @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
+              public void subscribe(@NonNull ObservableEmitter<Order> emitter) {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
@@ -252,10 +256,10 @@ public class OrderViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onComplete();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateCancelled(
@@ -273,7 +277,7 @@ public class OrderViewModelTest {
    */
   @Test
   public void setIdleViewStateToLiveDataForExpiredErrorWithoutMessage() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders()).thenReturn(
@@ -282,7 +286,7 @@ public class OrderViewModelTest {
               private boolean run;
 
               @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
+              public void subscribe(@NonNull ObservableEmitter<Order> emitter) {
                 if (!run) {
                   run = true;
                   emitter.onNext(order);
@@ -299,10 +303,10 @@ public class OrderViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onComplete();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order));
     inOrder.verify(viewStateObserver).onChanged(new OrderViewStateIdle(order2));
@@ -316,14 +320,14 @@ public class OrderViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -332,7 +336,7 @@ public class OrderViewModelTest {
    */
   @Test
   public void setNavigateToCloseForCancelledMessageConsumed() {
-    // Дано:
+    // Given:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders()).thenReturn(
         Observable.create(
@@ -340,7 +344,7 @@ public class OrderViewModelTest {
               private boolean run;
 
               @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
+              public void subscribe(@NonNull ObservableEmitter<Order> emitter) {
                 if (!run) {
                   run = true;
                   emitter.onError(new OrderCancelledException());
@@ -354,14 +358,14 @@ public class OrderViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onComplete();
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getAllValues().get(1).apply(orderViewActions);
     verify(orderViewActions).showPersistentDialog(anyInt(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(OrderNavigate.CLOSE);
   }
 
@@ -370,7 +374,7 @@ public class OrderViewModelTest {
    */
   @Test
   public void setNavigateToCloseForExpiredMessageConsumed() {
-    // Дано:
+    // Given:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders()).thenReturn(
         Observable.create(
@@ -378,7 +382,7 @@ public class OrderViewModelTest {
               private boolean run;
 
               @Override
-              public void subscribe(ObservableEmitter<Order> emitter) {
+              public void subscribe(@NonNull ObservableEmitter<Order> emitter) {
                 if (!run) {
                   run = true;
                   emitter.onError(new OrderOfferExpiredException("message"));
@@ -392,14 +396,14 @@ public class OrderViewModelTest {
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onComplete();
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getAllValues().get(1).apply(orderViewActions);
     verify(orderViewActions).showPersistentDialog(anyString(), runnableCaptor.capture());
     runnableCaptor.getValue().run();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(OrderNavigate.CLOSE);
   }
 }

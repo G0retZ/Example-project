@@ -10,16 +10,19 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Service;
-import io.reactivex.Completable;
-import io.reactivex.Single;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServicesUseCaseTest {
@@ -46,10 +49,10 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void askGatewayForServices() {
-    // Действие:
+    // Action:
     useCase.autoAssignServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getServices();
   }
 
@@ -58,13 +61,13 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void doNotTouchGatewayIfNoServices() {
-    // Дано:
+    // Given:
     when(gateway.getServices()).thenReturn(Single.just(new ArrayList<>()));
 
-    // Действие:
+    // Action:
     useCase.autoAssignServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getServices();
   }
 
@@ -73,7 +76,7 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void askGatewaySetSelectedServices() {
-    // Дано:
+    // Given:
     when(gateway.getServices()).thenReturn(Single.just(
         Arrays.asList(
             new Service(0, "n1", 100, true),
@@ -85,10 +88,10 @@ public class ServicesUseCaseTest {
         )
     ));
 
-    // Действие:
+    // Action:
     useCase.autoAssignServices().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway).getServices();
     verify(gateway).sendSelectedServices(
         Arrays.asList(
@@ -110,10 +113,10 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void answerNoNetworkErrorForServices() {
-    // Дано:
+    // Given:
     when(gateway.getServices()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.autoAssignServices().test().assertError(NoNetworkException.class);
   }
 
@@ -122,10 +125,10 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void answerNoVehiclesAvailableError() {
-    // Дано:
+    // Given:
     when(gateway.getServices()).thenReturn(Single.just(new ArrayList<>()));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.autoAssignServices().test().assertError(EmptyListException.class);
   }
 
@@ -134,7 +137,7 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void answerNoNetworkErrorForSetServices() {
-    // Дано:
+    // Given:
     when(gateway.getServices()).thenReturn(Single.just(
         Arrays.asList(
             new Service(0, "n1", 100, true),
@@ -148,7 +151,7 @@ public class ServicesUseCaseTest {
     when(gateway.sendSelectedServices(anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.autoAssignServices().test().assertError(NoNetworkException.class);
   }
 
@@ -157,7 +160,7 @@ public class ServicesUseCaseTest {
    */
   @Test
   public void answerSuccessToSetServices() {
-    // Дано:
+    // Given:
     when(gateway.getServices()).thenReturn(Single.just(
         Arrays.asList(
             new Service(0, "n1", 100, true),
@@ -170,7 +173,7 @@ public class ServicesUseCaseTest {
     ));
     when(gateway.sendSelectedServices(anyList())).thenReturn(Completable.complete());
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.autoAssignServices().test().assertComplete();
   }
 }

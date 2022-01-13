@@ -20,13 +20,13 @@ public class NextRoutePointViewStateNoRouteTest {
 
   @Test
   public void testActionsWithTrue() {
-    // Дано:
+    // Given:
     viewState = new NextRoutePointViewStateNoRoute(true);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showNextRoutePointAddress("", "");
     verify(viewActions).showNextRoutePointComment("");
     verify(viewActions).showNextRoutePointPending(false);
@@ -38,13 +38,13 @@ public class NextRoutePointViewStateNoRouteTest {
 
   @Test
   public void testActionsWithFalse() {
-    // Дано:
+      // Given:
     viewState = new NextRoutePointViewStateNoRoute(false);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showNextRoutePointAddress("", "");
     verify(viewActions).showNextRoutePointComment("");
     verify(viewActions).showNextRoutePointPending(false);

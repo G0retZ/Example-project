@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.FragmentViewActions;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +29,10 @@ public class SmsButtonViewStateHoldTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setEnabled(R.id.sendSms, false);
     verify(viewActions).setFormattedText(R.id.sendSms, R.string.repeat_code_from_sms_delayed, 12L);
     verify(viewActions).unblockWithPending("sms");

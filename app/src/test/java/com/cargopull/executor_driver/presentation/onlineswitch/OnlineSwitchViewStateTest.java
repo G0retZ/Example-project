@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,13 +22,13 @@ public class OnlineSwitchViewStateTest {
 
   @Test
   public void testActionsTrue() {
-    // Дано:
+    // Given:
     viewState = new OnlineSwitchViewState(true);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showTakeBreakButton(true);
     verify(viewActions).showBreakText(false);
     verify(viewActions).showResumeWorkButton(false);
@@ -37,13 +38,13 @@ public class OnlineSwitchViewStateTest {
 
   @Test
   public void testActionsFalse() {
-    // Дано:
+      // Given:
     viewState = new OnlineSwitchViewState(false);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showTakeBreakButton(false);
     verify(viewActions).showBreakText(true);
     verify(viewActions).showResumeWorkButton(true);

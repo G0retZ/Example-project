@@ -7,12 +7,14 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.utils.Pair;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCostDetailsViewStateIdleTest {
@@ -49,7 +51,7 @@ public class OrderCostDetailsViewStateIdleTest {
    */
   @Test
   public void testActionsForEstimatedOnly() {
-    // Дано:
+    // Given:
     when(orderCostDetailsItem.getTotalCost()).thenReturn(321L);
     when(orderCostDetailsItem.getEstimatedPackage()).thenReturn(estimatedPackageCostDetailsItem);
     when(estimatedPackageCostDetailsItem.getCost()).thenReturn(432L);
@@ -58,10 +60,10 @@ public class OrderCostDetailsViewStateIdleTest {
     when(estimatedPackageCostDetailsItem.getServiceCost()).thenReturn(654L);
     when(estimatedPackageCostDetailsItem.getOptionsCosts()).thenReturn(estimatedOptionsCosts);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showOrderCostDetailsPending(false);
     verify(viewActions).showOrderTotalCost(321L);
     verify(viewActions).showEstimatedOrderPackage(true);
@@ -80,7 +82,7 @@ public class OrderCostDetailsViewStateIdleTest {
    */
   @Test
   public void testActionsForOverPackageOnly() {
-    // Дано:
+    // Given:
     when(orderCostDetailsItem.getTotalCost()).thenReturn(321L);
     when(orderCostDetailsItem.getOverPackage()).thenReturn(overPackageCostDetailsItem);
     when(overPackageCostDetailsItem.getCost()).thenReturn(43L);
@@ -88,10 +90,10 @@ public class OrderCostDetailsViewStateIdleTest {
     when(overPackageCostDetailsItem.getServiceCost()).thenReturn(65L);
     when(overPackageCostDetailsItem.getOptionsCosts()).thenReturn(overPackageOptionsCosts);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showOrderCostDetailsPending(false);
     verify(viewActions).showOrderTotalCost(321L);
     verify(viewActions).showEstimatedOrderPackage(false);
@@ -110,17 +112,17 @@ public class OrderCostDetailsViewStateIdleTest {
    */
   @Test
   public void testActionsForOverPackageTariffOnly() {
-    // Дано:
+    // Given:
     when(orderCostDetailsItem.getTotalCost()).thenReturn(321L);
     when(orderCostDetailsItem.getOverPackageTariff()).thenReturn(overPackageTariffCostDetailsItem);
     when(overPackageTariffCostDetailsItem.getCost()).thenReturn(4L);
     when(overPackageTariffCostDetailsItem.getServiceCost()).thenReturn(6L);
     when(overPackageTariffCostDetailsItem.getOptionsCosts()).thenReturn(overPackageOptionsTariffs);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showOrderCostDetailsPending(false);
     verify(viewActions).showOrderTotalCost(321L);
     verify(viewActions).showEstimatedOrderPackage(false);
@@ -137,7 +139,7 @@ public class OrderCostDetailsViewStateIdleTest {
    */
   @Test
   public void testActionsForEstimatedAndOverPackageOnly() {
-    // Дано:
+    // Given:
     when(orderCostDetailsItem.getTotalCost()).thenReturn(321L);
     when(orderCostDetailsItem.getEstimatedPackage()).thenReturn(estimatedPackageCostDetailsItem);
     when(estimatedPackageCostDetailsItem.getCost()).thenReturn(432L);
@@ -151,10 +153,10 @@ public class OrderCostDetailsViewStateIdleTest {
     when(overPackageCostDetailsItem.getServiceCost()).thenReturn(65L);
     when(overPackageCostDetailsItem.getOptionsCosts()).thenReturn(overPackageOptionsCosts);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showOrderCostDetailsPending(false);
     verify(viewActions).showOrderTotalCost(321L);
     verify(viewActions).showEstimatedOrderPackage(true);
@@ -177,7 +179,7 @@ public class OrderCostDetailsViewStateIdleTest {
    */
   @Test
   public void testActionsForOverPackageAndOverPackageTariffOnly() {
-    // Дано:
+    // Given:
     when(orderCostDetailsItem.getTotalCost()).thenReturn(321L);
     when(orderCostDetailsItem.getOverPackage()).thenReturn(overPackageCostDetailsItem);
     when(overPackageCostDetailsItem.getCost()).thenReturn(43L);
@@ -189,10 +191,10 @@ public class OrderCostDetailsViewStateIdleTest {
     when(overPackageTariffCostDetailsItem.getServiceCost()).thenReturn(6L);
     when(overPackageTariffCostDetailsItem.getOptionsCosts()).thenReturn(overPackageOptionsTariffs);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showOrderCostDetailsPending(false);
     verify(viewActions).showOrderTotalCost(321L);
     verify(viewActions).showEstimatedOrderPackage(false);
@@ -213,7 +215,7 @@ public class OrderCostDetailsViewStateIdleTest {
    */
   @Test
   public void testActionsForAllPackages() {
-    // Дано:
+    // Given:
     when(orderCostDetailsItem.getTotalCost()).thenReturn(321L);
     when(orderCostDetailsItem.getEstimatedPackage()).thenReturn(estimatedPackageCostDetailsItem);
     when(estimatedPackageCostDetailsItem.getCost()).thenReturn(432L);
@@ -231,10 +233,10 @@ public class OrderCostDetailsViewStateIdleTest {
     when(overPackageTariffCostDetailsItem.getServiceCost()).thenReturn(6L);
     when(overPackageTariffCostDetailsItem.getOptionsCosts()).thenReturn(overPackageOptionsTariffs);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showOrderCostDetailsPending(false);
     verify(viewActions).showOrderTotalCost(321L);
     verify(viewActions).showEstimatedOrderPackage(true);

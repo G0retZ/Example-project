@@ -16,10 +16,10 @@ public class OnlineButtonViewStateHoldTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     new OnlineButtonViewStateHold().apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).enableGoOnlineButton(false);
     verify(viewActions).showGoOnlinePending(false);
     verifyNoMoreInteractions(viewActions);
