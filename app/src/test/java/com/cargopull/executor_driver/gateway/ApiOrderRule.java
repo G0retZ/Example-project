@@ -31,7 +31,7 @@ class ApiOrderRule extends CommonTestRule {
   private final static String ORDER_DISTANCE_END = "}";
   private final static String ORDER_SERVICE_START = "\"carSearchRequest\": {";
   private final static String ORDER_SERVICE_ID = "\"id\": %d";
-  private final static String ORDER_SERVICE_NAME = "\"name\": %s";
+  private final static String ORDER_SERVICE_NAME = "\"name\": \"%s\"";
   private final static String ORDER_SERVICE_PRICE = "\"price\": %d";
   private final static String ORDER_SERVICE_END = "}";
   private final static String ROUTE_TYPE = "\"routeType\": \"%s\"";
@@ -82,8 +82,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -170,8 +170,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -258,8 +258,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -347,8 +347,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -436,8 +436,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -524,8 +524,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -612,8 +612,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -700,8 +700,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -788,8 +788,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -876,8 +876,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -964,8 +964,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1052,8 +1052,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1140,8 +1140,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1228,8 +1228,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1316,8 +1316,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1404,8 +1404,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1492,8 +1492,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1581,8 +1581,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1670,8 +1670,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1758,8 +1758,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1846,8 +1846,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -1931,8 +1931,8 @@ class ApiOrderRule extends CommonTestRule {
         + String.format(ROUTE_TYPE, "POLYGON") + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -2019,8 +2019,8 @@ class ApiOrderRule extends CommonTestRule {
         + String.format(ORDER_DISTANCE_VALUE, 546)
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -2108,7 +2108,7 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -2196,7 +2196,7 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service")
+        + String.format(ORDER_SERVICE_NAME, "Transportation")
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -2368,8 +2368,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + ORDER_ROUTE_END + FIELD_DIVIDER
@@ -2433,8 +2433,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_OPTIONS_START
         + OBJECT_START
@@ -2496,8 +2496,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
@@ -2553,8 +2553,8 @@ class ApiOrderRule extends CommonTestRule {
         + ORDER_DISTANCE_END + FIELD_DIVIDER
         + ORDER_SERVICE_START
         + String.format(ORDER_SERVICE_ID, 4) + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_NAME, "service") + FIELD_DIVIDER
-        + String.format(ORDER_SERVICE_PRICE, 678)
+        + String.format(ORDER_SERVICE_NAME, "Transportation") + FIELD_DIVIDER
+        + String.format(ORDER_SERVICE_PRICE, 35)
         + ORDER_SERVICE_END + FIELD_DIVIDER
         + ORDER_ROUTE_START
         + OBJECT_START
