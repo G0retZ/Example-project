@@ -27,6 +27,18 @@ public class ApiSimpleResult<T> {
   @Nullable
   private T data;
 
+  @SuppressWarnings({"unused"})
+  public ApiSimpleResult() {
+  }
+
+  public ApiSimpleResult(@Nullable String code, @Nullable String message, @Nullable String status,
+      @Nullable T data) {
+    this.code = code;
+    this.message = message;
+    this.status = status;
+    this.data = data;
+  }
+
   @Nullable
   public String getCode() {
     return code;

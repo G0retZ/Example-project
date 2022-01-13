@@ -23,23 +23,20 @@ import com.cargopull.executor_driver.backend.ringtone.SingleRingTonePlayer
 import com.cargopull.executor_driver.backend.settings.AppPreferences
 import com.cargopull.executor_driver.backend.settings.AppSettingsService
 import com.cargopull.executor_driver.backend.stomp.StompClient
-import com.cargopull.executor_driver.backend.stomp.StompClientImpl
-import com.cargopull.executor_driver.backend.stomp.WebSocketConnection
+import com.cargopull.executor_driver.backend.stomp.StompFrame
+import com.cargopull.executor_driver.backend.stomp.TestStompClient
 import com.cargopull.executor_driver.backend.vibro.*
 import com.cargopull.executor_driver.backend.web.*
 import com.cargopull.executor_driver.gateway.TokenKeeperImpl
 import com.cargopull.executor_driver.utils.Releasable
 import com.cargopull.executor_driver.utils.TimeUtils
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.subjects.PublishSubject
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 
 interface BackendComponent : Releasable {
@@ -97,21 +94,14 @@ class ActualBackendComponent(private val appContext: Context, private val timeUt
         appContext.registerReceiver(receiver, IntentFilter(WIFI_STATE_CHANGED_ACTION))
         receiver
     }
+    val subject: PublishSubject<StompFrame> by lazy {
+        PublishSubject.create()
+    }
     override val apiService: ApiService by lazy {
-        ApiConnectionWrapper(
-                Retrofit.Builder()
-                        .baseUrl(apiUrl)
-                        .client(okHttpClient)
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .build()
-                        .create(ApiService::class.java),
-                networkStateReceiver
-        )
+        TestApiService(timeUtils, subject)
     }
     override val stompClient: StompClient by lazy {
-        StompClientImpl(socketUrl, WebSocketConnection(okHttpClient))
+        TestStompClient(timeUtils, subject.toFlowable(BackpressureStrategy.BUFFER))
     }
 
     override val personalTopicListener by lazy {
