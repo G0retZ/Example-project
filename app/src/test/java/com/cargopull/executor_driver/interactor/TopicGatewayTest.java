@@ -3,7 +3,7 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
@@ -12,10 +12,7 @@ import com.cargopull.executor_driver.backend.web.TopicListener;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.TopicGateway;
-import io.reactivex.Flowable;
-import io.reactivex.functions.Predicate;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -25,6 +22,12 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+
+import io.reactivex.Flowable;
+import io.reactivex.functions.Predicate;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(Parameterized.class)
 public class TopicGatewayTest {
@@ -92,7 +95,7 @@ public class TopicGatewayTest {
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(filter);
+    verifyNoInteractions(filter);
   }
 
   /**
@@ -126,7 +129,7 @@ public class TopicGatewayTest {
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(mapper);
+    verifyNoInteractions(mapper);
   }
 
   /**

@@ -2,15 +2,14 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import io.reactivex.Flowable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -19,6 +18,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServerTimeUseCaseTest {
@@ -64,7 +66,7 @@ public class ServerTimeUseCaseTest {
     useCase.getServerTime().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(timeUtils);
+    verifyNoInteractions(timeUtils);
   }
 
   /**
@@ -79,7 +81,7 @@ public class ServerTimeUseCaseTest {
     useCase.getServerTime().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(timeUtils);
+    verifyNoInteractions(timeUtils);
   }
 
   /**
@@ -112,7 +114,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
     // Действие:
-    TestObserver testObserver = useCase.getServerTime().test();
+    TestObserver<Void> testObserver = useCase.getServerTime().test();
 
     // Результат:
     testObserver.assertNoErrors();
@@ -128,7 +130,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
     // Действие:
-    TestObserver testObserver = useCase.getServerTime().test();
+    TestObserver<Void> testObserver = useCase.getServerTime().test();
 
     // Результат:
     testObserver.assertError(DataMappingException.class);
@@ -144,7 +146,7 @@ public class ServerTimeUseCaseTest {
     when(gateway.getData()).thenReturn(Flowable.empty());
 
     // Действие:
-    TestObserver testObserver = useCase.getServerTime().test();
+    TestObserver<Void> testObserver = useCase.getServerTime().test();
 
     // Результат:
     testObserver.assertComplete();

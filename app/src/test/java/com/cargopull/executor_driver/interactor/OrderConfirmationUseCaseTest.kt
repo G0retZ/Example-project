@@ -114,7 +114,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(orderDecisionUseCase)
+        verifyNoInteractions(orderDecisionUseCase)
     }
 
     /**
@@ -267,7 +267,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(ordersUseCase)
+        verifyNoInteractions(ordersUseCase)
     }
 
     /**
@@ -317,7 +317,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(ordersUseCase)
+        verifyNoInteractions(ordersUseCase)
     }
 
     /**
@@ -333,7 +333,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(ordersUseCase)
+        verifyNoInteractions(ordersUseCase)
     }
 
     /* Проверяем работу с юзкейсом обновления статуса исполнителя */
@@ -357,7 +357,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -374,7 +374,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(false).test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -391,7 +391,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -441,7 +441,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -457,7 +457,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /* Проверяем работу с юзкейсом обновления данных */
@@ -481,7 +481,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateDataUseCase)
+        verifyNoInteractions(updateDataUseCase)
     }
 
     /**
@@ -498,7 +498,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(false).test()
 
         // Результат:
-        verifyZeroInteractions(updateDataUseCase)
+        verifyNoInteractions(updateDataUseCase)
     }
 
     /**
@@ -515,7 +515,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateDataUseCase)
+        verifyNoInteractions(updateDataUseCase)
     }
 
     /**
@@ -565,7 +565,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateDataUseCase)
+        verifyNoInteractions(updateDataUseCase)
     }
 
     /**
@@ -581,7 +581,7 @@ class OrderConfirmationUseCaseTest {
         useCase.sendDecision(true).test()
 
         // Результат:
-        verifyZeroInteractions(updateDataUseCase)
+        verifyNoInteractions(updateDataUseCase)
     }
 
     /* Проверяем ответы на запрос отправки решения */
@@ -1059,5 +1059,6 @@ class OrderConfirmationUseCaseTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

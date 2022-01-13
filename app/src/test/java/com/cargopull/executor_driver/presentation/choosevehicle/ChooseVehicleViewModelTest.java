@@ -3,12 +3,13 @@ package com.cargopull.executor_driver.presentation.choosevehicle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -17,10 +18,7 @@ import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleChoiceUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
-import io.reactivex.subjects.SingleSubject;
-import java.util.Arrays;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -31,6 +29,12 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.subjects.SingleSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ChooseVehicleViewModelTest {
@@ -136,7 +140,7 @@ public class ChooseVehicleViewModelTest {
     viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(3, "m", "m", "co", "l", false)));
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /* Тетсируем работу с юзкейсом выбора ТС. */
@@ -308,7 +312,7 @@ public class ChooseVehicleViewModelTest {
     viewModel.selectItem(new ChooseVehicleListItem(new Vehicle(1, "m", "m", "c", "l", false)));
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**

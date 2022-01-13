@@ -3,21 +3,24 @@ package com.cargopull.executor_driver.gateway;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import io.reactivex.Observable;
-import io.reactivex.functions.Predicate;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.Map;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Map;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
+import io.reactivex.subscribers.TestSubscriber;
 
 public class FcmGatewayTest {
 
@@ -47,7 +50,7 @@ public class FcmGatewayTest {
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(filter);
+    verifyNoInteractions(filter);
   }
 
   /**
@@ -81,7 +84,7 @@ public class FcmGatewayTest {
     gateway.getData().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(mapper);
+    verifyNoInteractions(mapper);
   }
 
   /**

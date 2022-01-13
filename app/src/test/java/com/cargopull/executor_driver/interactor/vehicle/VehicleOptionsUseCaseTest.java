@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -14,19 +14,22 @@ import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsUseCaseTest {
@@ -83,7 +86,7 @@ public class VehicleOptionsUseCaseTest {
     ).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(vehicleChoiceReceiver);
+    verifyNoInteractions(vehicleChoiceReceiver);
   }
 
   /* Проверяем работу с гейтвеем ТС и поций */
@@ -114,7 +117,7 @@ public class VehicleOptionsUseCaseTest {
     ).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(vehiclesAndOptionsGateway);
+    verifyNoInteractions(vehiclesAndOptionsGateway);
   }
 
   /* Проверяем ответы на запрос выбранного ТС */
@@ -268,7 +271,7 @@ public class VehicleOptionsUseCaseTest {
     ).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verifyNoInteractions(gateway);
   }
 
   /**

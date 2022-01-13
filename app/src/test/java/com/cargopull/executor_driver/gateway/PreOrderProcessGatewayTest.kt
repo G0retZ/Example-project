@@ -90,7 +90,7 @@ class PreOrderProcessGatewayTest {
         gateway.sendDecision(order, true).test()
 
         // Результат:
-        verifyZeroInteractions(mapper)
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -106,7 +106,7 @@ class PreOrderProcessGatewayTest {
         gateway.sendDecision(order, true).test()
 
         // Результат:
-        verifyZeroInteractions(mapper)
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -219,5 +219,6 @@ class PreOrderProcessGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

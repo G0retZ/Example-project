@@ -5,12 +5,13 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -23,13 +24,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.SingleSubject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -40,6 +35,15 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.SingleSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewModelTest {
@@ -113,7 +117,7 @@ public class VehicleOptionsViewModelTest {
     publishSubject.onError(new Exception());
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -125,7 +129,7 @@ public class VehicleOptionsViewModelTest {
     singleSubject.onError(new Exception());
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -381,7 +385,7 @@ public class VehicleOptionsViewModelTest {
   @Test
   public void doNotTouchServicesUseCaseForOptionsInitially() {
     // Результат:
-    verifyZeroInteractions(servicesUseCase);
+    verifyNoInteractions(servicesUseCase);
   }
 
   /**
@@ -405,7 +409,7 @@ public class VehicleOptionsViewModelTest {
     viewModel.getViewStateLiveData();
 
     // Результат:
-    verifyZeroInteractions(servicesUseCase);
+    verifyNoInteractions(servicesUseCase);
   }
 
   /**
@@ -540,15 +544,15 @@ public class VehicleOptionsViewModelTest {
         ))
     ));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
-        new VehicleOptionsListItems(Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionBoolean(7, "name2", "description2", true)),
-            new VehicleOptionsListItem<>(new OptionBoolean(8, "emacs2", "descriptions2", false))
-        ), Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
-            new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
-        ))
+            new VehicleOptionsListItems(Arrays.asList(
+                    new VehicleOptionsListItem<>(new OptionBoolean(7, "name2", "description2", true)),
+                    new VehicleOptionsListItem<>(new OptionBoolean(8, "emacs2", "descriptions2", false))
+            ), Arrays.asList(
+                    new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
+                    new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
+            ))
     ));
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
@@ -724,7 +728,7 @@ public class VehicleOptionsViewModelTest {
     );
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -743,6 +747,6 @@ public class VehicleOptionsViewModelTest {
     );
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 }

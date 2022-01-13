@@ -68,7 +68,7 @@ class ConfirmOrderPaymentGatewayTest {
         gateway.data.test()
 
         // Результат:
-        verifyZeroInteractions(mapper)
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -157,9 +157,16 @@ class ConfirmOrderPaymentGatewayTest {
     @Throws(Exception::class)
     fun answerCompleteTheOrderDataErrorForMapperError() {
         // Дано:
-        `when`(apiService.completeOrderPayment(Collections.singletonMap("status", "COMPLETE_PAYMENT_CONFIRMATION")))
-                .thenReturn(Single.just(ApiSimpleResult()))
-        Mockito.doThrow(DataMappingException()).`when`(mapper).map(any())
+        `when`(
+            apiService.completeOrderPayment(
+                Collections.singletonMap(
+                    "status",
+                    "COMPLETE_PAYMENT_CONFIRMATION"
+                )
+            )
+        )
+            .thenReturn(Single.just(ApiSimpleResult()))
+        doThrow(DataMappingException()).`when`(mapper).map(any())
 
         // Действие:
         gateway.data.test()
@@ -177,5 +184,6 @@ class ConfirmOrderPaymentGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

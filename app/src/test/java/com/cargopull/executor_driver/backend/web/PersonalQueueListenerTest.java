@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
@@ -14,12 +14,7 @@ import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.backend.stomp.StompClient;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.interactor.CommonGateway;
-import io.reactivex.Flowable;
-import io.reactivex.functions.Action;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.concurrent.TimeUnit;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -28,6 +23,14 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Flowable;
+import io.reactivex.functions.Action;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersonalQueueListenerTest {
@@ -90,7 +93,7 @@ public class PersonalQueueListenerTest {
     queueListener.getMessages().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(appSettings);
+    verifyNoInteractions(appSettings);
   }
 
   /**
@@ -353,7 +356,7 @@ public class PersonalQueueListenerTest {
     testSubscriber.dispose();
     testSubscriber1.dispose();
     testSubscriber2.dispose();
-    verifyZeroInteractions(action);
+    verifyNoInteractions(action);
     testSubscriber3.dispose();
     verify(action, only()).run();
   }

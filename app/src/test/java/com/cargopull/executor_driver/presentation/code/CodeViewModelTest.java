@@ -6,12 +6,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.EventLogger;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
@@ -19,9 +20,7 @@ import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.interactor.auth.PasswordUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import io.reactivex.Completable;
-import io.reactivex.subjects.CompletableSubject;
-import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -34,6 +33,11 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashMap;
+
+import io.reactivex.Completable;
+import io.reactivex.subjects.CompletableSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CodeViewModelTest {
@@ -159,7 +163,7 @@ public class CodeViewModelTest {
   @Test
   public void doNotTouchEventLoggerInitially() {
     // Результат:
-    verifyZeroInteractions(eventLogger);
+    verifyNoInteractions(eventLogger);
   }
 
   /**
@@ -206,7 +210,7 @@ public class CodeViewModelTest {
     viewModel.setCode("1   2   3   4");
 
     // Результат:
-    verifyZeroInteractions(eventLogger);
+    verifyNoInteractions(eventLogger);
   }
 
   /* Тетсируем переключение состояний. */

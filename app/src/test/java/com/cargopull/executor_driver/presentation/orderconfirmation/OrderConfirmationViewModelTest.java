@@ -5,12 +5,13 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -28,15 +29,7 @@ import com.cargopull.executor_driver.interactor.OrderConfirmationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.Single;
-import java.util.Arrays;
-import java.util.HashMap;
-import kotlin.Pair;
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -49,6 +42,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.Single;
+import kotlin.Pair;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
@@ -149,7 +153,7 @@ public class OrderConfirmationViewModelTest {
     ));
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -187,7 +191,7 @@ public class OrderConfirmationViewModelTest {
     ));
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -218,7 +222,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -280,7 +284,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -297,7 +301,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -314,7 +318,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -333,7 +337,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -395,7 +399,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -412,7 +416,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -429,7 +433,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(errorReporter);
+    verifyNoInteractions(errorReporter);
   }
 
   /* Тетсируем работу с юзкейсом принятия заказа. */
@@ -572,7 +576,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void DoNotAskForCurrentTimeStampInitially() {
     // Результат:
-    verifyZeroInteractions(timeUtils);
+    verifyNoInteractions(timeUtils);
   }
 
   /**
@@ -622,7 +626,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(timeUtils);
+    verifyNoInteractions(timeUtils);
   }
 
   /**
@@ -657,7 +661,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(timeUtils);
+    verifyNoInteractions(timeUtils);
   }
 
   /* Тетсируем работу с логгером событий. */
@@ -668,7 +672,7 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void doNotTouchEventLoggerInitially() {
     // Результат:
-    verifyZeroInteractions(eventLogger);
+    verifyNoInteractions(eventLogger);
   }
 
   /**
@@ -720,7 +724,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(eventLogger);
+    verifyNoInteractions(eventLogger);
   }
 
   /**
@@ -772,7 +776,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(eventLogger);
+    verifyNoInteractions(eventLogger);
   }
 
   /* Тетсируем работу с вибро и звуком. */
@@ -783,8 +787,8 @@ public class OrderConfirmationViewModelTest {
   @Test
   public void doNotTouchVibrationAndSoundInitially() {
     // Результат:
-    verifyZeroInteractions(shakeItPlayer);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(shakeItPlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -799,8 +803,8 @@ public class OrderConfirmationViewModelTest {
     emitter.onNext(new Pair<>(101L, 2_000L));
 
     // Результат:
-    verifyZeroInteractions(shakeItPlayer);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(shakeItPlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -813,8 +817,8 @@ public class OrderConfirmationViewModelTest {
     emitter.onError(new Exception("message"));
 
     // Результат:
-    verifyZeroInteractions(shakeItPlayer);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(shakeItPlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -844,7 +848,7 @@ public class OrderConfirmationViewModelTest {
 
     // Результат:
     verify(shakeItPlayer, only()).shakeIt(R.raw.single_shot_vibro);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -878,7 +882,7 @@ public class OrderConfirmationViewModelTest {
 
     // Результат:
     verify(shakeItPlayer, only()).shakeIt(R.raw.single_shot_vibro);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -908,8 +912,8 @@ public class OrderConfirmationViewModelTest {
     viewModel.messageConsumed();
 
     // Результат:
-    verifyZeroInteractions(shakeItPlayer);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(shakeItPlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -1476,7 +1480,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -1504,7 +1508,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -1536,7 +1540,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.declineOrder();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -1551,7 +1555,7 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -1630,6 +1634,6 @@ public class OrderConfirmationViewModelTest {
     viewModel.acceptOrder();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 }

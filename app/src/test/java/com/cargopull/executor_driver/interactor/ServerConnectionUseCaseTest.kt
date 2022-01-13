@@ -90,7 +90,7 @@ class ServerConnectionUseCaseTest {
 
         // Результат:
         verify(serverConnectionGateway, only()).socketState
-        verifyZeroInteractions(serverSubscriptionConsumer)
+        verifyNoInteractions(serverSubscriptionConsumer)
     }
 
     /**
@@ -105,7 +105,7 @@ class ServerConnectionUseCaseTest {
         useCase.connect().test().isDisposed
 
         // Результат:
-        verifyZeroInteractions(serverSubscriptionConsumer)
+        verifyNoInteractions(serverSubscriptionConsumer)
     }
 
     /**

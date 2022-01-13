@@ -3,11 +3,12 @@ package com.cargopull.executor_driver.presentation.upcomingpreordermessage;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -16,8 +17,7 @@ import com.cargopull.executor_driver.backend.vibro.ShakeItPlayer;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.NotificationMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -28,6 +28,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpcomingPreOrderMessageViewModelTest {
@@ -117,8 +120,8 @@ public class UpcomingPreOrderMessageViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verifyZeroInteractions(shakeItPlayer);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(shakeItPlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -130,8 +133,8 @@ public class UpcomingPreOrderMessageViewModelTest {
     publishSubject.onError(new DataMappingException());
 
     // Результат:
-    verifyZeroInteractions(shakeItPlayer);
-    verifyZeroInteractions(ringTonePlayer);
+    verifyNoInteractions(shakeItPlayer);
+    verifyNoInteractions(ringTonePlayer);
   }
 
   /**
@@ -204,7 +207,7 @@ public class UpcomingPreOrderMessageViewModelTest {
     publishSubject.onError(new DataMappingException());
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoInteractions(viewStateObserver);
   }
 
   /**
@@ -219,7 +222,7 @@ public class UpcomingPreOrderMessageViewModelTest {
     publishSubject.onNext("");
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoInteractions(viewStateObserver);
   }
 
   /**
@@ -234,6 +237,6 @@ public class UpcomingPreOrderMessageViewModelTest {
     publishSubject.onNext("\n");
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoInteractions(viewStateObserver);
   }
 }

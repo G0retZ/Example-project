@@ -3,18 +3,19 @@ package com.cargopull.executor_driver.presentation.currentcostpolling;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.CurrentCostPollingUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.subjects.CompletableSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -23,6 +24,8 @@ import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.subjects.CompletableSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentCostPollingViewModelTest {
@@ -104,7 +107,7 @@ public class CurrentCostPollingViewModelTest {
     completableSubject.onComplete();
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoInteractions(viewStateObserver);
   }
 
   /**
@@ -119,7 +122,7 @@ public class CurrentCostPollingViewModelTest {
     completableSubject.onError(new DataMappingException());
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoInteractions(viewStateObserver);
   }
 
   /**
@@ -134,7 +137,7 @@ public class CurrentCostPollingViewModelTest {
     completableSubject.onError(new Exception());
 
     // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoInteractions(viewStateObserver);
   }
 
   /* Тетсируем навигацию. */
@@ -166,7 +169,7 @@ public class CurrentCostPollingViewModelTest {
     completableSubject.onError(new Exception());
 
     // Результат:
-    verifyZeroInteractions(navigationObserver);
+    verifyNoInteractions(navigationObserver);
   }
 
   /**
@@ -181,6 +184,6 @@ public class CurrentCostPollingViewModelTest {
     completableSubject.onComplete();
 
     // Результат:
-    verifyZeroInteractions(navigationObserver);
+    verifyNoInteractions(navigationObserver);
   }
 }

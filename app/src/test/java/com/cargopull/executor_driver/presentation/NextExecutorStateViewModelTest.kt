@@ -8,8 +8,8 @@ import com.cargopull.executor_driver.backend.web.ServerResponseException
 import com.cargopull.executor_driver.gateway.DataMappingException
 import com.cargopull.executor_driver.interactor.NextExecutorStateUseCase
 import io.reactivex.Completable
-import okhttp3.MediaType
-import okhttp3.ResponseBody
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
@@ -100,7 +100,7 @@ class NextExecutorStateViewModelTest {
         viewModel.routeToNextState()
 
         // Результат:
-        verifyZeroInteractions(errorReporter)
+        verifyNoInteractions(errorReporter)
     }
 
     /**
@@ -111,14 +111,17 @@ class NextExecutorStateViewModelTest {
         // Дано:
         `when`(nextExecutorStateUseCase.proceedToNextState)
                 .thenReturn(Completable.error(HttpException(
-                        Response.error<Any>(404, ResponseBody.create(MediaType.get("applocation/json"), ""))
+                    Response.error<Any>(
+                        404,
+                        "".toResponseBody("applocation/json".toMediaType())
+                    )
                 )))
 
         // Действие:
         viewModel.routeToNextState()
 
         // Результат:
-        verifyZeroInteractions(errorReporter)
+        verifyNoInteractions(errorReporter)
     }
 
     /* Тетсируем работу с юзкейсом перехода к следующему состоянию исполнителя. */
@@ -135,7 +138,7 @@ class NextExecutorStateViewModelTest {
         viewModel.navigationLiveData
 
         // Результат:
-        verifyZeroInteractions(nextExecutorStateUseCase)
+        verifyNoInteractions(nextExecutorStateUseCase)
     }
 
     /**
@@ -265,7 +268,7 @@ class NextExecutorStateViewModelTest {
         viewModel.routeToNextState()
 
         // Результат:
-        verifyZeroInteractions(navigateObserver)
+        verifyNoInteractions(navigateObserver)
     }
 
     /**
@@ -315,7 +318,7 @@ class NextExecutorStateViewModelTest {
         viewModel.routeToNextState()
 
         // Результат:
-        verifyZeroInteractions(navigateObserver)
+        verifyNoInteractions(navigateObserver)
     }
 
     private fun <T> any(type: Class<T>): T {
@@ -323,6 +326,7 @@ class NextExecutorStateViewModelTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }
 

@@ -84,7 +84,7 @@ class OrderRouteUseCaseTest {
         useCase.updateWith(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint4))
 
         // Результат:
-        verifyZeroInteractions(orderRouteGateway)
+        verifyNoInteractions(orderRouteGateway)
     }
 
     /**

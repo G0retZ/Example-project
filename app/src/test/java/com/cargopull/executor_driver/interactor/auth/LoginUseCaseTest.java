@@ -5,12 +5,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.entity.Validator;
 import com.cargopull.executor_driver.interactor.DataUpdateAndResetUseCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,7 +91,7 @@ public class LoginUseCaseTest {
     useCase.validateLogin("checkLogin").test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(loginObserver);
+    verifyNoInteractions(loginObserver);
   }
 
   /**

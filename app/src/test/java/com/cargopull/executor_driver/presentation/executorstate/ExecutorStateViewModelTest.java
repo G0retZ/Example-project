@@ -18,12 +18,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -34,9 +35,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -49,6 +48,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(Parameterized.class)
 public class ExecutorStateViewModelTest {
@@ -88,27 +92,27 @@ public class ExecutorStateViewModelTest {
   }
 
   @Parameterized.Parameters
-  public static Iterable primeNumbers() {
+  public static Iterable<TestDataSet> primeNumbers() {
     // Соответствия значений статуса направлениям навигации и сообщениям
     return Arrays.asList(
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            null, null, null, false, false),
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            "", null, null, false, false),
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            "\n", null, null, false, false),
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            "Message", null, "Message", false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            null, null, null, false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            "", null, null, false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            "\n", null, null, false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            "Message", null, null, false, false),
-        new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
-            null, null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    null, null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    "", null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    "\n", null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    "Message", null, "Message", false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    null, null, null, false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    "", null, null, false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    "\n", null, null, false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    "Message", null, null, false, false),
+            new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
+                    null, null, null, false, false),
         new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
             "", null, null, false, false),
         new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
@@ -281,7 +285,7 @@ public class ExecutorStateViewModelTest {
       verify(viewActions, only()).showExecutorStatusInfo(conditionDataSet.expectedInfo);
       verifyNoMoreInteractions(viewStateObserver);
     } else {
-      verifyZeroInteractions(viewStateObserver);
+      verifyNoInteractions(viewStateObserver);
     }
   }
 
@@ -304,8 +308,8 @@ public class ExecutorStateViewModelTest {
       verify(shakeItPlayer, only()).shakeIt(R.raw.regular_order_notify_vibro);
       verify(ringTonePlayer, only()).playRingTone(R.raw.regular_order_notify);
     } else {
-      verifyZeroInteractions(ringTonePlayer);
-      verifyZeroInteractions(shakeItPlayer);
+      verifyNoInteractions(ringTonePlayer);
+      verifyNoInteractions(shakeItPlayer);
     }
   }
 
@@ -324,7 +328,7 @@ public class ExecutorStateViewModelTest {
     viewModel.messageConsumed();
 
     // Результат:
-    verifyZeroInteractions(navigationObserver);
+    verifyNoInteractions(navigationObserver);
   }
 
   /**

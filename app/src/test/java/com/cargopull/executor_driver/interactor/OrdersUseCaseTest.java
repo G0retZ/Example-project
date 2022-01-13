@@ -3,26 +3,29 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersUseCaseTest {
@@ -100,7 +103,7 @@ public class OrdersUseCaseTest {
     useCase.removeOrder(order3);
 
     // Результат:
-    verifyZeroInteractions(changedOrdersUseCase);
+    verifyNoInteractions(changedOrdersUseCase);
   }
 
   /**
@@ -138,7 +141,7 @@ public class OrdersUseCaseTest {
     useCase.removeOrder(order3);
 
     // Результат:
-    verifyZeroInteractions(cancelledOrdersUseCase);
+    verifyNoInteractions(cancelledOrdersUseCase);
   }
 
   /**

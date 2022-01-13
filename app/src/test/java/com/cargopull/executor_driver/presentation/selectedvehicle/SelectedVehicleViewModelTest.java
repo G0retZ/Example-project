@@ -2,18 +2,18 @@ package com.cargopull.executor_driver.presentation.selectedvehicle;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -24,6 +24,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleViewModelTest {
@@ -76,7 +79,7 @@ public class SelectedVehicleViewModelTest {
     viewModel.changeVehicle();
 
     // Результат:
-    verifyZeroInteractions(selectedVehicleUseCase);
+    verifyNoInteractions(selectedVehicleUseCase);
   }
 
   /* Тетсируем переключение состояний. */

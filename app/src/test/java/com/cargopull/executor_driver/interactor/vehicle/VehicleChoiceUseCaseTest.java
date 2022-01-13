@@ -2,7 +2,7 @@ package com.cargopull.executor_driver.interactor.vehicle;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -11,16 +11,19 @@ import com.cargopull.executor_driver.entity.DriverBlockedException;
 import com.cargopull.executor_driver.entity.EmptyListException;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataUpdateUseCase;
-import io.reactivex.Single;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
+import io.reactivex.Single;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleChoiceUseCaseTest {
@@ -138,7 +141,7 @@ public class VehicleChoiceUseCaseTest {
     useCase.getVehicles().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(vehicleChoiceObserver);
+    verifyNoInteractions(vehicleChoiceObserver);
   }
 
   /**
@@ -195,7 +198,7 @@ public class VehicleChoiceUseCaseTest {
     ).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(vehicleChoiceObserver);
+    verifyNoInteractions(vehicleChoiceObserver);
   }
 
   /* Проверяем ответы на публикацию */

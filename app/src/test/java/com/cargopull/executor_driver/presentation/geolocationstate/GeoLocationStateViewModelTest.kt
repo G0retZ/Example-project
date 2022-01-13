@@ -97,7 +97,7 @@ class GeoLocationStateViewModelTest {
             viewModel.navigationLiveData
 
             // Результат:
-            verifyZeroInteractions(geolocationState)
+            verifyNoInteractions(geolocationState)
         }
 
         /**
@@ -130,7 +130,7 @@ class GeoLocationStateViewModelTest {
             viewModel.navigationLiveData
 
             // Результат:
-            verifyZeroInteractions(geolocationState)
+            verifyNoInteractions(geolocationState)
         }
 
         /* Тетсируем смену состояний. */
@@ -437,9 +437,15 @@ class GeoLocationStateViewModelTest {
 
             // Результат:
             return when (sendReport) {
-                1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_restored", mutableMapOf("loss_duration" to "290"))
-                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_lost", mutableMapOf("loss_duration" to "290"))
-                else -> verifyZeroInteractions(eventLogger)
+                1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_restored",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_lost",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                else -> verifyNoInteractions(eventLogger)
             }
         }
 
@@ -456,9 +462,15 @@ class GeoLocationStateViewModelTest {
 
             // Результат:
             return when (sendReport) {
-                1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_restored", mutableMapOf("loss_duration" to "290"))
-                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_lost", mutableMapOf("loss_duration" to "290"))
-                else -> verifyZeroInteractions(eventLogger)
+                1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_restored",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_lost",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                else -> verifyNoInteractions(eventLogger)
             }
         }
     }

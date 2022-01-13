@@ -4,11 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -56,7 +57,7 @@ public class OrderViewStateCancelledTest {
     // Результат:
     verify(viewActions).showPersistentDialog(R.string.order_cancelled, action);
     verifyNoMoreInteractions(viewActions);
-    verifyZeroInteractions(parentViewState);
+    verifyNoInteractions(parentViewState);
   }
 
   @Test

@@ -102,7 +102,7 @@ class OrderRouteGatewayTest {
         gateway.closeRoutePoint(routePoint).test()
 
         // Результат:
-        verifyZeroInteractions(mapper)
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -119,7 +119,7 @@ class OrderRouteGatewayTest {
         gateway.nextRoutePoint(routePoint).test()
 
         // Результат:
-        verifyZeroInteractions(mapper)
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -243,5 +243,6 @@ class OrderRouteGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

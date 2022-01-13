@@ -4,8 +4,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
@@ -15,15 +15,18 @@ import com.cargopull.executor_driver.entity.OrdersHistorySummary;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.OrdersHistorySummaryGatewayImpl;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.Map;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Map;
+
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersHistorySummaryGatewayTest {
@@ -82,7 +85,7 @@ public class OrdersHistorySummaryGatewayTest {
     gateway.getOrdersHistorySummary(11, 100).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(mapper);
+    verifyNoInteractions(mapper);
   }
 
   /**

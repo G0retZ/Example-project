@@ -65,7 +65,7 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -87,7 +87,7 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -131,7 +131,7 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        verifyZeroInteractions(updateUseCase)
+        verifyNoInteractions(updateUseCase)
     }
 
     /**
@@ -153,7 +153,7 @@ class NextExecutorStateUseCaseTest {
         useCase.proceedToNextState.test()
 
         // Результат:
-        verifyZeroInteractions(updateUseCase)
+        verifyNoInteractions(updateUseCase)
     }
 
     /**

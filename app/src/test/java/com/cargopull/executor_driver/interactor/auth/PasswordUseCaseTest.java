@@ -8,7 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -17,15 +17,17 @@ import com.cargopull.executor_driver.entity.LoginData;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.entity.Validator;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordUseCaseTest {
@@ -139,7 +141,7 @@ public class PasswordUseCaseTest {
     useCase.authorize("passwor", Completable.complete()).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verifyNoInteractions(gateway);
   }
 
   /**
@@ -152,7 +154,7 @@ public class PasswordUseCaseTest {
     useCase.authorize("password", Completable.never()).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verifyNoInteractions(gateway);
   }
 
   /**
@@ -165,7 +167,7 @@ public class PasswordUseCaseTest {
     useCase.authorize("password", Completable.error(new Exception())).test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(gateway);
+    verifyNoInteractions(gateway);
   }
 
   /**

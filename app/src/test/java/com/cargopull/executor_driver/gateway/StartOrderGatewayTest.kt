@@ -72,7 +72,7 @@ class StartOrderGatewayTest {
         gateway.data.test()
 
         // Результат:
-        verifyZeroInteractions(mapper)
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -181,5 +181,6 @@ class StartOrderGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

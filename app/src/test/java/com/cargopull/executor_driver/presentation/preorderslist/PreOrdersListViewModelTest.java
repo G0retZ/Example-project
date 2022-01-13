@@ -3,12 +3,13 @@ package com.cargopull.executor_driver.presentation.preorderslist;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.Order;
@@ -17,12 +18,7 @@ import com.cargopull.executor_driver.interactor.OrdersUseCase;
 import com.cargopull.executor_driver.interactor.SelectedOrderUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Completable;
-import io.reactivex.subjects.PublishSubject;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,6 +29,14 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Completable;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrdersListViewModelTest {
@@ -175,7 +179,7 @@ public class PreOrdersListViewModelTest {
     viewModel.getNavigationLiveData();
 
     // Результат:
-    verifyZeroInteractions(selectedOrderUseCase);
+    verifyNoInteractions(selectedOrderUseCase);
   }
 
   /**
@@ -198,7 +202,7 @@ public class PreOrdersListViewModelTest {
   @Test
   public void doNotTouchMapperWithoutResults() {
     // Результат:
-    verifyZeroInteractions(preOrdersListItemsMapper);
+    verifyNoInteractions(preOrdersListItemsMapper);
   }
 
   /**
@@ -325,7 +329,7 @@ public class PreOrdersListViewModelTest {
     // Результат:
     inOrder.verify(viewStateObserver).onChanged(new PreOrdersListViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(any(PreOrdersListViewStateEmpty.class));
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /* Тетсируем навигацию. */
@@ -344,7 +348,7 @@ public class PreOrdersListViewModelTest {
     publishSubject.onNext(orderSet2);
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -359,7 +363,7 @@ public class PreOrdersListViewModelTest {
     publishSubject.onComplete();
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -406,7 +410,7 @@ public class PreOrdersListViewModelTest {
     viewModel.setSelectedOrder(order);
 
     // Результат:
-    verifyZeroInteractions(navigateObserver);
+    verifyNoInteractions(navigateObserver);
   }
 
   /**

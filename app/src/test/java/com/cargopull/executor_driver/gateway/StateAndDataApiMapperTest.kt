@@ -77,7 +77,7 @@ class StateAndDataApiMapperTest {
         val pair = mapper.map(apiOrderCostDetails)
 
         // Результат:
-        verifyZeroInteractions(dataMapper)
+        verifyNoInteractions(dataMapper)
         assertEquals(pair.first, ExecutorState.ONLINE)
         assertEquals(pair.first.data, "lalala")
         assertNull(pair.second)

@@ -5,8 +5,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
@@ -17,6 +17,17 @@ import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.utils.Pair;
+
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -24,14 +35,6 @@ import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.PublishSubject;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentCostPollingGatewayTest {
@@ -92,7 +95,7 @@ public class CurrentCostPollingGatewayTest {
     gateway.startPolling().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(mapper);
+    verifyNoInteractions(mapper);
   }
 
   /**
@@ -109,7 +112,7 @@ public class CurrentCostPollingGatewayTest {
     gateway.startPolling().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(mapper);
+    verifyNoInteractions(mapper);
   }
 
   /**
@@ -148,7 +151,7 @@ public class CurrentCostPollingGatewayTest {
     gateway.startPolling().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(stompClient);
+    verifyNoInteractions(stompClient);
   }
 
   /**
@@ -190,7 +193,7 @@ public class CurrentCostPollingGatewayTest {
     testScheduler.advanceTimeBy(9, TimeUnit.MINUTES);
 
     // Результат:
-    verifyZeroInteractions(stompClient);
+    verifyNoInteractions(stompClient);
     testScheduler.advanceTimeBy(1, TimeUnit.MINUTES);
     verify(stompClient, only()).send("/mobile/retrieveOverPackage", "\"\"");
   }

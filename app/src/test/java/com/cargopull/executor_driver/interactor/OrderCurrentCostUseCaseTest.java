@@ -3,21 +3,23 @@ package com.cargopull.executor_driver.interactor;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCurrentCostUseCaseTest {
@@ -72,7 +74,7 @@ public class OrderCurrentCostUseCaseTest {
     useCase.getOrderCurrentCost().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(orderCurrentCostGateway);
+    verifyNoInteractions(orderCurrentCostGateway);
   }
 
   /**

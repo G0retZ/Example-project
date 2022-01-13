@@ -5,19 +5,15 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.ConnectionClosedException;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.entity.GeoLocation;
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.functions.Action;
-import io.reactivex.subscribers.TestSubscriber;
-import java.net.ConnectException;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -26,6 +22,13 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.net.ConnectException;
+
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
+import io.reactivex.functions.Action;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationUseCaseTest {
@@ -127,7 +130,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(geoLocationGateway);
+    verifyNoInteractions(geoLocationGateway);
   }
 
   /**
@@ -143,7 +146,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(geoLocationGateway);
+    verifyNoInteractions(geoLocationGateway);
   }
 
   /**
@@ -158,7 +161,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(geoLocationGateway);
+    verifyNoInteractions(geoLocationGateway);
   }
 
   /**
@@ -397,7 +400,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(geoTrackingGateway);
+    verifyNoInteractions(geoTrackingGateway);
   }
 
   /**
@@ -440,7 +443,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(geoTrackingGateway);
+    verifyNoInteractions(geoTrackingGateway);
   }
 
   /**
@@ -457,7 +460,7 @@ public class GeoLocationUseCaseTest {
     useCase.getGeoLocations().test().isDisposed();
 
     // Результат:
-    verifyZeroInteractions(geoTrackingGateway);
+    verifyNoInteractions(geoTrackingGateway);
   }
 
   /* Проверяем ответы гейтвея геопозиции */
