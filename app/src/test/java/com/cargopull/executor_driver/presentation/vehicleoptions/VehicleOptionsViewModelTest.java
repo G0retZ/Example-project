@@ -5,12 +5,13 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -23,13 +24,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.services.ServicesUseCase;
 import com.cargopull.executor_driver.interactor.vehicle.VehicleOptionsUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Completable;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.SingleSubject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -40,6 +35,15 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.SingleSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewModelTest {
@@ -85,10 +89,10 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportVehicleDataMappingError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -97,10 +101,10 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportDriverDataMappingError() {
-    // Действие:
+    // Action:
     singleSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -109,11 +113,11 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void doNotReportVehicleDataError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
-    verifyZeroInteractions(errorReporter);
+    // Effect:
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -121,11 +125,11 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void doNotReportDriverDataError() {
-    // Действие:
+    // Action:
     singleSubject.onError(new Exception());
 
-    // Результат:
-    verifyZeroInteractions(errorReporter);
+    // Effect:
+    verifyNoInteractions(errorReporter);
   }
 
   /**
@@ -133,11 +137,11 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportStateError() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(IllegalStateException::new));
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
         new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
@@ -146,7 +150,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(IllegalStateException.class));
   }
 
@@ -155,11 +159,11 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportNoNetworkError() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
         new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
@@ -168,7 +172,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(NoNetworkException.class));
   }
 
@@ -177,11 +181,11 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportArgumentError() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(IllegalArgumentException::new));
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
         new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
@@ -190,7 +194,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(IllegalArgumentException.class));
   }
 
@@ -199,13 +203,13 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportEmptyListError() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     when(servicesUseCase.autoAssignServices())
         .thenReturn(Completable.error(EmptyListException::new));
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
         new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
@@ -214,7 +218,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(EmptyListException.class));
   }
 
@@ -223,13 +227,13 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void reportNoNetworkErrorAgain() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     when(servicesUseCase.autoAssignServices())
         .thenReturn(Completable.error(NoNetworkException::new));
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(Arrays.asList(
         new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false)),
         new VehicleOptionsListItem<>(new OptionBoolean(2, "emacs", "description", true))
@@ -238,7 +242,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(NoNetworkException.class));
   }
 
@@ -249,7 +253,7 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void askVehicleOptionsUseCaseForOptionsInitially() {
-    // Результат:
+    // Effect:
     verify(vehicleOptionsUseCase).getVehicleOptions();
     verify(vehicleOptionsUseCase).getDriverOptions();
     verifyNoMoreInteractions(vehicleOptionsUseCase);
@@ -260,7 +264,7 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void doNotTouchVehicleOptionsUseCaseOnSubscriptions() {
-    // Дано:
+    // Given:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
         new OptionBoolean(2, "emacs", "descriptions", true)
@@ -270,12 +274,12 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(4, "nam", "script", 1, -1, 2)
     ));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
 
-    // Результат:
+    // Effect:
     verify(vehicleOptionsUseCase).getVehicleOptions();
     verify(vehicleOptionsUseCase).getDriverOptions();
     verifyNoMoreInteractions(vehicleOptionsUseCase);
@@ -286,12 +290,12 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void askVehicleOptionsUseCaseToOccupyVehicleWithOptions() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     when(servicesUseCase.autoAssignServices()).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
             new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false))
@@ -312,7 +316,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(vehicleOptionsUseCase).setSelectedVehicleAndOptions(Collections.singletonList(
         new OptionBoolean(1, "name", "description", false)
     ), Collections.singletonList(
@@ -341,7 +345,7 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void DoNotTouchVehicleOptionsUseCaseDuringVehicleOccupying() {
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
             new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false))
@@ -362,7 +366,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(vehicleOptionsUseCase).getVehicleOptions();
     verify(vehicleOptionsUseCase).getDriverOptions();
     verify(vehicleOptionsUseCase).setSelectedVehicleAndOptions(Collections.singletonList(
@@ -380,8 +384,8 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void doNotTouchServicesUseCaseForOptionsInitially() {
-    // Результат:
-    verifyZeroInteractions(servicesUseCase);
+    // Effect:
+    verifyNoInteractions(servicesUseCase);
   }
 
   /**
@@ -389,7 +393,7 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void doNotTouchServicesUseCaseOnSubscriptions() {
-    // Дано:
+    // Given:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
         new OptionBoolean(2, "emacs", "descriptions", true)
@@ -399,13 +403,13 @@ public class VehicleOptionsViewModelTest {
         new OptionNumeric(4, "nam", "script", 1, -1, 2)
     ));
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
 
-    // Результат:
-    verifyZeroInteractions(servicesUseCase);
+    // Effect:
+    verifyNoInteractions(servicesUseCase);
   }
 
   /**
@@ -413,12 +417,12 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void askServicesUseCaseToAutoAssignServices() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     when(servicesUseCase.autoAssignServices()).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
             new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false))
@@ -439,7 +443,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(servicesUseCase, times(3)).autoAssignServices();
     verifyNoMoreInteractions(servicesUseCase);
   }
@@ -449,7 +453,7 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void DoNotTouchServicesUseCaseDuringVehicleOccupying() {
-    // Действие:
+    // Action:
     viewModel.setOptions(new VehicleOptionsListItems(
         Collections.singletonList(
             new VehicleOptionsListItem<>(new OptionBoolean(1, "name", "description", false))
@@ -470,7 +474,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "description", 1, -1, 2))
     )));
 
-    // Результат:
+    // Effect:
     verify(servicesUseCase, only()).autoAssignServices();
   }
 
@@ -481,13 +485,13 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setInitialViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -497,11 +501,11 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setReadyViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
         new OptionBoolean(2, "emacs", "descriptions", true)
@@ -519,7 +523,7 @@ public class VehicleOptionsViewModelTest {
         new OptionBoolean(8, "emacs2", "descriptions2", false)
     ));
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
         new VehicleOptionsListItems(Arrays.asList(
@@ -540,15 +544,15 @@ public class VehicleOptionsViewModelTest {
         ))
     ));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
-        new VehicleOptionsListItems(Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionBoolean(7, "name2", "description2", true)),
-            new VehicleOptionsListItem<>(new OptionBoolean(8, "emacs2", "descriptions2", false))
-        ), Arrays.asList(
-            new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
-            new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
-        ))
+            new VehicleOptionsListItems(Arrays.asList(
+                    new VehicleOptionsListItem<>(new OptionBoolean(7, "name2", "description2", true)),
+                    new VehicleOptionsListItem<>(new OptionBoolean(8, "emacs2", "descriptions2", false))
+            ), Arrays.asList(
+                    new VehicleOptionsListItem<>(new OptionNumeric(3, "names", "desc", 5, 0, 10)),
+                    new VehicleOptionsListItem<>(new OptionNumeric(4, "nam", "script", 1, -1, 2))
+            ))
     ));
-    verifyZeroInteractions(viewStateObserver);
+    verifyNoMoreInteractions(viewStateObserver);
   }
 
   /**
@@ -556,13 +560,13 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
         new OptionBoolean(2, "emacs", "descriptions", true)
@@ -575,7 +579,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
         new VehicleOptionsListItems(Arrays.asList(
@@ -595,13 +599,13 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setNetworkErrorViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
         new OptionBoolean(2, "emacs", "descriptions", true)
@@ -614,7 +618,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
         new VehicleOptionsListItems(Arrays.asList(
@@ -652,7 +656,7 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setNetworkErrorViewStateToLiveDataForServicesAutoAssign() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
@@ -660,7 +664,7 @@ public class VehicleOptionsViewModelTest {
         .thenReturn(Completable.error(NoNetworkException::new));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(Arrays.asList(
         new OptionBoolean(1, "name", "description", false),
         new OptionBoolean(2, "emacs", "descriptions", true)
@@ -673,7 +677,7 @@ public class VehicleOptionsViewModelTest {
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(VehicleOptionsViewStateInitial.class));
     inOrder.verify(viewStateObserver).onChanged(new VehicleOptionsViewStateReady(
         new VehicleOptionsListItems(Arrays.asList(
@@ -713,18 +717,18 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setNothingToLiveData() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.error(new NoNetworkException()));
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.setOptions(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
+    // Effect:
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -732,17 +736,17 @@ public class VehicleOptionsViewModelTest {
    */
   @Test
   public void setNavigateToServicesToLiveData() {
-    // Дано:
+    // Given:
     when(vehicleOptionsUseCase.setSelectedVehicleAndOptions(anyList(), anyList()))
         .thenReturn(Completable.complete());
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.setOptions(
         new VehicleOptionsListItems(new ArrayList<>(), new ArrayList<>())
     );
 
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
+    // Effect:
+    verifyNoInteractions(navigateObserver);
   }
 }

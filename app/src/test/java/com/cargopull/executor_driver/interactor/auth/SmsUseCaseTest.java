@@ -5,7 +5,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -13,15 +13,17 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.ValidationException;
 import com.cargopull.executor_driver.entity.Validator;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SmsUseCaseTest {
@@ -56,10 +58,10 @@ public class SmsUseCaseTest {
    */
   @Test
   public void doNotTouchDataSharer() {
-    // Действие:
+    // Action:
     useCase.sendMeCode().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(phoneNumberReceiver, only()).get();
   }
 
@@ -72,13 +74,13 @@ public class SmsUseCaseTest {
    */
   @Test
   public void askPhoneNumberValidatorForResult() throws Exception {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
 
-    // Действие:
+    // Action:
     useCase.sendMeCode().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(phoneNumberValidator, only()).validate("1");
   }
 
@@ -89,13 +91,13 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerErrorIfPhoneNumberInvalid() {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
     testObserver.assertError(ValidationException.class);
@@ -108,14 +110,14 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerSuccessIfPhoneNumberValid() throws Exception {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("1", "2", "3"));
     doNothing().when(phoneNumberValidator).validate(anyString());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
     testObserver.assertNoErrors();
@@ -128,14 +130,14 @@ public class SmsUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForSms() {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("012345", "2", "3"));
 
-    // Действие:
+    // Action:
     useCase.sendMeCode().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(gateway);
+    // Effect:
+    verifyNoInteractions(gateway);
   }
 
   /**
@@ -143,13 +145,13 @@ public class SmsUseCaseTest {
    */
   @Test
   public void askGatewayForSms() {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
 
-    // Действие:
+    // Action:
     useCase.sendMeCode().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).sendMeCode("0123456");
   }
 
@@ -160,14 +162,14 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.error(new NoNetworkException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
     testObserver.assertError(NoNetworkException.class);
@@ -178,14 +180,14 @@ public class SmsUseCaseTest {
    */
   @Test
   public void answerSmsSendSuccessful() {
-    // Дано:
+    // Given:
     when(phoneNumberReceiver.get()).thenReturn(Observable.just("0123456", "2", "3"));
     when(gateway.sendMeCode(anyString())).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.sendMeCode().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNoErrors();
     testObserver.assertComplete();

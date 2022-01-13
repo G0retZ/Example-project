@@ -9,16 +9,18 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderOfferDecisionException;
 import com.cargopull.executor_driver.entity.OrderOfferExpiredException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderUseCaseImplTest {
@@ -53,7 +55,7 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void askGatewayForOrdersOnlyOnce() {
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.setOrderOfferDecisionMade();
@@ -61,7 +63,7 @@ public class OrderUseCaseImplTest {
     useCase.getOrders().test().isDisposed();
     useCase.setOrderOfferDecisionMade();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -72,14 +74,14 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerWithOrders() {
-    // Дано:
+    // Given:
     when(gateway.getData())
         .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -90,15 +92,15 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerWithUpdatedOrder() {
-    // Дано:
+    // Given:
     when(gateway.getData())
         .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.updateWith(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -109,13 +111,13 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -126,16 +128,16 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerPreOrderExpiredError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.just(order, order1, order2)
         .concatWith(Flowable.error(new OrderOfferExpiredException(""))));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.updateWith(order3);
     useCase.setOrderOfferDecisionMade();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertError(OrderOfferExpiredException.class);
     testSubscriber.assertNotComplete();
@@ -146,16 +148,16 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerOrderOfferDecisionError() {
-    // Дано:
+    // Given:
     when(gateway.getData())
         .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.updateWith(order3);
     useCase.setOrderOfferDecisionMade();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();
@@ -166,14 +168,14 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     useCase.updateWith(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
@@ -184,12 +186,12 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerNothingAfterError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(
         Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER)
     );
 
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders();
     TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(order);
@@ -200,7 +202,7 @@ public class OrderUseCaseImplTest {
     emitter.onError(new Exception());
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertNotComplete();
@@ -217,12 +219,12 @@ public class OrderUseCaseImplTest {
    */
   @Test
   public void answerNothingAfterPreOrderExpiredError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(
         Flowable.create(emitter -> this.emitter = emitter, BackpressureStrategy.BUFFER)
     );
 
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders();
     TestSubscriber<Order> testSubscriber = orders.test();
     emitter.onNext(order);
@@ -233,7 +235,7 @@ public class OrderUseCaseImplTest {
     useCase.setOrderOfferDecisionMade();
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2, order3);
     testSubscriber.assertError(OrderOfferDecisionException.class);
     testSubscriber.assertNotComplete();

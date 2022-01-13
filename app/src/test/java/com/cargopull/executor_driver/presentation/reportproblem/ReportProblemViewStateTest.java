@@ -6,11 +6,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.entity.Problem;
-import java.util.Collections;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReportProblemViewStateTest {
@@ -26,13 +28,13 @@ public class ReportProblemViewStateTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     viewState = new ReportProblemViewState(Collections.singletonList(routePointItems));
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).setAvailableProblems(Collections.singletonList(routePointItems));
     verify(viewActions).showAvailableProblems(true);
     verify(viewActions).showReportProblemPending(false);

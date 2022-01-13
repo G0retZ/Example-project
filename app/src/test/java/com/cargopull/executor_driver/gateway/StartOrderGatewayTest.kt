@@ -50,10 +50,10 @@ class StartOrderGatewayTest {
      */
     @Test
     fun askApiToCompleteTheOrder() {
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(apiService, only()).startOrder(Collections.singletonMap("status", "START_ORDER"))
     }
 
@@ -64,15 +64,15 @@ class StartOrderGatewayTest {
      */
     @Test
     fun doNotTouchMapperOnError() {
-        // Дано:
+        // Given:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.error(Exception()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
-        verifyZeroInteractions(mapper)
+        // Effect:
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -81,14 +81,14 @@ class StartOrderGatewayTest {
     @Test
     @Throws(Exception::class)
     fun askMapperToMapData() {
-        // Дано:
+        // Given:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Результат:
+        // Effect:
         verify(mapper, only()).map(any())
     }
 
@@ -100,18 +100,18 @@ class StartOrderGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         `when`(mapper.map(any())).thenReturn(Pair(ExecutorState.ONLINE, order))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValue(Pair(ExecutorState.ONLINE, order))
@@ -122,14 +122,14 @@ class StartOrderGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderError() {
-        // Дано:
+        // Given:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
     }
@@ -139,17 +139,17 @@ class StartOrderGatewayTest {
      */
     @Test
     fun answerCompleteTheOrderDataErrorForWrongModel() {
-        // Дано:
+        // Given:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.error(JsonParseException("")))
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }
@@ -160,18 +160,18 @@ class StartOrderGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerCompleteTheOrderDataErrorForMapperError() {
-        // Дано:
+        // Given:
         `when`(apiService.startOrder(Collections.singletonMap("status", "START_ORDER")))
                 .thenReturn(Single.just(ApiSimpleResult()))
         doThrow(DataMappingException()).`when`(mapper).map(any())
 
-        // Действие:
+        // Action:
         gateway.data.test()
 
-        // Действие:
+        // Action:
         val testObserver = gateway.data.test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(DataMappingException::class.java)
     }
@@ -181,5 +181,6 @@ class StartOrderGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

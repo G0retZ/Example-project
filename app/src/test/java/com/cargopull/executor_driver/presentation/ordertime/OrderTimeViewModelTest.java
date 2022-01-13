@@ -7,13 +7,13 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderFulfillmentTimeUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -24,6 +24,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderTimeViewModelTest {
@@ -57,7 +60,7 @@ public class OrderTimeViewModelTest {
    */
   @Test
   public void askUseCaseForOrderTimeInitially() {
-    // Результат:
+    // Effect:
     verify(orderCurrentTimeUseCase, only()).getOrderElapsedTime();
   }
 
@@ -66,13 +69,13 @@ public class OrderTimeViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(orderCurrentTimeUseCase, only()).getOrderElapsedTime();
   }
 
@@ -83,13 +86,13 @@ public class OrderTimeViewModelTest {
    */
   @Test
   public void setViewStateWithZeroToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -99,17 +102,17 @@ public class OrderTimeViewModelTest {
    */
   @Test
   public void setViewStateWithTimesToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(123L);
     publishSubject.onNext(873L);
     publishSubject.onNext(4728L);
     publishSubject.onNext(32L);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(123));
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
@@ -123,18 +126,18 @@ public class OrderTimeViewModelTest {
    */
   @Test
   public void setNoNewViewStateViewStateToLiveDataOnError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(123L);
     publishSubject.onNext(873L);
     publishSubject.onNext(4728L);
     publishSubject.onNext(32L);
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(0));
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(123));
     inOrder.verify(viewStateObserver).onChanged(new OrderTimeViewState(873));
@@ -150,13 +153,13 @@ public class OrderTimeViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

@@ -1,10 +1,12 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiVehicle;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.Vehicle;
+
 import javax.inject.Inject;
 
 /**
@@ -23,19 +25,19 @@ public class VehicleApiMapper implements Mapper<ApiVehicle, Vehicle> {
   @Override
   public Vehicle map(@NonNull ApiVehicle from) throws Exception {
     if (from.getLicensePlate() == null) {
-      throw new DataMappingException("Ошибка маппинга: гос номер не должен быть null!");
+      throw new DataMappingException("Mapping error: legal plate must not be null!");
     }
     if (from.getMarkName() == null) {
-      throw new DataMappingException("Ошибка маппинга: имя марки не должно быть null!");
+      throw new DataMappingException("Mapping error: brand name must not be null!");
     }
     if (from.getModelName() == null) {
-      throw new DataMappingException("Ошибка маппинга: имя модели не должно быть null!");
+      throw new DataMappingException("Mapping error: model name must not be null!");
     }
     if (from.getColor() == null) {
-      throw new DataMappingException("Ошибка маппинга: имя цвета не должно быть null!");
+      throw new DataMappingException("Mapping error: color name must not be null!");
     }
     if (from.getVehicleOptionItems() == null) {
-      throw new DataMappingException("Ошибка маппинга: список опций не должен быть null!");
+      throw new DataMappingException("Mapping error: options list must not be null!");
     }
     Vehicle vehicle = new Vehicle(
         from.getId(),

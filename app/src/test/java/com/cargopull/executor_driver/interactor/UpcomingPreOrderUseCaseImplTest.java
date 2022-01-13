@@ -4,27 +4,30 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.OrderCancelledException;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpcomingPreOrderUseCaseImplTest {
@@ -69,13 +72,13 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void askGatewayForOrdersOnlyOnce() {
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -86,14 +89,14 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void doNotAskUseCaseForOrdersListForGet() {
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(ordersUseCase);
+    // Effect:
+    verifyNoInteractions(ordersUseCase);
   }
 
   /**
@@ -101,7 +104,7 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void askUseCaseForOrdersListForEveryValue() {
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order);
@@ -111,7 +114,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(ordersUseCase, times(2)).getOrdersSet();
     verifyNoMoreInteractions(ordersUseCase);
   }
@@ -124,7 +127,7 @@ public class UpcomingPreOrderUseCaseImplTest {
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   public void askOrderToModifyEta() {
-    // Дано:
+    // Given:
     when(order1.getEtaToStartPoint()).thenReturn(1L);
     when(order2.getEtaToStartPoint()).thenReturn(2L);
     when(order3.getEtaToStartPoint()).thenReturn(3L);
@@ -133,14 +136,14 @@ public class UpcomingPreOrderUseCaseImplTest {
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     orderEmitter.onNext(order);
     orderEmitter.onNext(order2);
     orderEmitter.onNext(order3);
     orderEmitter.onNext(order1);
 
-    // Результат:
+    // Effect:
     verify(order).withEtaToStartPoint(0L);
     verify(order).getEtaToStartPoint();
     verify(order1).withEtaToStartPoint(1L);
@@ -159,13 +162,13 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void doNotAnswerForNoChoice() {
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     orderEmitter.onNext(order);
     orderEmitter.onNext(order1);
     orderEmitter.onNext(order2);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -176,20 +179,20 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerWithSelectedOrders() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2, order3)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     orderEmitter.onNext(order);
     orderEmitter.onNext(order2);
     orderEmitter.onNext(order1);
     orderEmitter.onNext(order3);
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order3, order1, order2, order);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -200,11 +203,11 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerWithSelectedOrder() {
-    // Дано:
+    // Given:
     when(order1.withEtaToStartPoint(anyLong()))
         .thenReturn(order, order1, order, order3, order2, order);
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     orderEmitter.onNext(order1);
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
@@ -214,7 +217,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order3, order1, order2)));
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order1, order3)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order, order3, order2, order);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -225,11 +228,11 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerErrorOnUpcomingPreOrdersError() {
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     orderEmitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -240,12 +243,12 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerErrorOnPreOrdersListError() {
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     orderEmitter.onNext(order2);
     ordersEmitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -256,11 +259,11 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerOrderCancelledError() {
-    // Дано:
+    // Given:
     when(order2.withEtaToStartPoint(anyLong()))
         .thenReturn(order, order1, order, order3, order2, order);
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     orderEmitter.onNext(order2);
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order, order1, order2)));
@@ -270,7 +273,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order3, order1, order2)));
     ordersEmitter.onNext(new HashSet<>(Arrays.asList(order2, order)));
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(OrderCancelledException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertValues(order, order1);
@@ -281,13 +284,13 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
@@ -298,13 +301,13 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerNothingAfterUpcomingPreOrdersError() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders();
     TestSubscriber<Order> testSubscriber = orders.test();
     orderEmitter.onNext(order1);
@@ -314,7 +317,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     orderEmitter.onError(new Exception());
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertValues(order2, order3, order1);
     testSubscriber.assertNotComplete();
@@ -332,7 +335,7 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerNothingAfterPreOrdersListError() {
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders();
     TestSubscriber<Order> testSubscriber = orders.test();
     orderEmitter.onNext(order1);
@@ -345,7 +348,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     ordersEmitter.onError(new Exception());
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertValues(order2, order3, order1);
     testSubscriber.assertNotComplete();
@@ -363,13 +366,13 @@ public class UpcomingPreOrderUseCaseImplTest {
    */
   @Test
   public void answerNothingAfterUpComingPreOrdersComplete() {
-    // Дано:
+    // Given:
     when(ordersUseCase.getOrdersSet()).thenReturn(
         Flowable.<Set<Order>>just(new HashSet<>(Arrays.asList(order, order1, order2)))
             .concatWith(Flowable.never())
     );
 
-    // Действие:
+    // Action:
     Flowable<Order> orders = useCase.getOrders().doOnNext(System.out::println);
     TestSubscriber<Order> testSubscriber = orders.test();
     orderEmitter.onNext(order1);
@@ -379,7 +382,7 @@ public class UpcomingPreOrderUseCaseImplTest {
     orderEmitter.onComplete();
     TestSubscriber<Order> testSubscriber1 = orders.test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNoErrors();
     testSubscriber.assertValues(order2, order3, order1);
     testSubscriber.assertComplete();

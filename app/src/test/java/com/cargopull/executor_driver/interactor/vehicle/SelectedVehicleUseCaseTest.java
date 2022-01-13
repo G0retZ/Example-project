@@ -6,13 +6,16 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.Observable;
-import java.util.NoSuchElementException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.NoSuchElementException;
+
+import io.reactivex.Observable;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleUseCaseTest {
@@ -35,10 +38,10 @@ public class SelectedVehicleUseCaseTest {
    */
   @Test
   public void askVehicleDataSharerForVehicles() {
-    // Действие:
+    // Action:
     useCase.getSelectedVehicle().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(vehicleChoiceReceiver, only()).get();
   }
 
@@ -49,7 +52,7 @@ public class SelectedVehicleUseCaseTest {
    */
   @Test
   public void answerWithVehicleSelections() {
-    // Дано:
+    // Given:
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromArray(
         new Vehicle(12, "manufacturer", "model", "color", "license", false),
         new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -57,7 +60,7 @@ public class SelectedVehicleUseCaseTest {
         new Vehicle(15, "manufactures", "modelers", "colo", "licensee", true)
     ));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.getSelectedVehicle().test().assertValues(
         new Vehicle(12, "manufacturer", "model", "color", "license", false),
         new Vehicle(13, "manufacture", "models", "colo", "licenses", true),
@@ -71,10 +74,10 @@ public class SelectedVehicleUseCaseTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.error(new NoSuchElementException()));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.getSelectedVehicle().test().assertError(NoSuchElementException.class);
   }
 }

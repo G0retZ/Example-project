@@ -61,13 +61,13 @@ class OrderRouteGatewayTest {
      */
     @Test
     fun askStompClientToSendCloseRoutePointMessage() {
-        // Дано:
+        // Given:
         `when`(routePoint.id).thenReturn(7L)
 
-        // Действие:
+        // Action:
         gateway.closeRoutePoint(routePoint).test().isDisposed
 
-        // Результат:
+        // Effect:
         verify<ApiService>(apiService, only()).completeRoutePoint(7)
     }
 
@@ -76,13 +76,13 @@ class OrderRouteGatewayTest {
      */
     @Test
     fun askStompClientToSendNextRoutePointMessage() {
-        // Дано:
+        // Given:
         `when`(routePoint.id).thenReturn(7L)
 
-        // Действие:
+        // Action:
         gateway.nextRoutePoint(routePoint).test().isDisposed
 
-        // Результат:
+        // Effect:
         verify<ApiService>(apiService, only()).makeRoutePointNext(7)
     }
 
@@ -93,16 +93,16 @@ class OrderRouteGatewayTest {
      */
     @Test
     fun doNotTouchMapperOnCloseRoutePointError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeRoutePoint(anyLong()))
                 .thenReturn(Single.error(Exception()))
         `when`(routePoint.id).thenReturn(7L)
 
-        // Действие:
+        // Action:
         gateway.closeRoutePoint(routePoint).test()
 
-        // Результат:
-        verifyZeroInteractions(mapper)
+        // Effect:
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -110,16 +110,16 @@ class OrderRouteGatewayTest {
      */
     @Test
     fun doNotTouchMapperOnNextRoutePointError() {
-        // Дано:
+        // Given:
         `when`(apiService.makeRoutePointNext(anyLong()))
                 .thenReturn(Single.error(Exception()))
         `when`(routePoint.id).thenReturn(7L)
 
-        // Действие:
+        // Action:
         gateway.nextRoutePoint(routePoint).test()
 
-        // Результат:
-        verifyZeroInteractions(mapper)
+        // Effect:
+        verifyNoInteractions(mapper)
     }
 
     /**
@@ -128,16 +128,16 @@ class OrderRouteGatewayTest {
     @Test
     @Throws(Exception::class)
     fun askMapperToMapCloseRoutePointData() {
-        // Дано:
+        // Given:
         `when`(apiService.completeRoutePoint(anyLong())).thenReturn(Single.just(apiSimpleResult))
         `when`(routePoint.id).thenReturn(7L)
         `when`(apiSimpleResult.data).thenReturn(Arrays.asList(apiRoutePoint, apiRoutePoint, apiRoutePoint))
         `when`(mapper.map(any())).thenReturn(routePoint, routePoint1, routePoint2, routePoint3)
 
-        // Действие:
+        // Action:
         gateway.closeRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         verify(mapper, times(3)).map(apiRoutePoint)
         verifyNoMoreInteractions(mapper)
     }
@@ -148,16 +148,16 @@ class OrderRouteGatewayTest {
     @Test
     @Throws(Exception::class)
     fun askMapperToMapNextRoutePointData() {
-        // Дано:
+        // Given:
         `when`(apiService.makeRoutePointNext(anyLong())).thenReturn(Single.just(apiSimpleResult))
         `when`(routePoint.id).thenReturn(7L)
         `when`(apiSimpleResult.data).thenReturn(Arrays.asList(apiRoutePoint, apiRoutePoint, apiRoutePoint))
         `when`(mapper.map(any())).thenReturn(routePoint, routePoint1, routePoint2, routePoint3)
 
-        // Действие:
+        // Action:
         gateway.nextRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         verify(mapper, times(3)).map(apiRoutePoint)
         verifyNoMoreInteractions(mapper)
     }
@@ -170,15 +170,15 @@ class OrderRouteGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerSendCloseRoutePointSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.completeRoutePoint(anyLong())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.data).thenReturn(Arrays.asList<ApiRoutePoint>(apiRoutePoint, apiRoutePoint, apiRoutePoint, apiRoutePoint))
         `when`(mapper.map(any())).thenReturn(routePoint, routePoint1, routePoint2, routePoint3)
 
-        // Действие:
+        // Action:
         val testObserver = gateway.closeRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValue(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint3))
@@ -190,15 +190,15 @@ class OrderRouteGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerSendNextRoutePointSuccess() {
-        // Дано:
+        // Given:
         `when`(apiService.makeRoutePointNext(anyLong())).thenReturn(Single.just(apiSimpleResult))
         `when`(apiSimpleResult.data).thenReturn(Arrays.asList<ApiRoutePoint>(apiRoutePoint, apiRoutePoint, apiRoutePoint, apiRoutePoint))
         `when`(mapper.map(any())).thenReturn(routePoint, routePoint1, routePoint2, routePoint3)
 
-        // Действие:
+        // Action:
         val testObserver = gateway.nextRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValue(Arrays.asList<RoutePoint>(routePoint, routePoint1, routePoint2, routePoint3))
@@ -209,14 +209,14 @@ class OrderRouteGatewayTest {
      */
     @Test
     fun answerSendCloseRoutePointError() {
-        // Дано:
+        // Given:
         `when`(apiService.completeRoutePoint(anyLong()))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.closeRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
     }
@@ -226,14 +226,14 @@ class OrderRouteGatewayTest {
      */
     @Test
     fun answerSendNextRoutePointError() {
-        // Дано:
+        // Given:
         `when`(apiService.makeRoutePointNext(anyLong()))
                 .thenReturn(Single.error(IllegalArgumentException()))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.nextRoutePoint(routePoint).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalArgumentException::class.java)
     }
@@ -243,5 +243,6 @@ class OrderRouteGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

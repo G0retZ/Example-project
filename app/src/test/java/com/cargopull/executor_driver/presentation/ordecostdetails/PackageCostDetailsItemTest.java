@@ -6,12 +6,14 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.PackageCostDetails;
 import com.cargopull.executor_driver.utils.Pair;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PackageCostDetailsItemTest {
@@ -29,43 +31,43 @@ public class PackageCostDetailsItemTest {
 
   @Test
   public void testGetPackageCost() {
-    // Дано:
+    // Given:
     when(packageCostDetails.getPackageCost()).thenReturn(123L);
 
-    // Результат:
+    // Effect:
     assertEquals(packageCostDetailsItem.getCost(), 123L);
   }
 
   @Test
   public void testGetPackageTime() {
-    // Дано:
+    // Given:
     when(packageCostDetails.getPackageTime()).thenReturn(123L);
 
-    // Результат:
+    // Effect:
     assertEquals(packageCostDetailsItem.getTime(), 123L);
   }
 
   @Test
   public void testGetPackageDistance() {
-    // Дано:
+    // Given:
     when(packageCostDetails.getPackageDistance()).thenReturn(123456);
 
-    // Результат:
+    // Effect:
     assertEquals(packageCostDetailsItem.getDistance(), 123.456d, 0);
   }
 
   @Test
   public void testGetServiceCost() {
-    // Дано:
+    // Given:
     when(packageCostDetails.getServiceCost()).thenReturn(123456L);
 
-    // Результат:
+    // Effect:
     assertEquals(packageCostDetailsItem.getServiceCost(), 123456L);
   }
 
   @Test
   public void testGetOptionsCosts() {
-    // Дано:
+    // Given:
     when(packageCostDetails.getOptionCosts())
         .thenReturn(Arrays.asList(
             new Pair<>("name1", 1L),
@@ -73,7 +75,7 @@ public class PackageCostDetailsItemTest {
             new Pair<>("name3", 3L)
         ));
 
-    // Результат:
+    // Effect:
     assertEquals(packageCostDetailsItem.getOptionsCosts().size(), 3);
     assertEquals(packageCostDetailsItem.getOptionsCosts().get(0).first, "name1");
     assertEquals(packageCostDetailsItem.getOptionsCosts().get(0).second, new Long(1));

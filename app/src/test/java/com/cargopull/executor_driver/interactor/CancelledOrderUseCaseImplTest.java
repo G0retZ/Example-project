@@ -4,20 +4,24 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CancelledOrderUseCaseImplTest {
@@ -49,13 +53,13 @@ public class CancelledOrderUseCaseImplTest {
    */
   @Test
   public void askGatewayForOrdersOnlyOnce() {
-    // Действие:
+    // Action:
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
     useCase.getOrders().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -66,14 +70,14 @@ public class CancelledOrderUseCaseImplTest {
    */
   @Test
   public void answerWithOrders() {
-    // Дано:
+    // Given:
     when(gateway.getData())
         .thenReturn(Flowable.just(order, order1, order2).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertNoErrors();
     testSubscriber.assertNotComplete();
@@ -84,13 +88,13 @@ public class CancelledOrderUseCaseImplTest {
    */
   @Test
   public void answerError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -101,13 +105,13 @@ public class CancelledOrderUseCaseImplTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();
@@ -118,12 +122,12 @@ public class CancelledOrderUseCaseImplTest {
    */
   @Test
   public void answerNothingAfterError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.create(new FlowableOnSubscribe<Order>() {
       private boolean run;
 
       @Override
-      public void subscribe(FlowableEmitter<Order> emitter) {
+      public void subscribe(@NonNull FlowableEmitter<Order> emitter) {
         if (!run) {
           emitter.onNext(order);
           emitter.onNext(order1);
@@ -134,11 +138,11 @@ public class CancelledOrderUseCaseImplTest {
       }
     }, BackpressureStrategy.BUFFER));
 
-    // Действие:
+    // Action:
     TestSubscriber<Order> testSubscriber = useCase.getOrders().test();
     TestSubscriber<Order> testSubscriber1 = useCase.getOrders().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues(order, order1, order2);
     testSubscriber.assertError(Exception.class);
     testSubscriber.assertNotComplete();

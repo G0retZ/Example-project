@@ -6,46 +6,48 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.entity.Vehicle;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ChooseVehicleViewStateReadyTest {
 
-  private ChooseVehicleViewStateReady viewState;
+    private ChooseVehicleViewStateReady viewState;
 
-  @Mock
-  private ChooseVehicleViewActions viewActions;
+    @Mock
+    private ChooseVehicleViewActions viewActions;
 
-  @Before
-  public void setUp() {
-    viewState = new ChooseVehicleViewStateReady(Arrays.asList(
-        new ChooseVehicleListItem(
-            new Vehicle(1, "m", "m", "c", "l", false)
-        ),
-        new ChooseVehicleListItem(
-            new Vehicle(2, "ma", "m", "co", "l", true)
-        ),
-        new ChooseVehicleListItem(
-            new Vehicle(3, "m", "m", "co", "l", false)
-        ),
-        new ChooseVehicleListItem(
-            new Vehicle(4, "ma", "m", "c", "l", true)
-        )
-    ));
-  }
+    @Before
+    public void setUp() {
+        viewState = new ChooseVehicleViewStateReady(Arrays.asList(
+                new ChooseVehicleListItem(
+                        new Vehicle(1, "m", "m", "c", "l", false)
+                ),
+                new ChooseVehicleListItem(
+                        new Vehicle(2, "ma", "m", "co", "l", true)
+                ),
+                new ChooseVehicleListItem(
+                        new Vehicle(3, "m", "m", "co", "l", false)
+                ),
+                new ChooseVehicleListItem(
+                        new Vehicle(4, "ma", "m", "c", "l", true)
+                )
+        ));
+    }
 
-  @Test
+    @Test
   public void testActions() {
-    // Действие:
+        // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+        // Effect:
     verify(viewActions).showVehicleList(true);
     verify(viewActions).showVehicleListPending(false);
     verify(viewActions).showVehicleListErrorMessage(false);

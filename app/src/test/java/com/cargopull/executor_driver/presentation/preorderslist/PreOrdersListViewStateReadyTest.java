@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrdersListViewStateReadyTest {
@@ -31,10 +32,10 @@ public class PreOrdersListViewStateReadyTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).showPreOrdersList(true);
     verify(viewActions).showEmptyPreOrdersList(false);
     verify(viewActions).showPreOrdersListPending(false);

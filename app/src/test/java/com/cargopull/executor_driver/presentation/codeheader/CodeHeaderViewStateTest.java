@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.TextViewActions;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +29,10 @@ public class CodeHeaderViewStateTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions, only())
         .setText(R.id.codeHeaderPhone, "+7 (999) 700-44-50");
   }

@@ -44,10 +44,10 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun askGatewayToProceedToNextState() {
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
 
-        // Результат:
+        // Effect:
         verify(gateway, only()).data
     }
 
@@ -58,14 +58,14 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateExecutorStateUseCase() {
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
 
-        // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        // Effect:
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -73,21 +73,21 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun doNotTouchUpdateExecutorStateUseCaseOnErrors() {
-        // Дано:
+        // Given:
         `when`(gateway.data).thenReturn(
                 Single.error(DataMappingException()),
                 Single.error(IOException()),
                 Single.error(NullPointerException())
         )
 
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
 
-        // Результат:
-        verifyZeroInteractions(updateExecutorStateUseCase)
+        // Effect:
+        verifyNoInteractions(updateExecutorStateUseCase)
     }
 
     /**
@@ -95,7 +95,7 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun passUpdateExecutorStateToUpdateUseCase() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(updateExecutorStateUseCase)
         `when`(gateway.data).thenReturn(
                 Single.just(Pair(ExecutorState.ONLINE, "lalala")),
@@ -104,13 +104,13 @@ class NextExecutorStateUseCaseTest {
                 Single.just(Pair(ExecutorState.ORDER_FULFILLMENT, "lilili"))
         )
 
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
 
-        // Результат:
+        // Effect:
         inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.ONLINE)
         inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.WAITING_FOR_CLIENT)
         inOrder.verify(updateExecutorStateUseCase).updateWith(ExecutorState.PAYMENT_CONFIRMATION)
@@ -124,14 +124,14 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun doNotTouchUpdatedDataUseCase() {
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
 
-        // Результат:
-        verifyZeroInteractions(updateUseCase)
+        // Effect:
+        verifyNoInteractions(updateUseCase)
     }
 
     /**
@@ -139,21 +139,21 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun doNotTouchUpdatedDataUseCaseOnErrors() {
-        // Дано:
+        // Given:
         `when`(gateway.data).thenReturn(
                 Single.error(DataMappingException()),
                 Single.error(IOException()),
                 Single.error(NullPointerException())
         )
 
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
 
-        // Результат:
-        verifyZeroInteractions(updateUseCase)
+        // Effect:
+        verifyNoInteractions(updateUseCase)
     }
 
     /**
@@ -161,7 +161,7 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun passUpdatedDataToUpdateUseCase() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(updateUseCase)
         `when`(gateway.data).thenReturn(
                 Single.just(Pair(ExecutorState.ONLINE, "lalala")),
@@ -170,13 +170,13 @@ class NextExecutorStateUseCaseTest {
                 Single.just(Pair(ExecutorState.ORDER_FULFILLMENT, "lilili"))
         )
 
-        // Действие:
+        // Action:
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
         useCase.proceedToNextState.test()
 
-        // Результат:
+        // Effect:
         inOrder.verify(updateUseCase).updateWith("lalala")
         inOrder.verify(updateUseCase).updateWith("lelele")
         inOrder.verify(updateUseCase).updateWith("lilili")
@@ -189,13 +189,13 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun answerDataMappingError() {
-        // Дано:
+        // Given:
         `when`(gateway.data).thenReturn(Single.error(DataMappingException()))
 
-        // Действие:
+        // Action:
         val test = useCase.proceedToNextState.test()
 
-        // Результат:
+        // Effect:
         test.assertError(DataMappingException::class.java)
         test.assertNoValues()
         test.assertNotComplete()
@@ -206,13 +206,13 @@ class NextExecutorStateUseCaseTest {
      */
     @Test
     fun answerWithOrdersBeforeComplete() {
-        // Дано:
+        // Given:
         `when`(gateway.data).thenReturn(Single.just(Pair(ExecutorState.ONLINE, "lalala")))
 
-        // Действие:
+        // Action:
         val test = useCase.proceedToNextState.test()
 
-        // Результат:
+        // Effect:
         test.assertNoValues()
         test.assertComplete()
         test.assertNoErrors()

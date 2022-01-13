@@ -13,16 +13,13 @@ import static com.cargopull.executor_driver.entity.ExecutorState.SHIFT_OPENED;
 import static com.cargopull.executor_driver.entity.ExecutorState.WAITING_FOR_CLIENT;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.Pair;
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.observers.TestObserver;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -32,6 +29,12 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(Parameterized.class)
 public class ExecutorStateNotOnlineUseCaseTest {
@@ -61,20 +64,20 @@ public class ExecutorStateNotOnlineUseCaseTest {
   }
 
   @Parameterized.Parameters
-  public static Iterable primeNumbers() {
+  public static Iterable<Pair<ExecutorState, Pair<Boolean, Boolean>>> primeNumbers() {
     // Соответствия значений статуса эксепшенам и действиям гейтвея
     return Arrays.asList(
-        new Pair<>(BLOCKED, new Pair<>(true, false)),
-        new Pair<>(SHIFT_CLOSED, new Pair<>(true, false)),
-        new Pair<>(SHIFT_OPENED, new Pair<>(true, false)),
-        new Pair<>(ONLINE, new Pair<>(false, true)),
-        new Pair<>(DRIVER_ORDER_CONFIRMATION, new Pair<>(true, false)),
-        new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION, new Pair<>(true, false)),
-        new Pair<>(CLIENT_ORDER_CONFIRMATION, new Pair<>(true, false)),
-        new Pair<>(MOVING_TO_CLIENT, new Pair<>(true, false)),
-        new Pair<>(WAITING_FOR_CLIENT, new Pair<>(true, false)),
-        new Pair<>(ORDER_FULFILLMENT, new Pair<>(true, false)),
-        new Pair<>(PAYMENT_CONFIRMATION, new Pair<>(false, true))
+            new Pair<>(BLOCKED, new Pair<>(true, false)),
+            new Pair<>(SHIFT_CLOSED, new Pair<>(true, false)),
+            new Pair<>(SHIFT_OPENED, new Pair<>(true, false)),
+            new Pair<>(ONLINE, new Pair<>(false, true)),
+            new Pair<>(DRIVER_ORDER_CONFIRMATION, new Pair<>(true, false)),
+            new Pair<>(DRIVER_PRELIMINARY_ORDER_CONFIRMATION, new Pair<>(true, false)),
+            new Pair<>(CLIENT_ORDER_CONFIRMATION, new Pair<>(true, false)),
+            new Pair<>(MOVING_TO_CLIENT, new Pair<>(true, false)),
+            new Pair<>(WAITING_FOR_CLIENT, new Pair<>(true, false)),
+            new Pair<>(ORDER_FULFILLMENT, new Pair<>(true, false)),
+            new Pair<>(PAYMENT_CONFIRMATION, new Pair<>(false, true))
     );
   }
 
@@ -94,10 +97,10 @@ public class ExecutorStateNotOnlineUseCaseTest {
    */
   @Test
   public void getExecutorStates() {
-    // Действие:
+    // Action:
     useCase.setExecutorNotOnline().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(executorStateUseCase, only()).getExecutorStates();
   }
 
@@ -108,29 +111,29 @@ public class ExecutorStateNotOnlineUseCaseTest {
    */
   @Test
   public void DoNotTouchGatewayWithoutStatus() {
-    // Действие:
+    // Action:
     useCase.setExecutorNotOnline().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(gateway);
+    // Effect:
+    verifyNoInteractions(gateway);
   }
 
   @Test
   public void touchOrNotGateway() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     useCase.setExecutorNotOnline().test().isDisposed();
 
-    // Результат:
+    // Effect:
     if (expectedGatewayInvocation) {
       // Должен отправить статус "смена открыта" через гейтвей передачи статусов.
       verify(gateway, only()).sendNewExecutorState(ExecutorState.SHIFT_OPENED);
     } else {
       // Не должен трогать гейтвей передачи статусов
-      verifyZeroInteractions(gateway);
+      verifyNoInteractions(gateway);
     }
   }
 
@@ -138,14 +141,14 @@ public class ExecutorStateNotOnlineUseCaseTest {
 
   @Test
   public void answerIllegalArgumentErrorOrComplete() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     if (expectedArgumentException) {
       // Должен вернуть ошибку неподходящего статуса
@@ -163,16 +166,16 @@ public class ExecutorStateNotOnlineUseCaseTest {
    */
   @Test
   public void answerWithErrorIfSendFailed() {
-    // Дано:
+    // Given:
     when(executorStateUseCase.getExecutorStates())
         .thenReturn(Flowable.just(conditionExecutorState).concatWith(Flowable.never()));
     when(gateway.sendNewExecutorState(ExecutorState.SHIFT_OPENED))
         .thenReturn(Completable.error(new Exception()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = useCase.setExecutorNotOnline().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNotComplete();
     testObserver

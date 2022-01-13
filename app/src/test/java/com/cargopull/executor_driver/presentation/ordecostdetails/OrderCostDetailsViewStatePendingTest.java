@@ -4,10 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,10 +35,10 @@ public class OrderCostDetailsViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showOrderCostDetailsPending(true);
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -45,16 +46,16 @@ public class OrderCostDetailsViewStatePendingTest {
 
   @Test
   public void testNoActions() {
-    // Дано:
+      // Given:
     viewState = new OrderCostDetailsViewStatePending(null);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showOrderCostDetailsPending(true);
     verifyNoMoreInteractions(viewActions);
-    verifyZeroInteractions(parentViewState);
+    verifyNoInteractions(parentViewState);
   }
 
   @Test

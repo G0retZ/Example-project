@@ -3,16 +3,15 @@ package com.cargopull.executor_driver.presentation.calltooperator;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
-import java.util.concurrent.TimeUnit;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -23,6 +22,11 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CallToOperatorViewModelTest {
@@ -53,10 +57,10 @@ public class CallToOperatorViewModelTest {
    */
   @Test
   public void setNotCallingViewStateToLiveDataInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(any(CallToOperatorViewStateNotCalling.class));
   }
 
@@ -65,14 +69,14 @@ public class CallToOperatorViewModelTest {
    */
   @Test
   public void setCallingViewStateToLiveDataForComplete() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.callToOperator();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateNotCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateCalling.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -83,15 +87,15 @@ public class CallToOperatorViewModelTest {
    */
   @Test
   public void setNotCallingViewStateToLiveData10SecondsAfterCall() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.callToOperator();
     testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateNotCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateCalling.class));
     inOrder.verify(viewStateObserver).onChanged(any(CallToOperatorViewStateNotCalling.class));
@@ -105,11 +109,11 @@ public class CallToOperatorViewModelTest {
    */
   @Test
   public void doNotSetNavigateInitially() {
-    // Действие:
+    // Action:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
+    // Effect:
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -117,14 +121,14 @@ public class CallToOperatorViewModelTest {
    */
   @Test
   public void doNotSetNavigate() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.callToOperator();
 
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
+    // Effect:
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -132,14 +136,14 @@ public class CallToOperatorViewModelTest {
    */
   @Test
   public void doNotSetNavigateAfter9999ms() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.callToOperator();
     testScheduler.advanceTimeBy(10, TimeUnit.MINUTES);
 
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
+    // Effect:
+    verifyNoInteractions(navigateObserver);
   }
 }

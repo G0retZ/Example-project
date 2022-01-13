@@ -11,13 +11,15 @@ import com.cargopull.executor_driver.backend.web.incoming.ApiVehicle;
 import com.cargopull.executor_driver.entity.Option;
 import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.Vehicle;
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleApiMapperTest {
@@ -41,7 +43,7 @@ public class VehicleApiMapperTest {
    */
   @Test
   public void mappingSuccess() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -58,10 +60,10 @@ public class VehicleApiMapperTest {
         )
     );
 
-    // Действие:
+    // Action:
     Vehicle vehicle = mapper.map(apiVehicle);
 
-    // Результат:
+    // Effect:
     assertEquals(vehicle.getId(), 2190);
     assertEquals(vehicle.getManufacturer(), "mark");
     assertEquals(vehicle.getModel(), "model");
@@ -81,7 +83,7 @@ public class VehicleApiMapperTest {
    */
   @Test
   public void mappingWithEmptyOptionsSuccess() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -92,10 +94,10 @@ public class VehicleApiMapperTest {
         new ArrayList<>()
     );
 
-    // Действие:
+    // Action:
     Vehicle vehicle = mapper.map(apiVehicle);
 
-    // Результат:
+    // Effect:
     assertEquals(vehicle.getId(), 2190);
     assertEquals(vehicle.getManufacturer(), "mark");
     assertEquals(vehicle.getModel(), "model");
@@ -112,7 +114,7 @@ public class VehicleApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithoutMarkNameFail() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         null,
@@ -123,7 +125,7 @@ public class VehicleApiMapperTest {
         new ArrayList<>()
     );
 
-    // Действие:
+    // Action:
     mapper.map(apiVehicle);
   }
 
@@ -134,7 +136,7 @@ public class VehicleApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithoutModelNameFail() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -145,7 +147,7 @@ public class VehicleApiMapperTest {
         new ArrayList<>()
     );
 
-    // Действие:
+    // Action:
     mapper.map(apiVehicle);
   }
 
@@ -156,7 +158,7 @@ public class VehicleApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithoutPlateFail() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -167,7 +169,7 @@ public class VehicleApiMapperTest {
         new ArrayList<>()
     );
 
-    // Действие:
+    // Action:
     mapper.map(apiVehicle);
   }
 
@@ -178,7 +180,7 @@ public class VehicleApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithoutColorFail() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -189,7 +191,7 @@ public class VehicleApiMapperTest {
         new ArrayList<>()
     );
 
-    // Действие:
+    // Action:
     mapper.map(apiVehicle);
   }
 
@@ -200,7 +202,7 @@ public class VehicleApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingWithoutOptionsFail() throws Exception {
-    // Дано:
+    // Given:
     ApiVehicle apiVehicle = new ApiVehicle(
         2190,
         "mark",
@@ -211,7 +213,7 @@ public class VehicleApiMapperTest {
         null
     );
 
-    // Действие:
+    // Action:
     mapper.map(apiVehicle);
   }
 }

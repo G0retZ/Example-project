@@ -9,19 +9,22 @@ import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.concurrent.TimeUnit;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderFulfillmentTimeUseCaseTest {
@@ -56,13 +59,13 @@ public class OrderFulfillmentTimeUseCaseTest {
    */
   @Test
   public void askGatewayForOrders() {
-    // Действие:
+    // Action:
     useCase.getOrderElapsedTime().test().isDisposed();
     useCase.getOrderElapsedTime().test().isDisposed();
     useCase.getOrderElapsedTime().test().isDisposed();
     useCase.getOrderElapsedTime().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(orderUseCase, times(4)).getOrders();
     verifyNoMoreInteractions(orderUseCase);
   }
@@ -74,13 +77,13 @@ public class OrderFulfillmentTimeUseCaseTest {
    */
   @Test
   public void answerDataMappingError() {
-    // Дано:
+    // Given:
     when(orderUseCase.getOrders()).thenReturn(Flowable.error(new DataMappingException()));
 
-    // Действие:
+    // Action:
     TestSubscriber<Long> test = useCase.getOrderElapsedTime().test();
 
-    // Результат:
+    // Effect:
     test.assertError(DataMappingException.class);
     test.assertNoValues();
     test.assertNotComplete();
@@ -91,7 +94,7 @@ public class OrderFulfillmentTimeUseCaseTest {
    */
   @Test
   public void answerWithTimeUpdates() {
-    // Дано:
+    // Given:
     PublishSubject<Order> publishSubject = PublishSubject.create();
     when(orderUseCase.getOrders())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
@@ -99,7 +102,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     when(order2.getStartTime()).thenReturn(6789000L);
     when(timeUtils.currentTimeMillis()).thenReturn(12350000L, 6801000L);
 
-    // Действие:
+    // Action:
     TestSubscriber<Long> test = useCase.getOrderElapsedTime().test();
     publishSubject.onNext(order);
     testScheduler.advanceTimeBy(2, TimeUnit.SECONDS);
@@ -110,7 +113,7 @@ public class OrderFulfillmentTimeUseCaseTest {
     testScheduler.advanceTimeBy(3, TimeUnit.SECONDS);
     testScheduler.advanceTimeBy(8, TimeUnit.SECONDS);
 
-    // Результат:
+    // Effect:
     test.assertValues(5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L, 12L, 13L, 14L, 15L, 16L,
         17L, 18L, 19L, 20L, 21L, 22L, 23L, 24L, 25L);
     test.assertNotComplete();

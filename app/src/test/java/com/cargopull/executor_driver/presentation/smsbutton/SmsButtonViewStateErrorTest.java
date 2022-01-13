@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.presentation.FragmentViewActions;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +27,10 @@ public class SmsButtonViewStateErrorTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setText(R.id.sendSms, R.string.repeat_code_from_sms);
     verify(viewActions).setEnabled(R.id.sendSms, true);
     verify(viewActions).unblockWithPending("sms");

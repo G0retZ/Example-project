@@ -11,13 +11,15 @@ import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.outgoing.ApiLogin;
 import com.cargopull.executor_driver.entity.LoginData;
 import com.cargopull.executor_driver.gateway.PasswordGatewayImpl;
-import io.reactivex.Completable;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PasswordGatewayTest {
@@ -43,10 +45,10 @@ public class PasswordGatewayTest {
    */
   @Test
   public void authCompletableRequested() {
-    // Действие:
+    // Action:
     gateway.authorize(new LoginData("Login", "Password"));
 
-    // Результат:
+    // Effect:
     verify(api, only()).authorize(new ApiLogin("Login", "Password"));
   }
 
@@ -57,11 +59,11 @@ public class PasswordGatewayTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Действие:
+    // Action:
     when(api.authorize(any(ApiLogin.class)))
         .thenReturn(Completable.error(new NoNetworkException()));
 
-    // Результат:
+    // Effect:
     gateway.authorize(new LoginData("Login", "Password"))
         .test().assertError(NoNetworkException.class);
   }
@@ -71,10 +73,10 @@ public class PasswordGatewayTest {
    */
   @Test
   public void answerAuthSuccessful() {
-    // Действие:
+    // Action:
     when(api.authorize(any(ApiLogin.class))).thenReturn(Completable.complete());
 
-    // Результат:
+    // Effect:
     gateway.authorize(new LoginData("Login", "Password"))
         .test().assertComplete();
   }

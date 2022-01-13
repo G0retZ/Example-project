@@ -29,7 +29,7 @@ class EventLoggerImpl(private val appSettings: AppSettingsService, context: Cont
         appSettings.getData("authorizationLogin")
             ?.let { params[FirebaseAnalytics.Param.CHARACTER] = it }
             ?: FirebaseCrashlytics.getInstance()
-                .recordException(RuntimeException("Не удалось выснить номер телефона водителя"))
+                .recordException(RuntimeException("Failed to get drivers phone number"))
         val bundle = Bundle()
         params.forEach { (key, value) ->
             bundle.putString(key, value)

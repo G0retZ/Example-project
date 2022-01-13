@@ -16,10 +16,10 @@ public class OnlineButtonViewStateReadyTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     new OnlineButtonViewStateReady().apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).enableGoOnlineButton(true);
     verify(viewActions).showGoOnlinePending(false);
     verifyNoMoreInteractions(viewActions);

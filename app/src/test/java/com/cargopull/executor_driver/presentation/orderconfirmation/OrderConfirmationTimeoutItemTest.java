@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.utils.TimeUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,7 @@ public class OrderConfirmationTimeoutItemTest {
 
   @Test
   public void testGetItemTimestamp() {
-    // Результат:
+    // Effect:
     assertEquals(ocTimeoutItem.getItemTimestamp(), 12390182L);
     assertEquals(ocTimeoutItem.getItemTimestamp(), 12390182L);
     assertEquals(ocTimeoutItem.getItemTimestamp(), 12390182L);
@@ -37,10 +38,10 @@ public class OrderConfirmationTimeoutItemTest {
 
   @Test
   public void testGetTimeout() {
-    // Дано:
+      // Given:
     when(timeUtils.currentTimeMillis()).thenReturn(12395182L, 12400182L);
 
-    // Результат:
+      // Effect:
     assertEquals(ocTimeoutItem.getTimeout(), 15000L);
     assertEquals(ocTimeoutItem.getTimeout(), 10000L);
   }

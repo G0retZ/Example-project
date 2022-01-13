@@ -24,10 +24,10 @@ public class CallToClientViewStateNotCallingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showCallingToClient(false);
     verify(viewActions).showCallToClientPending(false);
     verifyNoMoreInteractions(viewActions);

@@ -3,11 +3,13 @@ package com.cargopull.executor_driver.entity;
 import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.utils.Pair;
-import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PackageCostDetailsTest {
@@ -25,11 +27,11 @@ public class PackageCostDetailsTest {
 
   @Test
   public void testConstructor() {
-    // Дано:
+    // Given:
     PackageCostDetails packageOptionCost = new PackageCostDetails(123, 234, 345, 456,
         Arrays.asList(optionCost0, optionCost1, optionCost2, optionCost3, optionCost4));
 
-    // Результат:
+    // Effect:
     assertEquals(packageOptionCost.getPackageTime(), 123);
     assertEquals(packageOptionCost.getPackageDistance(), 234);
     assertEquals(packageOptionCost.getPackageCost(), 345);

@@ -3,12 +3,13 @@ package com.cargopull.executor_driver.presentation.balance;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorBalance;
@@ -16,8 +17,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorBalanceUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -28,6 +28,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BalanceViewModelTest {
@@ -70,10 +73,10 @@ public class BalanceViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -84,7 +87,7 @@ public class BalanceViewModelTest {
    */
   @Test
   public void askUseCaseForExecutorBalancesInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorBalance();
   }
 
@@ -93,13 +96,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorBalance();
   }
 
@@ -110,13 +113,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -126,13 +129,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new BalanceViewStatePending(null));
   }
 
@@ -141,16 +144,16 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setBalanceViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(executorBalance);
     publishSubject.onNext(executorBalance1);
     publishSubject.onNext(executorBalance2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewState(executorBalance));
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewState(executorBalance1));
@@ -165,15 +168,15 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setPendingViewStateStateToLiveDataForReplenishAccount() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(executorBalance);
     viewModel.replenishAccount();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new BalanceViewState(executorBalance));
     verifyNoMoreInteractions(viewStateObserver);
@@ -186,17 +189,17 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setNothingToLiveDataForBalanceUpdates() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
-    // Действие:
+    // Action:
+    // Action:
     publishSubject.onNext(executorBalance);
     publishSubject.onNext(executorBalance1);
     publishSubject.onNext(executorBalance2);
 
-    // Результат:
-    verifyZeroInteractions(navigateObserver);
+    // Effect:
+    verifyNoInteractions(navigateObserver);
   }
 
   /**
@@ -204,13 +207,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setNavigateToReplenishAccountToLiveData() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.replenishAccount();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(BalanceNavigate.PAYMENT_OPTIONS);
   }
 
@@ -219,13 +222,13 @@ public class BalanceViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

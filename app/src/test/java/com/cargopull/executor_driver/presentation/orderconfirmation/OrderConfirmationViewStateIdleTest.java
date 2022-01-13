@@ -24,16 +24,16 @@ public class OrderConfirmationViewStateIdleTest {
 
   @Test
   public void testActionsWithTrue() {
-    // Дано:
+    // Given:
     OrderConfirmationViewStateIdle orderConfirmationViewStateIdle = new OrderConfirmationViewStateIdle(
         orderConfirmationTimeoutItem, true);
     InOrder inOrder = Mockito.inOrder(viewActions);
     when(orderConfirmationTimeoutItem.getTimeout()).thenReturn(13_000L);
 
-    // Действие:
+      // Action:
     orderConfirmationViewStateIdle.apply(viewActions);
 
-    // Результат:
+      // Effect:
     inOrder.verify(viewActions).showDriverOrderConfirmationPending(false);
     inOrder.verify(viewActions).enableAcceptButton(true);
     inOrder.verify(viewActions).enableDeclineButton(true);
@@ -46,16 +46,16 @@ public class OrderConfirmationViewStateIdleTest {
 
   @Test
   public void testActionsWithFalse() {
-    // Дано:
+      // Given:
     OrderConfirmationViewStateIdle orderConfirmationViewStateIdle = new OrderConfirmationViewStateIdle(
         orderConfirmationTimeoutItem, false);
     InOrder inOrder = Mockito.inOrder(viewActions);
     when(orderConfirmationTimeoutItem.getTimeout()).thenReturn(13_000L);
 
-    // Действие:
+      // Action:
     orderConfirmationViewStateIdle.apply(viewActions);
 
-    // Результат:
+      // Effect:
     inOrder.verify(viewActions).showDriverOrderConfirmationPending(false);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(true);

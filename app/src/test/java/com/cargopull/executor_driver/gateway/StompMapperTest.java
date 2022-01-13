@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.entity.Order;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,13 +44,13 @@ public class StompMapperTest {
    */
   @Test
   public void mappingJsonStringToOrderSuccess() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn(rule.getFullOrder());
 
-    // Действие:
+      // Action:
     Order order = mapper.map(stompFrame);
 
-    // Результат:
+      // Effect:
     assertEquals(this.order, order);
   }
 
@@ -60,11 +61,11 @@ public class StompMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingFailForOrderMappingError() throws Exception {
-    // Дано:
+      // Given:
     when(stompFrame.getBody()).thenReturn(rule.getFullOrder());
     doThrow(new DataMappingException()).when(apiOrderMapper).map(any(ApiOrder.class));
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -75,10 +76,10 @@ public class StompMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
-    // Дано:
+      // Given:
     when(stompFrame.getBody()).thenReturn("\n");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -89,10 +90,10 @@ public class StompMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
-    // Дано:
+      // Given:
     when(stompFrame.getBody()).thenReturn("dasie");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -103,10 +104,10 @@ public class StompMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
-    // Дано:
+      // Given:
     when(stompFrame.getBody()).thenReturn("12");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -117,10 +118,10 @@ public class StompMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
-    // Дано:
+      // Given:
     when(stompFrame.getBody()).thenReturn("[]");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -131,7 +132,7 @@ public class StompMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 }

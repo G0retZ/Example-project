@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Problem;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -40,15 +41,15 @@ public class ApiProblemTest {
 
   @Test
   public void testConstructorWithProblem() {
-    // Дано:
+    // Given:
     when(problem.getId()).thenReturn(7);
     when(problem.getName()).thenReturn("seven");
     when(problem.getUnusedName()).thenReturn("unused");
 
-    // Действие:
+      // Action:
     ApiProblem apiProblem = new ApiProblem(problem);
 
-    // Результат:
+      // Effect:
     assertEquals(apiProblem.getId(), 7);
     assertEquals(apiProblem.getDescription(), "seven");
     assertEquals(apiProblem.getName(), "unused");
@@ -57,7 +58,7 @@ public class ApiProblemTest {
 
   @Test
   public void testEquals() {
-    // Дано:
+      // Given:
     when(problem.getId()).thenReturn(7);
     when(problem.getName()).thenReturn("seven");
     when(problem.getUnusedName()).thenReturn("unused");
@@ -71,10 +72,10 @@ public class ApiProblemTest {
     when(problem3.getName()).thenReturn("seven");
     when(problem3.getUnusedName()).thenReturn("nom");
 
-    // Действие:
+      // Action:
     ApiProblem apiProblem = new ApiProblem(problem);
 
-    // Результат:
+      // Effect:
     assertEquals(apiProblem, apiProblem);
     assertEquals(new ApiProblem(7, "seven", "unused"), new ApiProblem(7, "seven", "unused"));
     assertEquals(apiProblem, new ApiProblem(7, "seven", "unused"));

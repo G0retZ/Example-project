@@ -3,19 +3,20 @@ package com.cargopull.executor_driver.presentation.geolocation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.interactor.GeoLocationUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Flowable;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -26,6 +27,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationViewModelTest {
@@ -58,13 +61,13 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void reportGeoLocationError() {
-    // Дано:
+    // Given:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(SecurityException::new));
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(SecurityException.class));
   }
 
@@ -75,10 +78,10 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void askDataReceiverToSubscribeToLocationUpdates() {
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     verify(geoLocationUseCase, only()).getGeoLocations();
   }
 
@@ -87,12 +90,12 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void DoNotTouchDataReceiverAfterFirstSubscription() {
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
     viewModel.updateGeoLocations();
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     verify(geoLocationUseCase, only()).getGeoLocations();
   }
 
@@ -103,7 +106,7 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setViewStatesWithDataToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.just(
         new GeoLocation(1, 2, 3),
@@ -113,10 +116,10 @@ public class GeoLocationViewModelTest {
     ));
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(
         new GeoLocationViewState(new GeoLocation(1, 2, 3))
     );
@@ -137,7 +140,7 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setServerDataErrorViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(geoLocationUseCase.getGeoLocations()).thenReturn(
         Flowable.just(
@@ -149,10 +152,10 @@ public class GeoLocationViewModelTest {
     );
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(
         new GeoLocationViewState(new GeoLocation(1, 2, 3))
     );
@@ -173,7 +176,7 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setNoNewViewStateToLiveDataForNetworkError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(geoLocationUseCase.getGeoLocations()).thenReturn(
         Flowable.just(
@@ -185,10 +188,10 @@ public class GeoLocationViewModelTest {
     );
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(
         new GeoLocationViewState(new GeoLocation(1, 2, 3))
     );
@@ -209,7 +212,7 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setNoNewViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(geoLocationUseCase.getGeoLocations()).thenReturn(
         Flowable.just(
@@ -221,10 +224,10 @@ public class GeoLocationViewModelTest {
     );
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(
         new GeoLocationViewState(new GeoLocation(1, 2, 3))
     );
@@ -245,7 +248,7 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setNoNewViewStateToLiveDataForGeoLocationError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(geoLocationUseCase.getGeoLocations()).thenReturn(
         Flowable.just(
@@ -257,10 +260,10 @@ public class GeoLocationViewModelTest {
     );
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(
         new GeoLocationViewState(new GeoLocation(1, 2, 3))
     );
@@ -283,14 +286,14 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void navigateToResolveGoeLocationProblem() {
-    // Дано:
+    // Given:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(SecurityException::new));
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(GeoLocationNavigate.RESOLVE_GEO_PERMISSIONS);
   }
 
@@ -299,16 +302,16 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setNavigateForNoNetworkError() {
-    // Дано:
+    // Given:
     when(geoLocationUseCase.getGeoLocations())
         .thenReturn(Flowable.error(IllegalStateException::new));
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
-    verifyZeroInteractions(navigationObserver);
+    // Effect:
+    verifyNoInteractions(navigationObserver);
   }
 
   /**
@@ -316,14 +319,14 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.error(Exception::new));
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -332,7 +335,7 @@ public class GeoLocationViewModelTest {
    */
   @Test
   public void doNotSetNavigateForData() {
-    // Дано:
+    // Given:
     when(geoLocationUseCase.getGeoLocations()).thenReturn(Flowable.just(
         new GeoLocation(1, 2, 3),
         new GeoLocation(4, 5, 6),
@@ -341,10 +344,10 @@ public class GeoLocationViewModelTest {
     ));
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     viewModel.updateGeoLocations();
 
-    // Результат:
-    verifyZeroInteractions(navigationObserver);
+    // Effect:
+    verifyNoInteractions(navigationObserver);
   }
 }

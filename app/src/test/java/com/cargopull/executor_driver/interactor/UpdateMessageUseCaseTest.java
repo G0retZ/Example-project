@@ -7,14 +7,16 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateMessageUseCaseTest {
@@ -40,13 +42,13 @@ public class UpdateMessageUseCaseTest {
    */
   @Test
   public void askGatewayForUpdateMessages() {
-    // Действие:
+    // Action:
     useCase.getUpdateMessages().test().isDisposed();
     useCase.getUpdateMessages().test().isDisposed();
     useCase.getUpdateMessages().test().isDisposed();
     useCase.getUpdateMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, times(4)).getData();
     verifyNoMoreInteractions(gateway);
   }
@@ -58,13 +60,13 @@ public class UpdateMessageUseCaseTest {
    */
   @Test
   public void answerWithUpdateMessages() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.just("1", "2", "3"));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues("1", "2", "3");
     testSubscriber.assertNoErrors();
   }
@@ -74,13 +76,13 @@ public class UpdateMessageUseCaseTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -91,13 +93,13 @@ public class UpdateMessageUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = useCase.getUpdateMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();

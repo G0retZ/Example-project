@@ -6,19 +6,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.UpdateMessageUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -29,6 +29,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateMessageViewModelTest {
@@ -66,10 +69,10 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -80,7 +83,7 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void askUseCaseToSubscribeToUpdateMessagesInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getUpdateMessages();
   }
 
@@ -89,13 +92,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getUpdateMessages();
   }
 
@@ -106,13 +109,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void showUpdateMessageMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(viewStateCaptor.capture());
     viewStateCaptor.getValue().apply(viewActions);
     verify(viewActions, only()).showUpdateMessage("Message");
@@ -123,14 +126,14 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void showOnlineMessageThenNull() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("Message");
     viewModel.messageConsumed();
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
     assertEquals(2, viewStateCaptor.getAllValues().size());
     assertNull(viewStateCaptor.getAllValues().get(1));
@@ -144,14 +147,14 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void doNotShowEmptyMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("");
 
-    // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    // Effect:
+    verifyNoInteractions(viewStateObserver);
   }
 
   /**
@@ -159,13 +162,13 @@ public class UpdateMessageViewModelTest {
    */
   @Test
   public void doNotShowSpaceMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("\n");
 
-    // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    // Effect:
+    verifyNoInteractions(viewStateObserver);
   }
 }

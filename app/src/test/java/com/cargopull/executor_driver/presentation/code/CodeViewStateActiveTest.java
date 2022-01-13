@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,10 +26,10 @@ public class CodeViewStateActiveTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setEnabled(R.id.codeInput, true);
     verify(viewActions).unblockWithPending("password");
     verify(viewActions).setBackground(R.id.codeInput, R.drawable.ic_code_input_activated);

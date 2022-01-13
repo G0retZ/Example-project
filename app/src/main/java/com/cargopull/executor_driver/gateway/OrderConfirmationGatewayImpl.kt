@@ -27,7 +27,7 @@ constructor(private val apiService: ApiService,
                         }
                         Pair(state, null)
                     } catch (e: Exception) {
-                        throw DataMappingException("Ошибка маппинга: неверный формат статуса!", e)
+                        throw DataMappingException("Mapping error: wrong format of status!", e)
                     }
                 }
     }

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
 import com.cargopull.executor_driver.entity.Order;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,28 +27,28 @@ public class RemoveOrdersUseCaseImplTest {
 
   @Test
   public void shouldAskForOrdersSet() {
-    // Действие:
+    // Action:
     removeOrdersUseCase.getOrdersSet();
 
-    // Результат:
+      // Effect:
     verify(ordersUseCase, only()).getOrdersSet();
   }
 
   @Test
   public void shouldAskForRemoveOrderOnAdd() {
-    // Действие:
+      // Action:
     removeOrdersUseCase.addOrder(order);
 
-    // Результат:
+      // Effect:
     verify(ordersUseCase, only()).removeOrder(order);
   }
 
   @Test
   public void shouldAskForRemoveOrderOnRemove() {
-    // Действие:
+      // Action:
     removeOrdersUseCase.removeOrder(order);
 
-    // Результат:
+      // Effect:
     verify(ordersUseCase, only()).removeOrder(order);
   }
 }

@@ -2,15 +2,14 @@ package com.cargopull.executor_driver.interactor;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import io.reactivex.Flowable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -19,6 +18,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServerTimeUseCaseTest {
@@ -46,10 +48,10 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void askGatewayForServerTime() {
-    // Действие:
+    // Action:
     useCase.getServerTime().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -60,11 +62,11 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void doNotSetServerTimeIfNoData() {
-    // Действие:
+    // Action:
     useCase.getServerTime().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(timeUtils);
+    // Effect:
+    verifyNoInteractions(timeUtils);
   }
 
   /**
@@ -72,14 +74,14 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void doNotSetServerTimeIfError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     useCase.getServerTime().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(timeUtils);
+    // Effect:
+    verifyNoInteractions(timeUtils);
   }
 
   /**
@@ -87,14 +89,14 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void doNotSetServerTime() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(timeUtils);
     when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
-    // Действие:
+    // Action:
     useCase.getServerTime().test().isDisposed();
 
-    // Результат:
+    // Effect:
     inOrder.verify(timeUtils).setServerCurrentTime(1L);
     inOrder.verify(timeUtils).setServerCurrentTime(2L);
     inOrder.verify(timeUtils).setServerCurrentTime(3L);
@@ -108,13 +110,13 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void answerWithServerTimes() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.just(1L, 2L, 3L));
 
-    // Действие:
-    TestObserver testObserver = useCase.getServerTime().test();
+    // Action:
+    TestObserver<Void> testObserver = useCase.getServerTime().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertComplete();
   }
@@ -124,13 +126,13 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
-    TestObserver testObserver = useCase.getServerTime().test();
+    // Action:
+    TestObserver<Void> testObserver = useCase.getServerTime().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
     testObserver.assertNotComplete();
   }
@@ -140,13 +142,13 @@ public class ServerTimeUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
-    TestObserver testObserver = useCase.getServerTime().test();
+    // Action:
+    TestObserver<Void> testObserver = useCase.getServerTime().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertNoErrors();
   }

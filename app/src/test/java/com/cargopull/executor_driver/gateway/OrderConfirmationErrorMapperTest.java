@@ -5,10 +5,12 @@ import static org.junit.Assert.assertTrue;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.ServerResponseException;
 import com.cargopull.executor_driver.entity.OrderConfirmationFailedException;
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
@@ -28,10 +30,10 @@ public class OrderConfirmationErrorMapperTest {
    */
   @Test
   public void map410toOrderConfirmationFailedException() throws Exception {
-    // Действие:
+    // Action:
     Throwable error = mapper.map(new ServerResponseException("410", "You are slowpoke!"));
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof OrderConfirmationFailedException);
   }
 
@@ -42,10 +44,10 @@ public class OrderConfirmationErrorMapperTest {
    */
   @Test
   public void map422_2toHttpException() throws Exception {
-    // Действие:
+    // Action:
     Throwable error = mapper.map(new ServerResponseException("410.0", "You are fake!"));
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof ServerResponseException);
   }
 
@@ -56,10 +58,10 @@ public class OrderConfirmationErrorMapperTest {
    */
   @Test
   public void noMappingForNoNetworkException() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     Throwable error = mapper.map(new NoNetworkException());
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof NoNetworkException);
   }
 
@@ -70,7 +72,7 @@ public class OrderConfirmationErrorMapperTest {
    */
   @Test
   public void noMappingForOtherExceptions() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     Throwable error = mapper.map(
         new HttpException(
             Response.error(700, ResponseBody
@@ -78,7 +80,7 @@ public class OrderConfirmationErrorMapperTest {
         )
     );
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof HttpException);
   }
 }

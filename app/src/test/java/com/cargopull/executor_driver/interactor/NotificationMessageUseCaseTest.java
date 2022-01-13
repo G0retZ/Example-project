@@ -6,14 +6,16 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotificationMessageUseCaseTest {
@@ -37,13 +39,13 @@ public class NotificationMessageUseCaseTest {
    */
   @Test
   public void askGatewayForMissedOrdersMessages() {
-    // Действие:
+    // Action:
     useCase.getNotificationMessages().test().isDisposed();
     useCase.getNotificationMessages().test().isDisposed();
     useCase.getNotificationMessages().test().isDisposed();
     useCase.getNotificationMessages().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getData();
   }
 
@@ -54,13 +56,13 @@ public class NotificationMessageUseCaseTest {
    */
   @Test
   public void answerWithMissedOrdersMessages() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.just("1", "2", "3"));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = useCase.getNotificationMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValues("1", "2", "3");
     testSubscriber.assertNoErrors();
   }
@@ -70,13 +72,13 @@ public class NotificationMessageUseCaseTest {
    */
   @Test
   public void answerWithError() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = useCase.getNotificationMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(DataMappingException.class);
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
@@ -87,13 +89,13 @@ public class NotificationMessageUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.getData()).thenReturn(Flowable.empty());
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testSubscriber = useCase.getNotificationMessages().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertComplete();
     testSubscriber.assertNoValues();
     testSubscriber.assertNoErrors();

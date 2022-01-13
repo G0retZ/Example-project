@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.settings.AppSettingsService;
 import com.cargopull.executor_driver.gateway.LoginGateway;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class LoginGatewayTest {
    */
   @Test
   public void askSettingsForLogin() {
-    // Результат:
+    // Effect:
     verify(appSettings, only()).getData("authorizationLogin");
   }
 
@@ -41,14 +42,14 @@ public class LoginGatewayTest {
    */
   @Test
   public void doNotAskSettingsForLogin() {
-    // Действие:
+      // Action:
     loginGateway.get().test().isDisposed();
     loginGateway.get().test().isDisposed();
     loginGateway.get().test().isDisposed();
     loginGateway.get().test().isDisposed();
     loginGateway.get().test().isDisposed();
 
-    // Результат:
+      // Effect:
     verify(appSettings, only()).getData("authorizationLogin");
   }
 
@@ -57,10 +58,10 @@ public class LoginGatewayTest {
    */
   @Test
   public void askSettingsForSaveLogin() {
-    // Действие:
+      // Action:
     loginGateway.updateWith("123456");
 
-    // Результат:
+      // Effect:
     verify(appSettings).getData("authorizationLogin");
     verify(appSettings).saveData(eq("authorizationLogin"), eq("123456"));
     verifyNoMoreInteractions(appSettings);
@@ -71,11 +72,11 @@ public class LoginGatewayTest {
    */
   @Test
   public void valueUnchangedForRead() {
-    // Дано:
+      // Given:
     when(appSettings.getData("authorizationLogin")).thenReturn("654321");
     loginGateway = new LoginGateway(appSettings);
 
-    // Результат:
+      // Effect:
     loginGateway.get().test().assertValue("654321");
   }
 }

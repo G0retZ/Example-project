@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,11 +32,11 @@ public class RoutePointItemTest {
 
   @Test
   public void testProcessedGetters() {
-    // Дано:
+    // Given:
     when(routePoint.getAddress()).thenReturn("add");
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.PROCESSED);
 
-    // Результат:
+      // Effect:
     assertEquals(routePointItem.getAddress(), "add");
     assertEquals(routePointItem.getRoutePoint(), routePoint);
     assertTrue(routePointItem.isProcessed());
@@ -44,11 +45,11 @@ public class RoutePointItemTest {
 
   @Test
   public void testActiveGetters() {
-    // Дано:
+      // Given:
     when(routePoint.getAddress()).thenReturn("add");
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.ACTIVE);
 
-    // Результат:
+      // Effect:
     assertEquals(routePointItem.getAddress(), "add");
     assertEquals(routePointItem.getRoutePoint(), routePoint);
     assertFalse(routePointItem.isProcessed());
@@ -57,11 +58,11 @@ public class RoutePointItemTest {
 
   @Test
   public void testQueuedGetters() {
-    // Дано:
+      // Given:
     when(routePoint.getAddress()).thenReturn("add");
     when(routePoint.getRoutePointState()).thenReturn(RoutePointState.QUEUED);
 
-    // Результат:
+      // Effect:
     assertEquals(routePointItem.getAddress(), "add");
     assertEquals(routePointItem.getRoutePoint(), routePoint);
     assertFalse(routePointItem.isProcessed());

@@ -3,16 +3,14 @@ package com.cargopull.executor_driver.gateway;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.stomp.Command;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.ExecutorState;
 import com.cargopull.executor_driver.utils.Pair;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +20,10 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 @RunWith(Parameterized.class)
 public class ExecutorStateApiMapperTest {
@@ -52,7 +54,7 @@ public class ExecutorStateApiMapperTest {
   }
 
   @Parameterized.Parameters
-  public static Iterable primeNumbers() {
+  public static Iterable<Pair<StompFrame, Expectations>> primeNumbers() {
     ArrayList<Pair<StompFrame, Expectations>> conditions = new ArrayList<>();
     // Соответствия значений хедера статуса эксепшенам
     HashMap<String, Class<? extends Exception>> statusHeadersToExceptions = new HashMap<>();
@@ -143,7 +145,7 @@ public class ExecutorStateApiMapperTest {
 
   @Before
   public void setUp() throws Exception {
-    // Дано:
+    // Given:
     when(payloadMapper.map(conditionStompFrame)).thenReturn(expectedMessage);
     if (expectedException != null) {
       thrown.expect(expectedException);
@@ -159,14 +161,14 @@ public class ExecutorStateApiMapperTest {
    */
   @Test
   public void shouldAskPayloadMapperToMapStompFrameToMessage() throws Exception {
-    // Действие:
+    // Action:
     mapper.map(conditionStompFrame);
 
-    // Результат:
+    // Effect:
     if (expectedException == null) {
       verify(payloadMapper, only()).map(conditionStompFrame);
     } else {
-      verifyZeroInteractions(payloadMapper);
+      verifyNoInteractions(payloadMapper);
     }
   }
 
@@ -177,10 +179,10 @@ public class ExecutorStateApiMapperTest {
    */
   @Test
   public void mappingConditionsStompFrameToExpectedState() throws Exception {
-    // Действие:
+    // Action:
     ExecutorState executorState = mapper.map(conditionStompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(expectedExecutorState, executorState);
     assertEquals(expectedMessage, executorState.getData());
     assertEquals(expectedTimer, executorState.getCustomerTimer());

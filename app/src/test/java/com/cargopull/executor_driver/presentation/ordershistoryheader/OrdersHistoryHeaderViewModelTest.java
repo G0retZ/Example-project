@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -18,8 +19,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrdersHistorySummaryGateway;
 import com.cargopull.executor_driver.presentation.ViewState;
 import com.cargopull.executor_driver.utils.TimeUtils;
-import io.reactivex.Single;
-import io.reactivex.SingleEmitter;
+
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -31,6 +31,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersHistoryHeaderViewModelTest {
@@ -72,10 +75,10 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     singleEmitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -86,7 +89,7 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void askForCurrentTimeStampInitially() {
-    // Результат:
+    // Effect:
     verify(timeUtils, only()).currentTimeMillis();
   }
 
@@ -95,13 +98,13 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void doNotAskForCurrentTimeStampOnErrors() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(timeUtils, only()).currentTimeMillis();
   }
 
@@ -110,7 +113,7 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void askForCurrentTimeStampAgainIfLoggedIn() {
-    // Действие:
+    // Action:
     singleEmitter.onError(new DataMappingException());
     viewModel.retry();
     singleEmitter.onError(new DataMappingException());
@@ -118,7 +121,7 @@ public class OrdersHistoryHeaderViewModelTest {
     singleEmitter.onError(new DataMappingException());
     viewModel.retry();
 
-    // Результат:
+    // Effect:
     verify(timeUtils, times(4)).currentTimeMillis();
     verifyNoMoreInteractions(timeUtils);
   }
@@ -130,7 +133,7 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void askUseCaseForOrdersInitially() {
-    // Результат:
+    // Effect:
     verify(gateway, only()).getOrdersHistorySummary(
         DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
         DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
@@ -142,13 +145,13 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void doNotAskUseCaseForOrdersOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getOrdersHistorySummary(
         DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
         DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
@@ -160,15 +163,15 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void askUseCaseForOrdersForSelectedMonths() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(gateway);
 
-    // Действие:
+    // Action:
     new OrdersHistoryHeaderViewModelImpl(1, errorReporter, timeUtils, gateway);
     new OrdersHistoryHeaderViewModelImpl(3, errorReporter, timeUtils, gateway);
     new OrdersHistoryHeaderViewModelImpl(5, errorReporter, timeUtils, gateway);
 
-    // Результат:
+    // Effect:
     inOrder.verify(gateway).getOrdersHistorySummary(
         DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
         DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
@@ -194,7 +197,7 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void askUseCaseForOrdersAgainAfterFailOnly() {
-    // Действие:
+    // Action:
     singleEmitter.onError(new Exception());
     viewModel.retry();
     singleEmitter.onError(new Exception());
@@ -206,7 +209,7 @@ public class OrdersHistoryHeaderViewModelTest {
     viewModel.retry();
     viewModel.retry();
 
-    // Результат:
+    // Effect:
     verify(gateway, times(4)).getOrdersHistorySummary(
         DateTime.now().withDate(1974, 8, 1).withMillisOfDay(0).getMillis(),
         DateTime.now().withDate(1974, 8, 10).withTime(7, 53, 22, 0).getMillis()
@@ -221,10 +224,10 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(any(OrdersHistoryHeaderViewStatePending.class));
   }
 
@@ -233,14 +236,14 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void setIdleViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleEmitter.onSuccess(ordersHistorySummary);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(
         new OrdersHistoryHeaderViewStateLoaded(ordersHistorySummary)
@@ -253,14 +256,14 @@ public class OrdersHistoryHeaderViewModelTest {
    */
   @Test
   public void setErrorViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     singleEmitter.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStatePending.class));
     inOrder.verify(viewStateObserver).onChanged(any(OrdersHistoryHeaderViewStateError.class));
     verifyNoMoreInteractions(viewStateObserver);

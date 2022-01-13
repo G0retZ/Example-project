@@ -56,15 +56,15 @@ class OrderConfirmationGatewayTest {
      */
     @Test
     fun askStompClientToSendMessage() {
-        // Дано:
+        // Given:
         val inOrder = inOrder(apiService)
         `when`(order.id).thenReturn(7L)
 
-        // Действие:
+        // Action:
         gateway.sendDecision(order, false).test()
         gateway.sendDecision(order, true).test()
 
-        // Результат:
+        // Effect:
         inOrder.verify<ApiService>(apiService, times(2)).acceptOrderOffer(orderDecisionCaptor.kCapture())
         verifyNoMoreInteractions(apiService)
         assertEquals(orderDecisionCaptor.allValues[0].id, 7)
@@ -81,15 +81,15 @@ class OrderConfirmationGatewayTest {
      */
     @Test
     fun answerSendDecisionSuccess() {
-        // Дано:
+        // Given:
         `when`(apiSimpleResult.message).thenReturn("he-he-he")
         `when`(apiSimpleResult.status).thenReturn("ONLINE")
         `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.just(apiSimpleResult))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValueCount(1)
@@ -105,15 +105,15 @@ class OrderConfirmationGatewayTest {
      */
     @Test
     fun answerSendDecisionSuccessWithTimerValue() {
-        // Дано:
+        // Given:
         `when`(apiSimpleResult.message).thenReturn("he-he-he")
         `when`(apiSimpleResult.status).thenReturn("CLIENT_ORDER_CONFIRMATION")
         `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.just(apiSimpleResult))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValueCount(1)
@@ -129,14 +129,14 @@ class OrderConfirmationGatewayTest {
      */
     @Test
     fun answerSendDecisionSuccessWithoutMessage() {
-        // Дано:
+        // Given:
         `when`(apiSimpleResult.status).thenReturn("ONLINE")
         `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.just(apiSimpleResult))
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNoErrors()
         testObserver.assertComplete()
         testObserver.assertValueCount(1)
@@ -153,14 +153,14 @@ class OrderConfirmationGatewayTest {
     @Test
     @Throws(Exception::class)
     fun answerSendDecisionError() {
-        // Дано:
+        // Given:
         `when`(apiService.acceptOrderOffer(any())).thenReturn(Single.error(IllegalArgumentException()))
         `when`(errorMapper.map(any())).thenReturn(IllegalStateException())
 
-        // Действие:
+        // Action:
         val testObserver = gateway.sendDecision(order, false).test()
 
-        // Результат:
+        // Effect:
         testObserver.assertNotComplete()
         testObserver.assertError(IllegalStateException::class.java)
         testObserver.assertNoValues()
@@ -176,5 +176,6 @@ class OrderConfirmationGatewayTest {
         return uninitialized()
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
 }

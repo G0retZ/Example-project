@@ -16,7 +16,7 @@ class StateAndDataApiMapper<T, D>(private val mapper: Mapper<T, D>) : Mapper<Api
             pair.first.data = from.message
             return pair
         } catch (e: Exception) {
-            throw DataMappingException("Ошибка маппинга: неверный формат статуса!", e)
+            throw DataMappingException("Mapping error: wrong status format!", e)
         }
     }
 }

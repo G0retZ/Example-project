@@ -64,7 +64,7 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun askGatewayForGeolocationStateInitially() {
-            // Результат:
+            // Effect:
             verify<CommonGateway<Boolean>>(gateway, only()).data
         }
 
@@ -73,13 +73,13 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun doNotTouchGatewayOnSubscriptions() {
-            // Действие:
+            // Action:
             viewModel.viewStateLiveData
             viewModel.navigationLiveData
             viewModel.viewStateLiveData
             viewModel.navigationLiveData
 
-            // Результат:
+            // Effect:
             verify<CommonGateway<Boolean>>(gateway, only()).data
         }
 
@@ -90,14 +90,14 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun doNotTouchLocationManager() {
-            // Действие:
+            // Action:
             viewModel.viewStateLiveData
             viewModel.navigationLiveData
             viewModel.viewStateLiveData
             viewModel.navigationLiveData
 
-            // Результат:
-            verifyZeroInteractions(geolocationState)
+            // Effect:
+            verifyNoInteractions(geolocationState)
         }
 
         /**
@@ -105,12 +105,12 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun askLocationManagerForServiceProvidersStatus() {
-            // Действие:
+            // Action:
             publishSubject.onNext(true)
             publishSubject.onNext(false)
             viewModel.checkSettings()
 
-            // Результат:
+            // Effect:
             verify<GeolocationState>(geolocationState, times(3)).isGpsEnabled
             verify<GeolocationState>(geolocationState, times(3)).isNetworkEnabled
             verifyNoMoreInteractions(geolocationState)
@@ -123,14 +123,14 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun doNotTouchEventLogger() {
-            // Действие:
+            // Action:
             viewModel.viewStateLiveData
             viewModel.navigationLiveData
             viewModel.viewStateLiveData
             viewModel.navigationLiveData
 
-            // Результат:
-            verifyZeroInteractions(geolocationState)
+            // Effect:
+            verifyNoInteractions(geolocationState)
         }
 
         /* Тетсируем смену состояний. */
@@ -140,15 +140,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateReadyForAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(true)
             `when`(geolocationState.isNetworkEnabled).thenReturn(true)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(true)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateReadyViewState::class.java))
         }
 
@@ -157,15 +157,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateReadyForUnAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(true)
             `when`(geolocationState.isNetworkEnabled).thenReturn(true)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(false)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateReadyViewState::class.java))
         }
 
@@ -174,15 +174,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateNoLocationForAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(false)
             `when`(geolocationState.isNetworkEnabled).thenReturn(false)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(true)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateNoLocationViewState::class.java))
         }
 
@@ -191,15 +191,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateNoLocationForUnAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(false)
             `when`(geolocationState.isNetworkEnabled).thenReturn(false)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(false)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateNoLocationViewState::class.java))
         }
 
@@ -208,15 +208,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateNoGpsForAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(false)
             `when`(geolocationState.isNetworkEnabled).thenReturn(true)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(true)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateNoGpsDetectionViewState::class.java))
         }
 
@@ -225,15 +225,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateNoGpsForUnAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(false)
             `when`(geolocationState.isNetworkEnabled).thenReturn(true)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(false)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateNoGpsDetectionViewState::class.java))
         }
 
@@ -242,15 +242,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateNoNetworkForAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(true)
             `when`(geolocationState.isNetworkEnabled).thenReturn(false)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(true)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateNoNetworkDetectionViewState::class.java))
         }
 
@@ -259,15 +259,15 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun showGeolocationStateNoNetworkForUnAvailable() {
-            // Дано:
+            // Given:
             viewModel.viewStateLiveData.observeForever(viewStateObserver)
             `when`(geolocationState.isGpsEnabled).thenReturn(true)
             `when`(geolocationState.isNetworkEnabled).thenReturn(false)
 
-            // Действие:
+            // Action:
             publishSubject.onNext(false)
 
-            // Результат:
+            // Effect:
             verify(viewStateObserver, only()).onChanged(any(GeoLocationStateNoNetworkDetectionViewState::class.java))
         }
 
@@ -401,11 +401,11 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun askTimeUtilsForTimeStamp() {
-            // Действие:
+            // Action:
             publishSubject.onNext(fromAvailability)
             publishSubject.onNext(toAvailability)
 
-            // Результат:
+            // Effect:
             verify<TimeUtils>(timeUtils, times(tuInvocations % 2)).currentTimeMillis()
             verifyNoMoreInteractions(timeUtils)
         }
@@ -415,12 +415,12 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun askTimeUtilsForTimeStampAgain() {
-            // Действие:
+            // Action:
             publishSubject.onNext(fromAvailability)
             publishSubject.onNext(toAvailability)
             publishSubject.onNext(toAvailability1)
 
-            // Результат:
+            // Effect:
             verify<TimeUtils>(timeUtils, times(tuInvocations % 2 + tuInvocations / 2)).currentTimeMillis()
             verifyNoMoreInteractions(timeUtils)
         }
@@ -430,16 +430,22 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun askEventLoggerToSendReport() {
-            // Действие:
+            // Action:
             publishSubject.onNext(fromAvailability)
             publishSubject.onNext(toAvailability)
             publishSubject.onNext(toAvailability1)
 
-            // Результат:
+            // Effect:
             return when (sendReport) {
-                1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_restored", mutableMapOf("loss_duration" to "290"))
-                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_lost", mutableMapOf("loss_duration" to "290"))
-                else -> verifyZeroInteractions(eventLogger)
+                1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_restored",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_lost",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                else -> verifyNoInteractions(eventLogger)
             }
         }
 
@@ -448,17 +454,23 @@ class GeoLocationStateViewModelTest {
          */
         @Test
         fun doNotAskEventLoggerToSendReportOnCheckSettings() {
-            // Действие:
+            // Action:
             publishSubject.onNext(fromAvailability)
             publishSubject.onNext(toAvailability)
             publishSubject.onNext(toAvailability1)
             viewModel.checkSettings()
 
-            // Результат:
+            // Effect:
             return when (sendReport) {
-                1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_restored", mutableMapOf("loss_duration" to "290"))
-                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent("geolocation_lost", mutableMapOf("loss_duration" to "290"))
-                else -> verifyZeroInteractions(eventLogger)
+                1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_restored",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                -1 -> verify<EventLogger>(eventLogger, only()).reportEvent(
+                    "geolocation_lost",
+                    mutableMapOf("loss_duration" to "290")
+                )
+                else -> verifyNoInteractions(eventLogger)
             }
         }
     }

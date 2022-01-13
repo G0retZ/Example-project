@@ -3,12 +3,13 @@ package com.cargopull.executor_driver.presentation.vehicleoptions;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsViewStateInitialTest {
@@ -25,10 +26,10 @@ public class VehicleOptionsViewStateInitialTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).enableReadyButton(false);
     verify(viewActions).showVehicleOptionsList(true);
     verify(viewActions).showVehicleOptionsPending(false);

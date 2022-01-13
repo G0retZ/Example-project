@@ -4,15 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
-import okhttp3.Interceptor;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import okhttp3.Interceptor;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeprecatedVersionInterceptorTest {
@@ -34,7 +35,7 @@ public class DeprecatedVersionInterceptorTest {
    */
   @Test
   public void doNotThrowUnauthorizedError() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(200)
@@ -46,10 +47,10 @@ public class DeprecatedVersionInterceptorTest {
             ).build()
     );
 
-    // Действие:
+    // Action:
     Response response = authorizationInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     assertEquals(response, chain.proceed(chain.request()));
   }
 
@@ -60,7 +61,7 @@ public class DeprecatedVersionInterceptorTest {
    */
   @Test(expected = DeprecatedVersionException.class)
   public void throwUnauthorizedErrorWithoutCodeHeader() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(403)
@@ -72,7 +73,7 @@ public class DeprecatedVersionInterceptorTest {
             ).build()
     );
 
-    // Действие и Результат:
+    // Action и Effect:
     authorizationInterceptor.intercept(chain);
   }
 }

@@ -5,12 +5,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
-import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderFilterTest {
@@ -29,7 +31,7 @@ public class OrderFilterTest {
    */
   @Test
   public void FilterIfExecutorStateIncorrect() {
-    // Действие и Результат:
+    // Action и Effect:
     assertFalse(filter.test(stompFrame));
   }
 
@@ -38,10 +40,10 @@ public class OrderFilterTest {
    */
   @Test
   public void filterForHeaderWithWrongValue() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("Status", ""));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertFalse(filter.test(stompFrame));
   }
 
@@ -50,11 +52,11 @@ public class OrderFilterTest {
    */
   @Test
   public void allowForHeaderWithDriverOrderConfirmation() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders())
         .thenReturn(Collections.singletonMap("Status", "DRIVER_ORDER_CONFIRMATION"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 
@@ -63,11 +65,11 @@ public class OrderFilterTest {
    */
   @Test
   public void allowForHeaderWithClientOrderConfirmation() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders())
         .thenReturn(Collections.singletonMap("Status", "CLIENT_ORDER_CONFIRMATION"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 
@@ -76,11 +78,11 @@ public class OrderFilterTest {
    */
   @Test
   public void allowForHeaderWithMovingToClient() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders())
         .thenReturn(Collections.singletonMap("Status", "MOVING_TO_CLIENT"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 
@@ -89,11 +91,11 @@ public class OrderFilterTest {
    */
   @Test
   public void allowForHeaderWithWaitingForClient() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders())
         .thenReturn(Collections.singletonMap("Status", "WAITING_FOR_CLIENT"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 
@@ -102,11 +104,11 @@ public class OrderFilterTest {
    */
   @Test
   public void allowForHeaderWithOrderFulfillment() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders())
         .thenReturn(Collections.singletonMap("Status", "ORDER_FULFILLMENT"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 
@@ -115,11 +117,11 @@ public class OrderFilterTest {
    */
   @Test
   public void allowForHeaderWithPaymentConfirmation() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders())
         .thenReturn(Collections.singletonMap("Status", "PAYMENT_CONFIRMATION"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 }

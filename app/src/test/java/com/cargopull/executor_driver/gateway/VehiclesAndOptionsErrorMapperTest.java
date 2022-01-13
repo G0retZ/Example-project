@@ -5,10 +5,12 @@ import static org.junit.Assert.assertTrue;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.backend.web.ServerResponseException;
 import com.cargopull.executor_driver.entity.DriverBlockedException;
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
@@ -28,10 +30,10 @@ public class VehiclesAndOptionsErrorMapperTest {
    */
   @Test
   public void map422_1toDriverBlockedException() throws Exception {
-    // Действие:
+    // Action:
     Throwable error = mapper.map(new ServerResponseException("422.1", "You are scum!"));
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof DriverBlockedException);
   }
 
@@ -42,10 +44,10 @@ public class VehiclesAndOptionsErrorMapperTest {
    */
   @Test
   public void map422_2toHttpException() throws Exception {
-    // Действие:
+    // Action:
     Throwable error = mapper.map(new ServerResponseException("422.2", "You are fake!"));
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof ServerResponseException);
   }
 
@@ -56,10 +58,10 @@ public class VehiclesAndOptionsErrorMapperTest {
    */
   @Test
   public void noMappingForNoNetworkException() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     Throwable error = mapper.map(new NoNetworkException());
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof NoNetworkException);
   }
 
@@ -70,7 +72,7 @@ public class VehiclesAndOptionsErrorMapperTest {
    */
   @Test
   public void noMappingForOtherExceptions() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     Throwable error = mapper.map(
         new HttpException(
             Response.error(700, ResponseBody
@@ -78,7 +80,7 @@ public class VehiclesAndOptionsErrorMapperTest {
         )
     );
 
-    // Результат:
+    // Effect:
     assertTrue(error instanceof HttpException);
   }
 }

@@ -1,15 +1,19 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.web.ApiService;
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.interactor.OrderRouteGateway;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
-import java.util.List;
-import javax.inject.Inject;
 
 public class OrderRouteGatewayImpl implements OrderRouteGateway {
 
@@ -32,7 +36,7 @@ public class OrderRouteGatewayImpl implements OrderRouteGateway {
         .flatMapObservable(listApiSimpleResult -> {
           List<ApiRoutePoint> data = listApiSimpleResult.getData();
           if (data == null) {
-            throw new DataMappingException("Нет маршрута!");
+              throw new DataMappingException("No route!");
           }
           return Observable.fromIterable(data);
         })

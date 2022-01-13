@@ -7,16 +7,19 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
-import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.subscribers.TestSubscriber;
-import java.util.concurrent.Callable;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.concurrent.Callable;
+
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HeatMapUseCaseTest {
@@ -45,10 +48,10 @@ public class HeatMapUseCaseTest {
    */
   @Test
   public void askGatewayForHeatMap() {
-    // Действие:
+    // Action:
     useCase.loadHeatMap().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getHeatMap();
   }
 
@@ -57,11 +60,11 @@ public class HeatMapUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForHeatMap() {
-    // Действие:
+    // Action:
     useCase.loadHeatMap().test().isDisposed();
     useCase.loadHeatMap().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).getHeatMap();
   }
 
@@ -72,13 +75,13 @@ public class HeatMapUseCaseTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Дано:
+    // Given:
     when(gateway.getHeatMap()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testObserver = useCase.loadHeatMap().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(NoNetworkException.class);
     testObserver.assertNotComplete();
     testObserver.assertNoValues();
@@ -89,7 +92,7 @@ public class HeatMapUseCaseTest {
    */
   @Test
   public void answerWithValues() {
-    // Дано:
+    // Given:
     when(gateway.getHeatMap()).thenReturn(Single.fromCallable(new Callable<String>() {
       private int count;
 
@@ -109,10 +112,10 @@ public class HeatMapUseCaseTest {
       }
     }));
 
-    // Действие:
+    // Action:
     TestSubscriber<String> testObserver = useCase.loadHeatMap().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
     testObserver.assertNotTerminated();
@@ -126,11 +129,11 @@ public class HeatMapUseCaseTest {
    */
   @Test
   public void doNotAskGatewayForHeatMapAfterDispose() throws Exception {
-    // Дано:
+    // Given:
     when(testCallable.call()).thenReturn("test mess");
     when(gateway.getHeatMap()).thenReturn(Single.fromCallable(testCallable));
 
-    // Действие:
+    // Action:
     Disposable disposable1 = useCase.loadHeatMap()
         .subscribe(System.out::println); // +1 вызов
     Disposable disposable2 = useCase.loadHeatMap()
@@ -141,7 +144,7 @@ public class HeatMapUseCaseTest {
     disposable2.dispose();
     disposable3.dispose();
 
-    // Результат:
+    // Effect:
     verify(testCallable).call();
     verifyNoMoreInteractions(testCallable);
   }

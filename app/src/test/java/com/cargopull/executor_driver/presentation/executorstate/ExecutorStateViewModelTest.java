@@ -18,12 +18,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
@@ -34,9 +35,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
-import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -49,6 +48,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(Parameterized.class)
 public class ExecutorStateViewModelTest {
@@ -88,27 +92,27 @@ public class ExecutorStateViewModelTest {
   }
 
   @Parameterized.Parameters
-  public static Iterable primeNumbers() {
+  public static Iterable<TestDataSet> primeNumbers() {
     // Соответствия значений статуса направлениям навигации и сообщениям
     return Arrays.asList(
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            null, null, null, false, false),
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            "", null, null, false, false),
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            "\n", null, null, false, false),
-        new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
-            "Message", null, "Message", false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            null, null, null, false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            "", null, null, false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            "\n", null, null, false, false),
-        new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
-            "Message", null, null, false, false),
-        new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
-            null, null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    null, null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    "", null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    "\n", null, null, false, false),
+            new TestDataSet(BLOCKED, ExecutorStateNavigate.BLOCKED,
+                    "Message", null, "Message", false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    null, null, null, false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    "", null, null, false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    "\n", null, null, false, false),
+            new TestDataSet(SHIFT_CLOSED, ExecutorStateNavigate.MAP_SHIFT_CLOSED,
+                    "Message", null, null, false, false),
+            new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
+                    null, null, null, false, false),
         new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
             "", null, null, false, false),
         new TestDataSet(SHIFT_OPENED, ExecutorStateNavigate.MAP_SHIFT_OPENED,
@@ -203,10 +207,10 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -217,7 +221,7 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void askUseCaseToSubscribeToExecutorStateUpdatesInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -226,13 +230,13 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -241,12 +245,12 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseForMessageReadEvent() {
-    // Действие:
+    // Action:
     viewModel.messageConsumed();
     viewModel.messageConsumed();
     viewModel.messageConsumed();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -257,16 +261,16 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void showOrNotTheMessage() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(conditionDataSet.conditionExecutorState);
     if (conditionDataSet.expectedMessage != null) {
       viewModel.messageConsumed();
     }
 
-    // Результат:
+    // Effect:
     assertFalse(conditionDataSet.expectedMessage != null && conditionDataSet.expectedInfo != null);
     if (conditionDataSet.expectedMessage != null) {
       verify(viewStateObserver, times(2)).onChanged(viewStateCaptor.capture());
@@ -281,7 +285,7 @@ public class ExecutorStateViewModelTest {
       verify(viewActions, only()).showExecutorStatusInfo(conditionDataSet.expectedInfo);
       verifyNoMoreInteractions(viewStateObserver);
     } else {
-      verifyZeroInteractions(viewStateObserver);
+      verifyNoInteractions(viewStateObserver);
     }
   }
 
@@ -292,10 +296,10 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void interactWithSoundAndVibrations() {
-    // Действие:
+    // Action:
     publishSubject.onNext(conditionDataSet.conditionExecutorState);
 
-    // Результат:
+    // Effect:
     assertFalse(conditionDataSet.expectedToRingAndVibrateSkip && conditionDataSet.expectedToRingAndVibrateOrder);
     if (conditionDataSet.expectedToRingAndVibrateSkip) {
       verify(ringTonePlayer, only()).playRingTone(R.raw.skip_order);
@@ -304,8 +308,8 @@ public class ExecutorStateViewModelTest {
       verify(shakeItPlayer, only()).shakeIt(R.raw.regular_order_notify_vibro);
       verify(ringTonePlayer, only()).playRingTone(R.raw.regular_order_notify);
     } else {
-      verifyZeroInteractions(ringTonePlayer);
-      verifyZeroInteractions(shakeItPlayer);
+      verifyNoInteractions(ringTonePlayer);
+      verifyNoInteractions(shakeItPlayer);
     }
   }
 
@@ -316,15 +320,15 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void navigateToNowhere() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
     viewModel.messageConsumed();
     viewModel.messageConsumed();
     viewModel.messageConsumed();
 
-    // Результат:
-    verifyZeroInteractions(navigationObserver);
+    // Effect:
+    verifyNoInteractions(navigationObserver);
   }
 
   /**
@@ -332,14 +336,14 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void navigateToNoNetwork() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 
@@ -348,14 +352,14 @@ public class ExecutorStateViewModelTest {
    */
   @Test
   public void navigateToExpectedDestination() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigationObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(conditionDataSet.conditionExecutorState);
 
-    // Результат:
+    // Effect:
     verify(navigationObserver, only()).onChanged(conditionDataSet.expectedNavigation);
   }
 

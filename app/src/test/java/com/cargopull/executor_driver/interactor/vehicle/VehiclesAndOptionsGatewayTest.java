@@ -21,10 +21,7 @@ import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.VehiclesAndOptionsGatewayImpl;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.Arrays;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -33,6 +30,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.List;
+
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehiclesAndOptionsGatewayTest {
@@ -88,10 +91,10 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askApiForOptionsForOnlineOnGetVehicles() {
-    // Действие:
+    // Action:
     gateway.getExecutorVehicles();
 
-    // Результат:
+    // Effect:
     verify(api, only()).getOptionsForOnline();
   }
 
@@ -100,10 +103,10 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askApiForOptionsForOnlineOnGetOptions() {
-    // Действие:
+    // Action:
     gateway.getExecutorOptions();
 
-    // Результат:
+    // Effect:
     verify(api, only()).getOptionsForOnline();
   }
 
@@ -112,11 +115,11 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askApiForOptionsForOnlineTwiceAfterVehiclesRequested() {
-    // Действие:
+    // Action:
     gateway.getExecutorVehicles();
     gateway.getExecutorOptions();
 
-    // Результат:
+    // Effect:
     verify(api, times(2)).getOptionsForOnline();
   }
 
@@ -125,11 +128,11 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askApiForOptionsForOnlineTwiceAfterOptionsRequested() {
-    // Действие:
+    // Action:
     gateway.getExecutorOptions();
     gateway.getExecutorVehicles();
 
-    // Результат:
+    // Effect:
     verify(api, times(2)).getOptionsForOnline();
   }
 
@@ -142,16 +145,16 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askVehicleMapperForMapping() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
         Arrays.asList(apiVehicle, apiVehicle, apiVehicle),
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     gateway.getExecutorVehicles().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(vehicleMapper, times(3)).map(apiVehicle);
     verifyNoMoreInteractions(vehicleMapper);
   }
@@ -163,17 +166,17 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askVehicleMapperForFirstMappingOnly() throws Exception {
-    // Дано:
+    // Given:
     when(vehicleMapper.map(any(ApiVehicle.class))).thenThrow(new DataMappingException());
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
         Arrays.asList(apiVehicle, apiVehicle, apiVehicle),
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     gateway.getExecutorVehicles().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(vehicleMapper, only()).map(apiVehicle);
   }
 
@@ -186,16 +189,16 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askOptionsMapperForMapping() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
         Arrays.asList(apiVehicle, apiVehicle, apiVehicle),
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     gateway.getExecutorOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(apiOptionMapper, times(2)).map(apiOptionItem);
     verifyNoMoreInteractions(apiOptionMapper);
   }
@@ -207,17 +210,17 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askOptionsMapperForFirstMappingOnly() throws Exception {
-    // Дано:
+    // Given:
     when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
         Arrays.asList(apiVehicle, apiVehicle, apiVehicle),
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     gateway.getExecutorOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(apiOptionMapper, only()).map(apiOptionItem);
   }
 
@@ -230,13 +233,13 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askErrorMapperForMappingAfterVehicleRequest() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Действие:
+    // Action:
     gateway.getExecutorVehicles().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(errorMapper, only()).map(throwableCaptor.capture());
     assertTrue(throwableCaptor.getValue() instanceof NoNetworkException);
   }
@@ -248,13 +251,13 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void askErrorMapperForMappingAfterOptionsRequest() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
 
-    // Действие:
+    // Action:
     gateway.getExecutorOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(errorMapper, only()).map(throwableCaptor.capture());
     assertTrue(throwableCaptor.getValue() instanceof NoNetworkException);
   }
@@ -268,11 +271,11 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void answerNoNetworkError() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
     when(errorMapper.map(any())).thenReturn(new NoNetworkException());
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.getExecutorVehicles().test().assertError(NoNetworkException.class);
     gateway.getExecutorOptions().test().assertError(NoNetworkException.class);
   }
@@ -284,11 +287,11 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void answerIllegalArgumentError() throws Exception {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.error(new NoNetworkException()));
     when(errorMapper.map(any())).thenReturn(new IllegalArgumentException());
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.getExecutorVehicles().test()
         .assertError(IllegalArgumentException.class);
     gateway.getExecutorOptions().test()
@@ -302,7 +305,7 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void answerVehicleDataMappingError() throws Exception {
-    // Дано:
+    // Given:
     when(vehicleMapper.map(any(ApiVehicle.class))).thenThrow(new DataMappingException());
     when(errorMapper.map(any())).thenReturn(new DataMappingException());
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
@@ -310,10 +313,10 @@ public class VehiclesAndOptionsGatewayTest {
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     TestObserver testObserver = gateway.getExecutorVehicles().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
   }
 
@@ -324,7 +327,7 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void answerOptionDataMappingError() throws Exception {
-    // Дано:
+    // Given:
     when(apiOptionMapper.map(any(ApiOptionItem.class))).thenThrow(new DataMappingException());
     when(errorMapper.map(any())).thenReturn(new DataMappingException());
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
@@ -332,10 +335,10 @@ public class VehiclesAndOptionsGatewayTest {
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     TestObserver testObserver = gateway.getExecutorOptions().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
   }
 
@@ -344,16 +347,16 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void answerWithVehicleEntities() {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
         Arrays.asList(apiVehicle, apiVehicle, apiVehicle),
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     TestObserver<List<Vehicle>> testObserver = gateway.getExecutorVehicles().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertValue(Arrays.asList(
         new Vehicle(1, "m", "m", "c", "l", false),
@@ -367,16 +370,16 @@ public class VehiclesAndOptionsGatewayTest {
    */
   @Test
   public void answerWithOptionEntities() {
-    // Дано:
+    // Given:
     when(api.getOptionsForOnline()).thenReturn(Single.just(new ApiOptionsForOnline(
         Arrays.asList(apiVehicle, apiVehicle, apiVehicle),
         Arrays.asList(apiOptionItem, apiOptionItem, apiOptionItem, apiOptionItem)
     )));
 
-    // Действие:
+    // Action:
     TestObserver<List<Option>> testObserver = gateway.getExecutorOptions().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertValue(Arrays.asList(
         new OptionBoolean(1, "n", "d", true),

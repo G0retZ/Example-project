@@ -4,6 +4,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.cargopull.executor_driver.R;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,10 +18,10 @@ public class OrdersHistoryHeaderViewStateErrorTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     new OrdersHistoryHeaderViewStateError().apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).setVisible(R.id.pendingIndicator, false);
     verify(viewActions).setVisible(R.id.networkErrorText, true);
     verify(viewActions).setVisible(R.id.retryButton, true);

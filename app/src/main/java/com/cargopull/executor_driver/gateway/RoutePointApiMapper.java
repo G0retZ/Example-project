@@ -1,9 +1,11 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RoutePointState;
+
 import javax.inject.Inject;
 
 /**
@@ -19,16 +21,16 @@ public class RoutePointApiMapper implements Mapper<ApiRoutePoint, RoutePoint> {
   @Override
   public RoutePoint map(@NonNull ApiRoutePoint from) throws Exception {
     if (from.getAddress() == null) {
-      throw new DataMappingException("Ошибка маппинга: адрес не должен быть null!");
+      throw new DataMappingException("Mapping error: address must not be null!");
     }
     if (from.getAddress().isEmpty()) {
-      throw new DataMappingException("Ошибка маппинга: адрес не должен быть пустым!");
+      throw new DataMappingException("Mapping error: address must not be empty!");
     }
     if (from.getStatus() == null) {
-      throw new DataMappingException("Ошибка маппинга: статус не должен быть null!");
+      throw new DataMappingException("Mapping error: status must not be null!");
     }
     if (from.getStatus().isEmpty()) {
-      throw new DataMappingException("Ошибка маппинга: статус не должен быть пустым!");
+      throw new DataMappingException("Mapping error: status must not be empty!");
     }
     RoutePointState routePointState;
     switch (from.getStatus()) {
@@ -43,7 +45,7 @@ public class RoutePointApiMapper implements Mapper<ApiRoutePoint, RoutePoint> {
         break;
       default:
         throw new DataMappingException(
-            "Ошибка маппинга: неизвестный статус \"" + from.getStatus() + "\" !");
+                "Mapping error: unknown status \"" + from.getStatus() + "\" !");
     }
     return new RoutePoint(
         from.getIndex(),

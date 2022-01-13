@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.backend.web.incoming.ApiServiceItem;
 import com.cargopull.executor_driver.entity.Service;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,10 +25,10 @@ public class ServiceApiMapperTest {
    */
   @Test
   public void mappingToUnselectedService() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     Service service = mapper.map(new ApiServiceItem(0, "name", 1000));
 
-    // Результат:
+      // Effect:
     assertEquals(service, new Service(0, "name", 1000, false));
   }
 
@@ -38,10 +39,10 @@ public class ServiceApiMapperTest {
    */
   @Test
   public void mappingToSelectedService() throws Exception {
-    // Дано и Действие:
+      // Given и Action:
     Service service = mapper.map(new ApiServiceItem(1, "n", 300).setSelected(true));
 
-    // Результат:
+      // Effect:
     assertEquals(service, new Service(1, "n", 300, true));
   }
 
@@ -52,7 +53,7 @@ public class ServiceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullNameFail() throws Exception {
-    // Дано и Действие:
+      // Given и Action:
     mapper.map(new ApiServiceItem(1, null, 300));
   }
 
@@ -63,7 +64,7 @@ public class ServiceApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullPriceFail() throws Exception {
-    // Дано и Действие:
+      // Given и Action:
     mapper.map(new ApiServiceItem(1, "a", null));
   }
 }

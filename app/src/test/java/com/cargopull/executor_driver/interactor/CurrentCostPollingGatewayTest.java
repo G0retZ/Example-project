@@ -5,8 +5,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.GatewayThreadTestRule;
@@ -17,6 +17,17 @@ import com.cargopull.executor_driver.gateway.CurrentCostPollingGatewayImpl;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.utils.Pair;
+
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
@@ -24,14 +35,6 @@ import io.reactivex.observers.TestObserver;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.TestScheduler;
 import io.reactivex.subjects.PublishSubject;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentCostPollingGatewayTest {
@@ -70,10 +73,10 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void askWebTopicListenerForOverPackage() {
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(topicListener, only()).getMessages();
   }
 
@@ -84,15 +87,15 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void doNotTouchMapperIfWrongHeader() {
-    // Дано:
+    // Given:
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(mapper);
+    // Effect:
+    verifyNoInteractions(mapper);
   }
 
   /**
@@ -100,16 +103,16 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void doNotTouchMapperForOverPackageHeader0() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "0"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(mapper);
+    // Effect:
+    verifyNoInteractions(mapper);
   }
 
   /**
@@ -119,15 +122,15 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void askForMappingForOverPackageHeader1() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, only()).map(stompFrame);
   }
 
@@ -139,16 +142,16 @@ public class CurrentCostPollingGatewayTest {
   @SuppressWarnings("unchecked")
   @Test
   public void doNotAskStompClientToSendPollPing() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", ""));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame), Flowable.never());
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(stompClient);
+    // Effect:
+    verifyNoInteractions(stompClient);
   }
 
   /**
@@ -158,17 +161,17 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void askStompClientToSendPollPingImmediately() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(0L, 30_000L));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     verify(stompClient, only()).send("/mobile/retrieveOverPackage", "\"\"");
   }
 
@@ -179,18 +182,18 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void askStompClientToSendPollPing10SecondsLater() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(600_000L, 30_000L));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
     testScheduler.advanceTimeBy(9, TimeUnit.MINUTES);
 
-    // Результат:
-    verifyZeroInteractions(stompClient);
+    // Effect:
+    verifyNoInteractions(stompClient);
     testScheduler.advanceTimeBy(1, TimeUnit.MINUTES);
     verify(stompClient, only()).send("/mobile/retrieveOverPackage", "\"\"");
   }
@@ -202,17 +205,17 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void askStompClientToSendPollPings() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(600_000L, 30_000L));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
     testScheduler.advanceTimeBy(15, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     verify(stompClient, times(11)).send("/mobile/retrieveOverPackage", "\"\"");
     verifyNoMoreInteractions(stompClient);
   }
@@ -226,7 +229,7 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void doNotAskStompClientToSendPollPingsIfPollingShouldStop() throws Exception {
-    // Дано:
+    // Given:
     PublishSubject<StompFrame> publishSubject = PublishSubject.create();
     when(topicListener.getMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
@@ -234,10 +237,10 @@ public class CurrentCostPollingGatewayTest {
     when(stompFrame1.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "0"));
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(600_000L, 30_000L));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
+    // Effect:
     publishSubject.onNext(stompFrame);
     testScheduler.advanceTimeBy(15, TimeUnit.MINUTES);
     verify(stompClient, times(11)).send("/mobile/retrieveOverPackage", "\"\"");
@@ -254,7 +257,7 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void askStompClientToSendPollPingsIfPollingShouldResume() throws Exception {
-    // Дано:
+    // Given:
     PublishSubject<StompFrame> publishSubject = PublishSubject.create();
     when(topicListener.getMessages())
         .thenReturn(publishSubject.toFlowable(BackpressureStrategy.BUFFER));
@@ -262,10 +265,10 @@ public class CurrentCostPollingGatewayTest {
     when(stompFrame1.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "0"));
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(600_000L, 30_000L));
 
-    // Действие:
+    // Action:
     gateway.startPolling().test().isDisposed();
 
-    // Результат:
+    // Effect:
     publishSubject.onNext(stompFrame);
     testScheduler.advanceTimeBy(15, TimeUnit.MINUTES);
     verify(stompClient, times(11)).send("/mobile/retrieveOverPackage", "\"\"");
@@ -286,15 +289,15 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void ignoreWrongHeaderAndWaitForCompletionOrInterruption() {
-    // Дано:
+    // Given:
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.startPolling().test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
   }
@@ -306,17 +309,17 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void answerDataMappingErrorForOverPackageHeader1() throws Exception {
-    // Дано:
+    // Given:
     doThrow(new DataMappingException()).when(mapper).map(stompFrame);
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.startPolling().test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
     testObserver.assertNotComplete();
   }
@@ -326,16 +329,16 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void answerCompleteForOverPackageHeader0() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "0"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.startPolling().test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
   }
@@ -347,17 +350,17 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void answerWithTimersForOverPackageHeaderIfConnected() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(10_000L, 30_000L));
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.startPolling().test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
   }
@@ -369,18 +372,18 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void waitForCompletionOrInterruption() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(600_000L, 30_000L));
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
         .thenReturn(Flowable.just(stompFrame).concatWith(Flowable.never()));
     when(stompClient.send(anyString(), anyString())).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.startPolling().test();
     testScheduler.advanceTimeBy(10, TimeUnit.MINUTES);
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
   }
@@ -392,7 +395,7 @@ public class CurrentCostPollingGatewayTest {
    */
   @Test
   public void ignorePollPingNetworkError() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(stompFrame)).thenReturn(new Pair<>(0L, 30_000L));
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("OverPackage", "1"));
     when(topicListener.getMessages())
@@ -400,11 +403,11 @@ public class CurrentCostPollingGatewayTest {
     when(stompClient.send(anyString(), anyString()))
         .thenReturn(Completable.error(IllegalArgumentException::new));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.startPolling().test();
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
   }

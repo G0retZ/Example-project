@@ -7,12 +7,14 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.R;
 import com.cargopull.executor_driver.entity.OrdersHistorySummary;
 import com.cargopull.executor_driver.presentation.ViewState;
-import java.text.DecimalFormat;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.text.DecimalFormat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrdersHistoryHeaderViewStateLoadedTest {
@@ -37,16 +39,16 @@ public class OrdersHistoryHeaderViewStateLoadedTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     when(viewActions.isShowCents()).thenReturn(true);
     DecimalFormat decimalFormat = new DecimalFormat("##,###,### Ps");
     decimalFormat.setMaximumFractionDigits(2);
     decimalFormat.setMinimumFractionDigits(2);
 
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+    // Effect:
     verify(viewActions).getCurrencyFormat();
     verify(viewActions).isShowCents();
     verify(viewActions).setVisible(R.id.pendingIndicator, false);

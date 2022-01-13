@@ -10,14 +10,16 @@ import static org.mockito.Mockito.when;
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.entity.Order;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PreOrdersListApiMapperTest {
@@ -45,14 +47,14 @@ public class PreOrdersListApiMapperTest {
    */
   @Test
   public void shouldAskForMappingJsonStringToPreOrder() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("[{}]");
     when(apiOrderMapper.map(any(ApiOrder.class))).thenReturn(order);
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
 
-    // Результат:
+    // Effect:
     verify(apiOrderMapper, only()).map(any(ApiOrder.class));
   }
 
@@ -63,14 +65,14 @@ public class PreOrdersListApiMapperTest {
    */
   @Test
   public void mappingJsonStringToPreOrdersListSuccess() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("[{}, {}, {}, {}]");
     when(apiOrderMapper.map(any(ApiOrder.class))).thenReturn(order, order2, order2, order);
 
-    // Действие:
+    // Action:
     Set<Order> preOrders = mapper.map(stompFrame);
 
-    // Результат:
+    // Effect:
     assertEquals(2, preOrders.size());
     assertEquals(new HashSet<>(Arrays.asList(order, order2)), preOrders);
   }
@@ -82,11 +84,11 @@ public class PreOrdersListApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingFailForRoutePointMappingError() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("[{}, {}, {}, {}]");
     doThrow(new DataMappingException()).when(apiOrderMapper).map(any(ApiOrder.class));
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -97,10 +99,10 @@ public class PreOrdersListApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("\n");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -111,10 +113,10 @@ public class PreOrdersListApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("dasie");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -125,10 +127,10 @@ public class PreOrdersListApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("12");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -139,10 +141,10 @@ public class PreOrdersListApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
-    // Дано:
+    // Given:
     when(stompFrame.getBody()).thenReturn("{}");
 
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 
@@ -153,7 +155,7 @@ public class PreOrdersListApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
-    // Действие:
+    // Action:
     mapper.map(stompFrame);
   }
 }

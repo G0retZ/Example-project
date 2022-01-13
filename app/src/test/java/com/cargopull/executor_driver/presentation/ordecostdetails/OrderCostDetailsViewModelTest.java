@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.OrderCostDetails;
@@ -15,8 +16,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.OrderCostDetailsUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -27,6 +27,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderCostDetailsViewModelTest {
@@ -68,10 +71,10 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void reportDataMappingError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -82,7 +85,7 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void askUseCaseForOrderCostDetailsInitially() {
-    // Результат:
+    // Effect:
     verify(orderCostDetailsUseCase, only()).getOrderCostDetails();
   }
 
@@ -91,13 +94,13 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void doNotouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(orderCostDetailsUseCase, only()).getOrderCostDetails();
   }
 
@@ -108,13 +111,13 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void setPendingViewStateToLiveDataInitially() {
-    // Дано:
+    // Given:
     InOrder inOrderCostDetails = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrderCostDetails.verify(viewStateObserver)
         .onChanged(any(OrderCostDetailsViewStatePending.class));
     verifyNoMoreInteractions(viewStateObserver);
@@ -125,13 +128,13 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void doNotSetAnyViewStateToLiveDataForError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new Exception());
 
-    // Результат:
+    // Effect:
     verify(viewStateObserver, only()).onChanged(new OrderCostDetailsViewStatePending(null));
   }
 
@@ -140,16 +143,16 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void setIdleViewStateToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(orderCostDetails);
     publishSubject.onNext(orderCostDetails1);
     publishSubject.onNext(orderCostDetails2);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver)
         .onChanged(new OrderCostDetailsViewStatePending(null));
     inOrder.verify(viewStateObserver).onChanged(new OrderCostDetailsViewStateIdle(
@@ -171,14 +174,14 @@ public class OrderCostDetailsViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

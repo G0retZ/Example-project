@@ -6,19 +6,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.location.Location;
+
 import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.geolocation.GeolocationCenter;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.entity.GeoLocation;
 import com.cargopull.executor_driver.gateway.GeoLocationGatewayImpl;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GeoLocationGatewayTest {
@@ -44,10 +47,10 @@ public class GeoLocationGatewayTest {
    */
   @Test
   public void askGeolocationCenterForLocations() {
-    // Действие:
+    // Action:
     gateway.getGeoLocations(140);
 
-    // Результат:
+    // Effect:
     verify(geolocationCenter, only()).getLocations(140);
   }
 
@@ -58,11 +61,11 @@ public class GeoLocationGatewayTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Действие:
+    // Action:
     when(geolocationCenter.getLocations(anyLong()))
         .thenReturn(Flowable.error(new NoNetworkException()));
 
-    // Действие и Результат:
+    // Action и Effect:
     gateway.getGeoLocations(123).test().assertError(NoNetworkException.class);
   }
 
@@ -71,7 +74,7 @@ public class GeoLocationGatewayTest {
    */
   @Test
   public void answerWithGeoLocationData() {
-    // Дано:
+    // Given:
     Location location = new Location("flp") {
       double latitude, longitude;
       long time;
@@ -111,10 +114,10 @@ public class GeoLocationGatewayTest {
     location.setTime(789);
     when(geolocationCenter.getLocations(anyLong())).thenReturn(Flowable.just(location));
 
-    // Действие:
+    // Action:
     TestSubscriber<GeoLocation> testSubscriber = gateway.getGeoLocations(34).test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertValue(new GeoLocation(123, 456, 789));
     testSubscriber.assertComplete();
   }

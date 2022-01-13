@@ -27,7 +27,12 @@ constructor(private val apiService: ApiService,
                 .map(dataMapper::map)
                 .onErrorResumeNext { throwable ->
                     if (throwable is JsonParseException) {
-                        Single.error(DataMappingException("Ошибка маппинга: неверный формат данных!", throwable))
+                        Single.error(
+                            DataMappingException(
+                                "Mapping error: wrong data format!",
+                                throwable
+                            )
+                        )
                     } else {
                         Single.error(throwable)
                     }

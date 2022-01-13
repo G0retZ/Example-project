@@ -1,8 +1,10 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.entity.ExecutorState;
+
 import javax.inject.Inject;
 
 /**
@@ -36,7 +38,7 @@ public class ExecutorStateApiMapper implements Mapper<StompFrame, ExecutorState>
       }
       executorState.setData(payloadMapper.map(from));
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: неверный формат статуса!", e);
+      throw new DataMappingException("Mapping error: wrong format of status!", e);
     }
     return executorState;
   }

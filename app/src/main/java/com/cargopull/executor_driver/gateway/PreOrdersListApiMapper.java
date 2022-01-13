@@ -1,14 +1,17 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.entity.Order;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.inject.Inject;
 
 /**
@@ -28,10 +31,10 @@ public class PreOrdersListApiMapper implements Mapper<StompFrame, Set<Order>> {
   @Override
   public Set<Order> map(@NonNull StompFrame from) throws Exception {
     if (from.getBody() == null) {
-      throw new DataMappingException("Ошибка маппинга: данные не должны быть null!");
+      throw new DataMappingException("Mapping error: data must not be null!");
     }
     if (from.getBody().trim().isEmpty()) {
-      throw new DataMappingException("Ошибка маппинга: данные не должны быть пустыми!");
+      throw new DataMappingException("Mapping error: data must not be empty!");
     }
     Gson gson = new Gson();
     Type type = new TypeToken<Set<ApiOrder>>() {
@@ -40,7 +43,7 @@ public class PreOrdersListApiMapper implements Mapper<StompFrame, Set<Order>> {
     try {
       apiOrders = gson.fromJson(from.getBody(), type);
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: не удалось распарсить JSON: " + from, e);
+      throw new DataMappingException("Mapping error: failed to parse JSON: " + from, e);
     }
     Set<Order> orders = new HashSet<>();
     for (ApiOrder apiOrder : apiOrders) {

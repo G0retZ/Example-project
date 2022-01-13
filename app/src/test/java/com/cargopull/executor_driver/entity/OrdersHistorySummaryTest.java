@@ -3,18 +3,19 @@ package com.cargopull.executor_driver.entity;
 import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.utils.Pair;
+
 import org.junit.Test;
 
 public class OrdersHistorySummaryTest {
 
   @Test
   public void testGetters() {
-    // Дано:
+    // Given:
     OrdersHistorySummary ordersHistorySummary = new OrdersHistorySummary(
         new Pair<>(2, 10L), new Pair<>(3, 21L), new Pair<>(4, 32L), new Pair<>(5, 43L)
     );
 
-    // Результат:
+      // Effect:
     assertEquals(ordersHistorySummary.getCompletedOrders(), 10L);
     assertEquals(ordersHistorySummary.getCancelledOrders(), 32L);
     assertEquals(ordersHistorySummary.getCompletedOrders(), 10L);

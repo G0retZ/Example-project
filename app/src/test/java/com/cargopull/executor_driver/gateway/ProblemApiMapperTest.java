@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.backend.web.incoming.ApiProblem;
 import com.cargopull.executor_driver.entity.Problem;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,10 +24,10 @@ public class ProblemApiMapperTest {
    */
   @Test
   public void mappingApiProblemToProblemSuccess() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     Problem problem = mapper.map(new ApiProblem(1, "one", "unused1"));
 
-    // Результат:
+      // Effect:
     assertEquals(problem.getId(), 1);
     assertEquals(problem.getName(), "one");
     assertEquals(problem.getUnusedName(), "unused1");
@@ -39,10 +40,10 @@ public class ProblemApiMapperTest {
    */
   @Test
   public void mappingApiProblemWithEmptyDescriptionToProblemSuccess() throws Exception {
-    // Дано и Действие:
+      // Given и Action:
     Problem problem = mapper.map(new ApiProblem(1, "", "unused1"));
 
-    // Результат:
+      // Effect:
     assertEquals(problem.getId(), 1);
     assertEquals(problem.getName(), "");
     assertEquals(problem.getUnusedName(), "unused1");
@@ -55,7 +56,7 @@ public class ProblemApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingApiProblemWithNullDescriptionToProblemFail() throws Exception {
-    // Дано, Действие и Результат:
+      // Given, Action и Effect:
     mapper.map(new ApiProblem(1, null, "unused1"));
   }
 }

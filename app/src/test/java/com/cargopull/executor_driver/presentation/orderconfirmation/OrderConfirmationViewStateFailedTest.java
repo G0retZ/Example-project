@@ -19,11 +19,11 @@ public class OrderConfirmationViewStateFailedTest {
 
   @Test
   public void testActionsWithMessage() {
-    // Действие:
+    // Action:
     InOrder inOrder = Mockito.inOrder(viewActions);
     new OrderConfirmationViewStateFailed("message").apply(viewActions);
 
-    // Результат:
+      // Effect:
     inOrder.verify(viewActions).showDriverOrderConfirmationPending(true);
     inOrder.verify(viewActions).enableAcceptButton(false);
     inOrder.verify(viewActions).enableDeclineButton(false);

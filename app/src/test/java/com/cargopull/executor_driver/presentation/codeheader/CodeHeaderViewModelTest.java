@@ -2,17 +2,18 @@ package com.cargopull.executor_driver.presentation.codeheader;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.interactor.DataReceiver;
 import com.cargopull.executor_driver.presentation.TextViewActions;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -23,6 +24,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CodeHeaderViewModelTest {
@@ -52,12 +55,12 @@ public class CodeHeaderViewModelTest {
    */
   @Test
   public void askSelectedDataSharerForLoginInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getViewStateLiveData();
 
-    // Результат:
+    // Effect:
     verify(loginReceiver, only()).get();
   }
 
@@ -68,19 +71,19 @@ public class CodeHeaderViewModelTest {
    */
   @Test
   public void setViewStateWithNumbersToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(loginReceiver.get()).thenReturn(publishSubject);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext("79997004450");
     publishSubject.onNext("79998887766");
     publishSubject.onNext("79876543210");
     publishSubject.onNext("70123456789");
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 700-44-50"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (999) 888-77-66"));
     inOrder.verify(viewStateObserver).onChanged(new CodeHeaderViewState("+7 (987) 654-32-10"));
@@ -94,15 +97,15 @@ public class CodeHeaderViewModelTest {
   @SuppressWarnings("unchecked")
   @Test
   public void ignoreErrors() {
-    // Дано:
+    // Given:
     PublishSubject<String> publishSubject = PublishSubject.create();
     when(loginReceiver.get()).thenReturn(publishSubject, PublishSubject.never());
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new IllegalArgumentException());
 
-    // Результат:
-    verifyZeroInteractions(viewStateObserver);
+    // Effect:
+    verifyNoInteractions(viewStateObserver);
   }
 }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.backend.analytics.ErrorReporter;
 import com.cargopull.executor_driver.entity.ExecutorState;
@@ -15,11 +16,7 @@ import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.interactor.ExecutorStateUseCase;
 import com.cargopull.executor_driver.presentation.CommonNavigate;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.plugins.RxJavaPlugins;
-import io.reactivex.schedulers.TestScheduler;
-import io.reactivex.subjects.PublishSubject;
-import java.util.concurrent.TimeUnit;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -30,6 +27,13 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ClientOrderConfirmationTimeViewModelTest {
@@ -67,10 +71,10 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void reportError() {
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(errorReporter, only()).reportError(any(DataMappingException.class));
   }
 
@@ -81,7 +85,7 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void askUseCaseForOrderTimeInitially() {
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -90,13 +94,13 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void doNotTouchUseCaseOnSubscriptions() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getNavigationLiveData();
 
-    // Результат:
+    // Effect:
     verify(useCase, only()).getExecutorStates();
   }
 
@@ -107,13 +111,13 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void setViewStateWithZeroToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
     verifyNoMoreInteractions(viewStateObserver);
@@ -124,11 +128,11 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void setViewStateWithTimesToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     ExecutorState.WAITING_FOR_CLIENT.setCustomerTimer(123_000L);
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
@@ -142,7 +146,7 @@ public class ClientOrderConfirmationTimeViewModelTest {
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
     inOrder.verify(viewStateObserver)
@@ -161,11 +165,11 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void setNoNewViewStateViewStateToLiveDataOnError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     ExecutorState.WAITING_FOR_CLIENT.setCustomerTimer(123_000L);
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
@@ -178,7 +182,7 @@ public class ClientOrderConfirmationTimeViewModelTest {
     publishSubject.onError(new Exception());
     testScheduler.advanceTimeBy(1, TimeUnit.NANOSECONDS);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
     inOrder.verify(viewStateObserver)
@@ -195,18 +199,18 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void setCountingViewStatesToLiveDataUntilError() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     ExecutorState.WAITING_FOR_CLIENT.setCustomerTimer(20_000L);
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
     testScheduler.advanceTimeBy(10, TimeUnit.SECONDS);
     publishSubject.onError(new IllegalArgumentException());
     testScheduler.advanceTimeBy(30, TimeUnit.SECONDS);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
     for (int i = 20_000; i > 9000; i -= 1000) {
@@ -222,16 +226,16 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void setCountingViewStatesToLiveDataUntilItEndsAndNotCountingAfter() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     ExecutorState.WAITING_FOR_CLIENT.setCustomerTimer(20_000L);
     publishSubject.onNext(ExecutorState.WAITING_FOR_CLIENT);
     testScheduler.advanceTimeBy(30, TimeUnit.SECONDS);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver)
         .onChanged(new ClientOrderConfirmationTimeViewStateCounting(0));
     for (int i = 20_000; i > 0; i -= 1000) {
@@ -250,13 +254,13 @@ public class ClientOrderConfirmationTimeViewModelTest {
    */
   @Test
   public void setNavigateToServerDataError() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onError(new DataMappingException());
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(CommonNavigate.SERVER_DATA_ERROR);
   }
 }

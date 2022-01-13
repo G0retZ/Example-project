@@ -17,37 +17,37 @@ class GeolocationStateImplTest {
 
     @Test
     fun gpsStateInteraction() {
-        // Дано:
+        // Given:
         val geolocationState = GeolocationStateImpl(locationManager)
 
-        // Действие:
+        // Action:
         geolocationState.isGpsEnabled
 
-        // Результат:
+        // Effect:
         verify(locationManager, only()).isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     @Test
     fun networkStateInteraction() {
-        // Дано:
+        // Given:
         val geolocationState = GeolocationStateImpl(locationManager)
 
-        // Действие:
+        // Action:
         geolocationState.isNetworkEnabled
 
-        // Результат:
+        // Effect:
         verify(locationManager, only()).isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     @Test
     fun gpsStateAnswer() {
-        // Дано:
+        // Given:
         `when`(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(true, false)
 
-        // Действие:
+        // Action:
         val geolocationState = GeolocationStateImpl(locationManager)
 
-        // Результат:
+        // Effect:
         assertTrue(geolocationState.isGpsEnabled)
         assertFalse(geolocationState.isGpsEnabled)
         assertFalse(geolocationState.isGpsEnabled)
@@ -55,13 +55,13 @@ class GeolocationStateImplTest {
 
     @Test
     fun networkStateAnswer() {
-        // Дано:
+        // Given:
         `when`(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)).thenReturn(false, true)
 
-        // Действие:
+        // Action:
         val geolocationState = GeolocationStateImpl(locationManager)
 
-        // Результат:
+        // Effect:
         assertFalse(geolocationState.isNetworkEnabled)
         assertTrue(geolocationState.isNetworkEnabled)
         assertTrue(geolocationState.isNetworkEnabled)

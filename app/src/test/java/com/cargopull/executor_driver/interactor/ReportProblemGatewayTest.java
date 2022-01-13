@@ -15,18 +15,21 @@ import com.cargopull.executor_driver.entity.Problem;
 import com.cargopull.executor_driver.gateway.DataMappingException;
 import com.cargopull.executor_driver.gateway.Mapper;
 import com.cargopull.executor_driver.gateway.ReportProblemGatewayImpl;
-import io.reactivex.Completable;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReportProblemGatewayTest {
@@ -65,10 +68,10 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void askApiServicesForReportProblems() {
-    // Действие:
+    // Action:
     gateway.getProblems().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(apiService, only()).getReportProblems();
   }
 
@@ -77,14 +80,14 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void askApiServicesToReportProblem() {
-    // Дано:
+    // Given:
     when(problem.getId()).thenReturn(7);
     when(problem.getName()).thenReturn("seven");
 
-    // Действие:
+    // Action:
     gateway.reportProblem(problem).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(apiService, only()).reportProblem(new ApiProblem(7, "seven", null));
   }
 
@@ -97,16 +100,16 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void askMapperForForDataMapping() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(apiProblem)).thenReturn(problem);
     when(apiService.getReportProblems()).thenReturn(Single.just(
         Arrays.asList(apiProblem, apiProblem, apiProblem, apiProblem)
     ));
 
-    // Действие:
+    // Action:
     gateway.getProblems().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(mapper, times(4)).map(apiProblem);
     verifyNoMoreInteractions(mapper);
   }
@@ -120,16 +123,16 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void answerWithDataMappingError() throws Exception {
-    // Дано:
+    // Given:
     doThrow(new DataMappingException()).when(mapper).map(apiProblem);
     when(apiService.getReportProblems()).thenReturn(Single.just(
         Arrays.asList(apiProblem, apiProblem, apiProblem, apiProblem)
     ));
 
-    // Действие:
+    // Action:
     TestObserver<List<Problem>> listTestObserver = gateway.getProblems().test();
 
-    // Результат:
+    // Effect:
     listTestObserver.assertError(DataMappingException.class);
     listTestObserver.assertNoValues();
   }
@@ -141,16 +144,16 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void answerWithData() throws Exception {
-    // Дано:
+    // Given:
     when(mapper.map(apiProblem)).thenReturn(problem, problem1, problem2, problem3);
     when(apiService.getReportProblems()).thenReturn(Single.just(
         Arrays.asList(apiProblem, apiProblem, apiProblem, apiProblem)
     ));
 
-    // Действие:
+    // Action:
     TestObserver<List<Problem>> listTestObserver = gateway.getProblems().test();
 
-    // Результат:
+    // Effect:
     listTestObserver.assertNoErrors();
     listTestObserver.assertValue(new ArrayList<>(
         Arrays.asList(problem, problem1, problem2, problem3)
@@ -162,15 +165,15 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void answerReportProblemSuccess() {
-    // Дано:
+    // Given:
     when(problem.getId()).thenReturn(7);
     when(problem.getName()).thenReturn("seven");
     when(apiService.reportProblem(any(ApiProblem.class))).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.reportProblem(problem).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoErrors();
     testObserver.assertComplete();
   }
@@ -180,16 +183,16 @@ public class ReportProblemGatewayTest {
    */
   @Test
   public void answerReportProblemFail() {
-    // Дано:
+    // Given:
     when(problem.getId()).thenReturn(7);
     when(problem.getName()).thenReturn("seven");
     when(apiService.reportProblem(any(ApiProblem.class)))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = gateway.reportProblem(problem).test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNotComplete();
     testObserver.assertError(IllegalArgumentException.class);
   }

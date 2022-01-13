@@ -6,14 +6,16 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
-import io.reactivex.Completable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CallToClientUseCaseTest {
@@ -39,10 +41,10 @@ public class CallToClientUseCaseTest {
    */
   @Test
   public void askGatewayToToCallClientForOrder() {
-    // Действие:
+    // Action:
     useCase.callToClient().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).callToClient();
   }
 
@@ -53,14 +55,14 @@ public class CallToClientUseCaseTest {
    */
   @Test
   public void answerNoNetworkErrorForCallClient() {
-    // Дано:
+    // Given:
     when(gateway.callToClient())
         .thenReturn(Completable.error(new NoNetworkException()));
 
-    // Действие:
+    // Action:
     TestObserver<Void> test = useCase.callToClient().test();
 
-    // Результат:
+    // Effect:
     test.assertError(NoNetworkException.class);
     test.assertNoValues();
     test.assertNotComplete();
@@ -71,13 +73,13 @@ public class CallToClientUseCaseTest {
    */
   @Test
   public void answerSendCallClientSuccessful() {
-    // Дано:
+    // Given:
     when(gateway.callToClient()).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> test = useCase.callToClient().test();
 
-    // Результат:
+    // Effect:
     test.assertComplete();
     test.assertNoErrors();
   }

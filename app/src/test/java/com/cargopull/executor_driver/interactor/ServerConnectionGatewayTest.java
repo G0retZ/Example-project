@@ -8,14 +8,16 @@ import com.cargopull.executor_driver.GatewayThreadTestRule;
 import com.cargopull.executor_driver.backend.stomp.StompClient;
 import com.cargopull.executor_driver.backend.web.NoNetworkException;
 import com.cargopull.executor_driver.gateway.ServerConnectionGatewayImpl;
-import io.reactivex.Flowable;
-import io.reactivex.subscribers.TestSubscriber;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServerConnectionGatewayTest {
@@ -41,10 +43,10 @@ public class ServerConnectionGatewayTest {
    */
   @Test
   public void askStompClientToSubscribeForConnectionState() {
-    // Действие:
+    // Action:
     gateway.getSocketState().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(stompClient, only()).getConnectionState();
   }
 
@@ -55,10 +57,10 @@ public class ServerConnectionGatewayTest {
    */
   @Test
   public void answerNothing() {
-    // Действие:
+    // Action:
     TestSubscriber<Boolean> testSubscriber = gateway.getSocketState().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNotComplete();
     testSubscriber.assertNoValues();
   }
@@ -68,15 +70,15 @@ public class ServerConnectionGatewayTest {
    */
   @Test
   public void answerOpenSuccess() {
-    // Дано:
+    // Given:
     when(stompClient.getConnectionState()).thenReturn(
         Flowable.<Boolean>never().startWith(true).startWith(false)
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Boolean> testSubscriber = gateway.getSocketState().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertNotComplete();
     testSubscriber.assertValues(false, true);
   }
@@ -86,15 +88,15 @@ public class ServerConnectionGatewayTest {
    */
   @Test
   public void answerWithFalseAndErrorAfterFailed() {
-    // Дано:
+    // Given:
     when(stompClient.getConnectionState()).thenReturn(
         Flowable.<Boolean>error(new NoNetworkException()).startWith(false)
     );
 
-    // Действие:
+    // Action:
     TestSubscriber<Boolean> testSubscriber = gateway.getSocketState().test();
 
-    // Результат:
+    // Effect:
     testSubscriber.assertError(NoNetworkException.class);
     testSubscriber.assertValue(false);
     testSubscriber.assertNotComplete();

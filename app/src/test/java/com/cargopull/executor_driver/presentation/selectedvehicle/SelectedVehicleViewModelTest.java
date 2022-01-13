@@ -2,18 +2,18 @@ package com.cargopull.executor_driver.presentation.selectedvehicle;
 
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
+
 import com.cargopull.executor_driver.ViewModelThreadTestRule;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.vehicle.SelectedVehicleUseCase;
 import com.cargopull.executor_driver.presentation.ViewState;
-import io.reactivex.Observable;
-import io.reactivex.subjects.PublishSubject;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -24,6 +24,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SelectedVehicleViewModelTest {
@@ -56,12 +59,12 @@ public class SelectedVehicleViewModelTest {
    */
   @Test
   public void askSelectedVehicleUseCaseForVehiclesInitially() {
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData();
     viewModel.getViewStateLiveData();
     viewModel.getViewStateLiveData();
 
-    // Результат:
+    // Effect:
     verify(selectedVehicleUseCase, only()).getSelectedVehicle();
   }
 
@@ -70,13 +73,13 @@ public class SelectedVehicleViewModelTest {
    */
   @Test
   public void DoNotTouchSelectedVehicleUseCaseDuringVehicleChoosing() {
-    // Действие:
+    // Action:
     viewModel.changeVehicle();
     viewModel.getNavigationLiveData();
     viewModel.changeVehicle();
 
-    // Результат:
-    verifyZeroInteractions(selectedVehicleUseCase);
+    // Effect:
+    verifyNoInteractions(selectedVehicleUseCase);
   }
 
   /* Тетсируем переключение состояний. */
@@ -86,13 +89,13 @@ public class SelectedVehicleViewModelTest {
    */
   @Test
   public void setViewStateWithoutNameToLiveData() {
-    // Дано:
+    // Given:
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
 
-    // Действие:
+    // Action:
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState(""));
     verifyNoMoreInteractions(viewStateObserver);
   }
@@ -102,19 +105,19 @@ public class SelectedVehicleViewModelTest {
    */
   @Test
   public void setViewStateWithNameToLiveData() {
-    // Дано:
+    // Given:
     PublishSubject<Vehicle> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(selectedVehicleUseCase.getSelectedVehicle()).thenReturn(publishSubject);
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(new Vehicle(1, "m", "m", "c", "l", false));
     publishSubject.onNext(new Vehicle(2, "ma", "m", "co", "l", true));
     publishSubject.onNext(new Vehicle(3, "m", "mo", "co", "l", false));
     publishSubject.onNext(new Vehicle(4, "ma", "mo", "c", "l", true));
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState(""));
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState("m m (l)"));
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState("ma m (l)"));
@@ -129,21 +132,21 @@ public class SelectedVehicleViewModelTest {
   @SuppressWarnings("unchecked")
   @Test
   public void setViewStateWithoutNameToLiveDataOnError() {
-    // Дано:
+    // Given:
     PublishSubject<Vehicle> publishSubject = PublishSubject.create();
     InOrder inOrder = Mockito.inOrder(viewStateObserver);
     when(selectedVehicleUseCase.getSelectedVehicle())
         .thenReturn(publishSubject, PublishSubject.never());
     viewModel.getViewStateLiveData().observeForever(viewStateObserver);
 
-    // Действие:
+    // Action:
     publishSubject.onNext(new Vehicle(1, "m", "m", "c", "l", false));
     publishSubject.onNext(new Vehicle(2, "ma", "m", "co", "l", true));
     publishSubject.onNext(new Vehicle(3, "m", "mo", "co", "l", false));
     publishSubject.onNext(new Vehicle(4, "ma", "mo", "c", "l", true));
     publishSubject.onError(new IllegalArgumentException());
 
-    // Результат:
+    // Effect:
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState(""));
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState("m m (l)"));
     inOrder.verify(viewStateObserver).onChanged(new SelectedVehicleViewState("ma m (l)"));
@@ -160,13 +163,13 @@ public class SelectedVehicleViewModelTest {
    */
   @Test
   public void setNavigateToVehiclesToLiveData() {
-    // Дано:
+    // Given:
     viewModel.getNavigationLiveData().observeForever(navigateObserver);
 
-    // Действие:
+    // Action:
     viewModel.changeVehicle();
 
-    // Результат:
+    // Effect:
     verify(navigateObserver, only()).onChanged(SelectedVehicleNavigate.VEHICLES);
   }
 }

@@ -6,14 +6,16 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
 import com.cargopull.executor_driver.gateway.DataMappingException;
-import io.reactivex.Completable;
-import io.reactivex.observers.TestObserver;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import io.reactivex.Completable;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CurrentCostPollingUseCaseTest {
@@ -39,13 +41,13 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void askGatewayForPollingTimers() {
-    // Действие:
+    // Action:
     currentCostPollingUseCase.listenForPolling().test().isDisposed();
     currentCostPollingUseCase.listenForPolling().test().isDisposed();
     currentCostPollingUseCase.listenForPolling().test().isDisposed();
     currentCostPollingUseCase.listenForPolling().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(gateway, only()).startPolling();
   }
 
@@ -56,10 +58,10 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void waitForCompletionOrError() {
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = currentCostPollingUseCase.listenForPolling().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertNoValues();
     testObserver.assertNoErrors();
     testObserver.assertNotComplete();
@@ -70,13 +72,13 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void answerWithErrorIfSubscriptionFailed() {
-    // Дано:
+    // Given:
     when(gateway.startPolling()).thenReturn(Completable.error(DataMappingException::new));
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = currentCostPollingUseCase.listenForPolling().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertError(DataMappingException.class);
     testObserver.assertNotComplete();
     testObserver.assertNoValues();
@@ -87,13 +89,13 @@ public class CurrentCostPollingUseCaseTest {
    */
   @Test
   public void answerComplete() {
-    // Дано:
+    // Given:
     when(gateway.startPolling()).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     TestObserver<Void> testObserver = currentCostPollingUseCase.listenForPolling().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertComplete();
     testObserver.assertNoValues();
     testObserver.assertNoErrors();

@@ -1,7 +1,9 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
+
 import javax.inject.Inject;
 
 /**
@@ -19,7 +21,7 @@ public class OrderCurrentCostApiMapper implements Mapper<StompFrame, Long> {
     try {
       return Long.valueOf(from.getHeaders().get("TotalAmount"));
     } catch (Exception e) {
-      throw new DataMappingException("Ошибка маппинга: неверный формат стоимости!", e);
+      throw new DataMappingException("Mapping error: wrong format of cost!", e);
     }
   }
 }

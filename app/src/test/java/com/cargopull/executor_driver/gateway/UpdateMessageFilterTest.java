@@ -5,12 +5,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
-import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateMessageFilterTest {
@@ -30,7 +32,7 @@ public class UpdateMessageFilterTest {
    */
   @Test
   public void filterIfExecutorStateIncorrect() {
-    // Действие и Результат:
+    // Action и Effect:
     assertFalse(filter.test(stompFrame));
   }
 
@@ -39,10 +41,10 @@ public class UpdateMessageFilterTest {
    */
   @Test
   public void filterForHeaderWithWrongValue() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("message", ""));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertFalse(filter.test(stompFrame));
   }
 
@@ -51,10 +53,10 @@ public class UpdateMessageFilterTest {
    */
   @Test
   public void allowForHeaderWithCorrectValue() {
-    // Дано:
+    // Given:
     when(stompFrame.getHeaders()).thenReturn(Collections.singletonMap("message", "UpdateVersion"));
 
-    // Действие и Результат:
+    // Action и Effect:
     assertTrue(filter.test(stompFrame));
   }
 }

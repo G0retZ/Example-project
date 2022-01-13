@@ -31,15 +31,15 @@ public class NextRoutePointViewStateEnRouteTest {
 
   @Test
   public void testActions() {
-    // Дано:
+    // Given:
     when(routePointItem.getAddress()).thenReturn("add");
     when(routePointItem.getComment()).thenReturn("com");
     when(routePointItem.getCoordinatesString()).thenReturn("0,0");
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showNextRoutePointAddress("0,0", "add");
     verify(viewActions).showNextRoutePointComment("com");
     verify(viewActions).showNextRoutePointPending(false);

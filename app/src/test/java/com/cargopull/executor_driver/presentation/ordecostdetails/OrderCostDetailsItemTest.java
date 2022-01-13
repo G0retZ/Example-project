@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.OrderCostDetails;
 import com.cargopull.executor_driver.entity.PackageCostDetails;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,42 +31,42 @@ public class OrderCostDetailsItemTest {
 
   @Test
   public void testGetOrderCost() {
-    // Дано:
+    // Given:
     when(orderCostDetails.getOrderCost()).thenReturn(123L);
 
-    // Результат:
+      // Effect:
     assertEquals(orderCostDetailsItem.getTotalCost(), 123L);
   }
 
   @Test
   public void testGetEstimatedPackage() {
-    // Дано:
+      // Given:
     when(orderCostDetails.getEstimatedCost()).thenReturn(packageCostDetails);
     orderCostDetailsItem = new OrderCostDetailsItem(orderCostDetails);
 
-    // Результат:
+      // Effect:
     assertEquals(orderCostDetailsItem.getEstimatedPackage(),
         new PackageCostDetailsItem(packageCostDetails));
   }
 
   @Test
   public void testGetOverPackage() {
-    // Дано:
+      // Given:
     when(orderCostDetails.getOverPackageCost()).thenReturn(packageCostDetails);
     orderCostDetailsItem = new OrderCostDetailsItem(orderCostDetails);
 
-    // Результат:
+      // Effect:
     assertEquals(orderCostDetailsItem.getOverPackage(),
         new PackageCostDetailsItem(packageCostDetails));
   }
 
   @Test
   public void testGetOverPackageTariff() {
-    // Дано:
+      // Given:
     when(orderCostDetails.getOverPackageTariff()).thenReturn(packageCostDetails);
     orderCostDetailsItem = new OrderCostDetailsItem(orderCostDetails);
 
-    // Результат:
+      // Effect:
     assertEquals(orderCostDetailsItem.getOverPackageTariff(),
         new PackageCostDetailsItem(packageCostDetails));
   }

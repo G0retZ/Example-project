@@ -4,10 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrdersSummary;
 import com.cargopull.executor_driver.entity.OrdersHistorySummary;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class OrdersHistorySummaryApiMapperTest {
 
@@ -25,7 +27,7 @@ public class OrdersHistorySummaryApiMapperTest {
    */
   @Test
   public void mappingToOrdersHistorySummary() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     OrdersHistorySummary ordersHistorySummary = mapper
         .map(new HashMap<String, ApiOrdersSummary>() {{
           put("successOrders", new ApiOrdersSummary(0, 10));
@@ -34,7 +36,7 @@ public class OrdersHistorySummaryApiMapperTest {
           put("cancelledOrders", new ApiOrdersSummary(3, 76));
         }});
 
-    // Результат:
+    // Effect:
     assertEquals(ordersHistorySummary.getCompletedOrders(), 10);
     assertEquals(ordersHistorySummary.getRejectedOrders(), 32);
     assertEquals(ordersHistorySummary.getCancelledOrders(), 76);
@@ -48,10 +50,10 @@ public class OrdersHistorySummaryApiMapperTest {
    */
   @Test
   public void mappingEmptyMapToOrdersHistorySummary() throws Exception {
-    // Дано и Действие:
+    // Given и Action:
     OrdersHistorySummary ordersHistorySummary = mapper.map(new HashMap<>());
 
-    // Результат:
+    // Effect:
     assertEquals(ordersHistorySummary.getCompletedOrders(), 0);
     assertEquals(ordersHistorySummary.getRejectedOrders(), 0);
     assertEquals(ordersHistorySummary.getCancelledOrders(), 0);

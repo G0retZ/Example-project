@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.UseCaseThreadTestRule;
@@ -14,19 +14,22 @@ import com.cargopull.executor_driver.entity.OptionBoolean;
 import com.cargopull.executor_driver.entity.OptionNumeric;
 import com.cargopull.executor_driver.entity.Vehicle;
 import com.cargopull.executor_driver.interactor.DataReceiver;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.observers.TestObserver;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.observers.TestObserver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VehicleOptionsUseCaseTest {
@@ -62,10 +65,10 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void askDataSharerForSelectedVehicle() {
-    // Действие:
+    // Action:
     useCase.getVehicleOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(vehicleChoiceReceiver, only()).get();
   }
 
@@ -74,7 +77,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void doNotTouchDataSharer() {
-    // Действие:
+    // Action:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
@@ -82,8 +85,8 @@ public class VehicleOptionsUseCaseTest {
         )), new ArrayList<>()
     ).test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(vehicleChoiceReceiver);
+    // Effect:
+    verifyNoInteractions(vehicleChoiceReceiver);
   }
 
   /* Проверяем работу с гейтвеем ТС и поций */
@@ -93,10 +96,10 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void askVehiclesAndOptionsGatewayForVehicles() {
-    // Действие:
+    // Action:
     useCase.getDriverOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(vehiclesAndOptionsGateway, only()).getExecutorOptions();
   }
 
@@ -105,7 +108,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void doNotTouchVehiclesAndOptionsGateway() {
-    // Действие:
+    // Action:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
@@ -113,8 +116,8 @@ public class VehicleOptionsUseCaseTest {
         )), new ArrayList<>()
     ).test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(vehiclesAndOptionsGateway);
+    // Effect:
+    verifyNoInteractions(vehiclesAndOptionsGateway);
   }
 
   /* Проверяем ответы на запрос выбранного ТС */
@@ -125,7 +128,7 @@ public class VehicleOptionsUseCaseTest {
   @SuppressWarnings({"unchecked"})
   @Test
   public void answerWithSelectedVehicleOptionsList() {
-    // Дано:
+    // Given:
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
     vehicles.get(0).addVehicleOptions(
@@ -146,7 +149,7 @@ public class VehicleOptionsUseCaseTest {
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.getVehicleOptions().test().assertValues(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -171,7 +174,7 @@ public class VehicleOptionsUseCaseTest {
   @SuppressWarnings({"unchecked"})
   @Test
   public void answerNoVehicleOptionsAvailableError() {
-    // Дано:
+    // Given:
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     vehicles.add(0, new Vehicle(11, "manufacturer2", "models", "colors", "lic", true));
     vehicles.get(0).addVehicleOptions(
@@ -188,10 +191,10 @@ public class VehicleOptionsUseCaseTest {
     vehicles.add(0, new Vehicle(13, "manufacturers", "model4", "carrots", "licensee", false));
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.fromIterable(vehicles));
 
-    // Действие
+    // Action
     TestObserver<List<Option>> testObserver = useCase.getVehicleOptions().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertValues(
         new ArrayList<>(),
         new ArrayList<>(Arrays.asList(
@@ -215,7 +218,7 @@ public class VehicleOptionsUseCaseTest {
   @SuppressWarnings({"unchecked"})
   @Test
   public void answerWithExecutorOptionsList() {
-    // Дано:
+    // Given:
     when(vehiclesAndOptionsGateway.getExecutorOptions()).thenReturn(Single.just(
         Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -225,7 +228,7 @@ public class VehicleOptionsUseCaseTest {
         )
     ));
 
-    // Действие и Результат:
+    // Action и Effect:
     useCase.getDriverOptions().test().assertValues(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -242,13 +245,13 @@ public class VehicleOptionsUseCaseTest {
   @SuppressWarnings({"unchecked"})
   @Test
   public void answerNoExecutorOptionsAvailableError() {
-    // Дано:
+    // Given:
     when(vehiclesAndOptionsGateway.getExecutorOptions()).thenReturn(Single.just(new ArrayList<>()));
 
-    // Действие
+    // Action
     TestObserver<List<Option>> testObserver = useCase.getDriverOptions().test();
 
-    // Результат:
+    // Effect:
     testObserver.assertValues(new ArrayList<>());
   }
 
@@ -259,7 +262,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void doNotTouchGateway() {
-    // Действие:
+    // Action:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
@@ -267,8 +270,8 @@ public class VehicleOptionsUseCaseTest {
         )), new ArrayList<>()
     ).test().isDisposed();
 
-    // Результат:
-    verifyZeroInteractions(gateway);
+    // Effect:
+    verifyNoInteractions(gateway);
   }
 
   /**
@@ -276,7 +279,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void askGatewayToSetVehicleAndDriverOptions() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -286,7 +289,7 @@ public class VehicleOptionsUseCaseTest {
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
-    // Действие:
+    // Action:
     useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
@@ -299,7 +302,7 @@ public class VehicleOptionsUseCaseTest {
         )
     ).test().isDisposed();
 
-    // Результат:
+    // Effect:
     vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.setOptions(
         Arrays.asList(
@@ -321,7 +324,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void askLastUseVehicleGatewayToSaveLastUsedVehicleIdIfSuccess() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -331,7 +334,7 @@ public class VehicleOptionsUseCaseTest {
     );
     when(vehicleChoiceReceiver.get()).thenReturn(Observable.just(vehicle));
 
-    // Действие:
+    // Action:
     useCase.getVehicleOptions().test().isDisposed();
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
@@ -344,7 +347,7 @@ public class VehicleOptionsUseCaseTest {
         )
     ).test().isDisposed();
 
-    // Результат:
+    // Effect:
     verify(lastUsedVehicleGateway, only()).saveLastUsedVehicleId(vehicle);
   }
 
@@ -355,7 +358,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void answerDataMappingError() {
-    // Действие и Результат:
+    // Action и Effect:
     useCase.setSelectedVehicleAndOptions(
         new ArrayList<>(Arrays.asList(
             new OptionNumeric(1, "name1", "desc1", -5, -18, 0),
@@ -369,7 +372,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void answerNoNetworkError() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -381,10 +384,10 @@ public class VehicleOptionsUseCaseTest {
     when(gateway.sendVehicleOptions(any(Vehicle.class), anyList()))
         .thenReturn(Completable.error(NoNetworkException::new));
 
-    // Действие:
+    // Action:
     useCase.getVehicleOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     useCase.setSelectedVehicleAndOptions(
         Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
@@ -399,7 +402,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void answerArgumentError() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -413,10 +416,10 @@ public class VehicleOptionsUseCaseTest {
     when(lastUsedVehicleGateway.saveLastUsedVehicleId(any()))
         .thenReturn(Completable.error(new IllegalArgumentException()));
 
-    // Действие:
+    // Action:
     useCase.getVehicleOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     useCase.setSelectedVehicleAndOptions(
         Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", 40, 0, 120),
@@ -431,7 +434,7 @@ public class VehicleOptionsUseCaseTest {
    */
   @Test
   public void answerSetSelectedVehicleOptionsSuccessful() {
-    // Дано:
+    // Given:
     Vehicle vehicle = new Vehicle(12, "manufacturer", "model", "color", "license", false);
     vehicle.addVehicleOptions(
         new OptionNumeric(0, "name0", "desc0", 10, 0, 20),
@@ -444,10 +447,10 @@ public class VehicleOptionsUseCaseTest {
         .thenReturn(Completable.complete());
     when(lastUsedVehicleGateway.saveLastUsedVehicleId(any())).thenReturn(Completable.complete());
 
-    // Действие:
+    // Action:
     useCase.getVehicleOptions().test().isDisposed();
 
-    // Результат:
+    // Effect:
     useCase.setSelectedVehicleAndOptions(
         Arrays.asList(
             new OptionNumeric(0, "name0", "desc0", 40, 0, 120),

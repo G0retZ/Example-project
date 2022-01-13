@@ -5,8 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.BuildConfig;
-import okhttp3.Interceptor;
-import okhttp3.Request;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +13,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import okhttp3.Interceptor;
+import okhttp3.Request;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendVersionInterceptorTest {
@@ -38,13 +40,13 @@ public class SendVersionInterceptorTest {
    */
   @Test
   public void injectVersion() throws Exception {
-    // Дано:
+    // Given:
     when(chain.request()).thenReturn(new Request.Builder().url("http://www.cargopull.com").build());
 
-    // Действие:
+    // Action:
     sendVersionInterceptor.intercept(chain);
 
-    // Результат:
+    // Effect:
     verify(chain).proceed(request.capture());
     assertEquals(request.getValue().headers("X-app-version").size(), 1);
     assertEquals(request.getValue().headers("X-app-version").get(0),

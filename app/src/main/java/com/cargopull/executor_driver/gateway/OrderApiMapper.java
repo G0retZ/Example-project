@@ -1,6 +1,7 @@
 package com.cargopull.executor_driver.gateway;
 
 import androidx.annotation.NonNull;
+
 import com.cargopull.executor_driver.backend.web.incoming.ApiOptionItem;
 import com.cargopull.executor_driver.backend.web.incoming.ApiOrder;
 import com.cargopull.executor_driver.backend.web.incoming.ApiRoutePoint;
@@ -9,6 +10,7 @@ import com.cargopull.executor_driver.entity.Order;
 import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RouteType;
+
 import javax.inject.Inject;
 
 /**
@@ -32,34 +34,34 @@ public class OrderApiMapper implements Mapper<ApiOrder, Order> {
   @Override
   public Order map(@NonNull ApiOrder from) throws Exception {
     if (from.getPaymentType() == null) {
-      throw new DataMappingException("Ошибка маппинга: Тип оплаты не должен быть null!");
+      throw new DataMappingException("Mapping error: Payment method must not be null!");
     }
     PaymentType paymentType;
     try {
       paymentType = PaymentType.valueOf(from.getPaymentType());
     } catch (Exception e) {
       throw new DataMappingException(
-          "Ошибка маппинга: неизвестный способ оплаты \"" + from.getPaymentType() + "\" !");
+              "Mapping error: Unknown payment method \"" + from.getPaymentType() + "\" !");
     }
     RouteType routeType;
     try {
       routeType = RouteType.valueOf(from.getRouteType());
     } catch (Exception e) {
       throw new DataMappingException(
-          "Ошибка маппинга: неизвестный тип маршрута \"" + from.getRouteType() + "\" !");
+              "Mapping error: unknown route type \"" + from.getRouteType() + "\" !");
     }
     if (from.getApiOrderService() == null) {
-      throw new DataMappingException("Ошибка маппинга: Услуга не должна быть null!");
+      throw new DataMappingException("Mapping error: Service must not be null!");
     }
     if (from.getApiOrderService().getName() == null) {
-      throw new DataMappingException("Ошибка маппинга: Имя услуги не должно быть null!");
+      throw new DataMappingException("Mapping error: Service name must not be null!");
     }
     if (from.getRoute() == null) {
-      throw new DataMappingException("Ошибка маппинга: маршрут не должен быть null!");
+      throw new DataMappingException("Mapping error: route must not be null!");
     }
     if (from.getRoute().isEmpty()) {
       throw new DataMappingException(
-          "Ошибка маппинга: маршрут должен содержать хотя бы одну точку!"
+              "Mapping error: route must have at least 1 point!"
       );
     }
     Order order = new Order(

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.backend.stomp.StompFrame;
 import com.cargopull.executor_driver.utils.Pair;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,13 +35,13 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test
   public void mappingJsonStringToOrderSuccess() throws Exception {
-    // Дано
+    // Given
     when(stompFrame.getBody()).thenReturn(rule.getApiOrderTimers(423_401L, 93_212L));
 
-    // Действие:
+      // Action:
     Pair<Long, Long> pair = mapper.map(stompFrame);
 
-    // Результат:
+      // Effect:
     assertEquals(pair.first, new Long(423_401L));
     assertEquals(pair.second, new Long(93_212L));
   }
@@ -51,13 +52,13 @@ public class CurrentCostPollingTimersApiMapperTest {
    * @throws Exception ошибка
    */
   public void mappingJsonStringWithoutOrderTimerToOrderSuccess() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn(rule.getApiOrderTimers(null, 93_212L));
 
-    // Действие:
+      // Action:
     Pair<Long, Long> pair = mapper.map(stompFrame);
 
-    // Результат:
+      // Effect:
     assertEquals(pair.first, new Long(0L));
     assertEquals(pair.second, new Long(93_212L));
   }
@@ -69,10 +70,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithoutOrderPeriodFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn(rule.getApiOrderTimers(423_401L, null));
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -83,10 +84,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithSmallOrderPeriodFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn(rule.getApiOrderTimers(423_401L, 14_999L));
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -97,10 +98,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithNegativeOrderTimerFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn(rule.getApiOrderTimers(-1L, 93_212L));
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -111,7 +112,7 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNullFail() throws Exception {
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -122,10 +123,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingJsonStringWithNegativeOrderPeriodFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn(rule.getApiOrderTimers(423_401L, -1L));
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -136,10 +137,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingEmptyFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn("\n");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -150,10 +151,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingStringFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn("dasie");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -164,10 +165,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingNumberFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn("12");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 
@@ -178,10 +179,10 @@ public class CurrentCostPollingTimersApiMapperTest {
    */
   @Test(expected = DataMappingException.class)
   public void mappingArrayFail() throws Exception {
-    // Дано
+      // Given
     when(stompFrame.getBody()).thenReturn("[]");
 
-    // Действие:
+      // Action:
     mapper.map(stompFrame);
   }
 }

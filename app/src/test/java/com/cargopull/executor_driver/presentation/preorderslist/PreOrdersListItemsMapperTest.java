@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.entity.Order;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
@@ -19,6 +15,12 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class PreOrdersListItemsMapperTest {
@@ -62,26 +64,26 @@ public class PreOrdersListItemsMapperTest {
 
   @Test
   public void testSortWithEmptySet() {
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems = preOrdersListItemsMapper.apply(new HashSet<>());
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 0);
   }
 
   @Test
   public void testSortWithOneHeader() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(today.plusHours(3).getMillis());
     when(order1.getScheduledStartTime()).thenReturn(today.plusHours(11).getMillis());
     when(order2.getScheduledStartTime()).thenReturn(today.plusHours(7).getMillis());
     when(order3.getScheduledStartTime()).thenReturn(today.plusHours(15).getMillis());
 
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems =
         preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 5);
     assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(0));
     assertEquals(preOrdersListItems.get(1).getOrder(), order);
@@ -92,17 +94,17 @@ public class PreOrdersListItemsMapperTest {
 
   @Test
   public void testSortWithTwoHeaders() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(today.plusHours(3).getMillis());
     when(order1.getScheduledStartTime()).thenReturn(today.plusHours(19).getMillis());
     when(order2.getScheduledStartTime()).thenReturn(today.plusHours(11).getMillis());
     when(order3.getScheduledStartTime()).thenReturn(today.plusHours(27).getMillis());
 
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems =
         preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 6);
     assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(0));
     assertEquals(preOrdersListItems.get(1).getOrder(), order);
@@ -114,17 +116,17 @@ public class PreOrdersListItemsMapperTest {
 
   @Test
   public void testSortWithThreeHeaders() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(today.plusHours(3).getMillis());
     when(order1.getScheduledStartTime()).thenReturn(today.plusDays(1).plusHours(11).getMillis());
     when(order2.getScheduledStartTime()).thenReturn(today.plusHours(19).getMillis());
     when(order3.getScheduledStartTime()).thenReturn(today.plusDays(2).plusHours(3).getMillis());
 
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems =
         preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 7);
     assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(0));
     assertEquals(preOrdersListItems.get(1).getOrder(), order);
@@ -137,17 +139,17 @@ public class PreOrdersListItemsMapperTest {
 
   @Test
   public void testSortWithThreeHeadersStartingFromTheDayAfterTomorrow() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(today.plusDays(1).plusHours(3).getMillis());
     when(order1.getScheduledStartTime()).thenReturn(today.plusDays(2).plusHours(11).getMillis());
     when(order2.getScheduledStartTime()).thenReturn(today.plusDays(1).plusHours(19).getMillis());
     when(order3.getScheduledStartTime()).thenReturn(today.plusDays(3).plusHours(3).getMillis());
 
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems =
         preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 7);
     assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(1));
     assertEquals(preOrdersListItems.get(1).getOrder(), order);
@@ -160,17 +162,17 @@ public class PreOrdersListItemsMapperTest {
 
   @Test
   public void testSortWithThreeHeadersStartingFromYesterday() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(today.minusDays(1).plusHours(3).getMillis());
     when(order1.getScheduledStartTime()).thenReturn(today.plusHours(11).getMillis());
     when(order2.getScheduledStartTime()).thenReturn(today.minusDays(1).plusHours(19).getMillis());
     when(order3.getScheduledStartTime()).thenReturn(today.plusDays(1).plusHours(3).getMillis());
 
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems =
         preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 7);
     assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(-1));
     assertEquals(preOrdersListItems.get(1).getOrder(), order);
@@ -183,17 +185,17 @@ public class PreOrdersListItemsMapperTest {
 
   @Test
   public void testSortWithThreeHeadersWithGaps() {
-    // Дано:
+    // Given:
     when(order.getScheduledStartTime()).thenReturn(today.minusDays(1).plusHours(3).getMillis());
     when(order1.getScheduledStartTime()).thenReturn(today.plusDays(2).plusHours(11).getMillis());
     when(order2.getScheduledStartTime()).thenReturn(today.plusHours(19).getMillis());
     when(order3.getScheduledStartTime()).thenReturn(today.plusDays(4).plusHours(3).getMillis());
 
-    // Действие:
+    // Action:
     List<PreOrdersListItem> preOrdersListItems =
         preOrdersListItemsMapper.apply(new HashSet<>(Arrays.asList(order, order1, order2, order3)));
 
-    // Результат:
+    // Effect:
     assertEquals(preOrdersListItems.size(), 8);
     assertEquals(preOrdersListItems.get(0), new PreOrdersListHeaderItem(-1));
     assertEquals(preOrdersListItems.get(1).getOrder(), order);

@@ -4,10 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import com.cargopull.executor_driver.presentation.ViewState;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -32,13 +33,13 @@ public class OrderViewStateExpiredTest {
 
   @Test
   public void testActionsWithParent() {
-    // Дано:
+    // Given:
     viewState = new OrderViewStateExpired(parentViewState, "message", action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPersistentDialog("message", action);
     verifyNoMoreInteractions(viewActions);
     verify(parentViewState, only()).apply(viewActions);
@@ -46,16 +47,16 @@ public class OrderViewStateExpiredTest {
 
   @Test
   public void testNoActionsWithoutParent() {
-    // Дано:
+      // Given:
     viewState = new OrderViewStateExpired(null, "mess", action);
 
-    // Действие:
+      // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).showPersistentDialog("mess", action);
     verifyNoMoreInteractions(viewActions);
-    verifyZeroInteractions(parentViewState);
+    verifyNoInteractions(parentViewState);
   }
 
   @Test

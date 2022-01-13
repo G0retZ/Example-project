@@ -7,15 +7,7 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 import com.cargopull.executor_driver.utils.Pair;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,6 +16,17 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 @RunWith(Parameterized.class)
 public class ServerResponseInterceptorTest {
@@ -92,7 +95,7 @@ public class ServerResponseInterceptorTest {
    */
   @Test
   public void doNotThrowUnauthorizedError() throws Exception {
-    // Дано:
+    // Given:
     when(chain.proceed(nullable(Request.class))).thenReturn(
         new Response.Builder()
             .code(code)
@@ -106,9 +109,9 @@ public class ServerResponseInterceptorTest {
     );
 
     try {
-      // Действие:
+      // Action:
       Response response = serverResponseInterceptor.intercept(chain);
-      // Результат:
+      // Effect:
       assertEquals(chain.proceed(chain.request()), response);
       assertFalse(isMyException);
     } catch (ServerResponseException sre) {

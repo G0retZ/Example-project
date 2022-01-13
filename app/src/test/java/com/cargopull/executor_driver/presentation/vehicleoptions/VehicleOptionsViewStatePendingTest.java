@@ -24,10 +24,10 @@ public class VehicleOptionsViewStatePendingTest {
 
   @Test
   public void testActions() {
-    // Действие:
+    // Action:
     viewState.apply(viewActions);
 
-    // Результат:
+      // Effect:
     verify(viewActions).enableReadyButton(false);
     verify(viewActions).showVehicleOptionsList(true);
     verify(viewActions).showVehicleOptionsPending(true);
