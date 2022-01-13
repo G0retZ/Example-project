@@ -16,16 +16,14 @@ import com.cargopull.executor_driver.entity.PaymentType;
 import com.cargopull.executor_driver.entity.RoutePoint;
 import com.cargopull.executor_driver.entity.RouteType;
 import com.google.gson.Gson;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderApiMapperTest {
@@ -84,7 +82,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -120,7 +118,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -156,7 +154,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -192,7 +190,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -228,7 +226,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -264,7 +262,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -301,7 +299,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -337,7 +335,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -373,7 +371,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -410,7 +408,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -446,7 +444,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -482,7 +480,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -518,7 +516,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -554,7 +552,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -590,7 +588,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 0);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -627,7 +625,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 0);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -663,7 +661,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -699,7 +697,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -735,7 +733,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -771,7 +769,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -807,7 +805,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -843,7 +841,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 0);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -879,7 +877,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -951,7 +949,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(),
@@ -1023,7 +1021,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
     assertEquals(order.getOptions(),
@@ -1059,7 +1057,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), new ArrayList<>());
     assertEquals(order.getOptions(),
@@ -1095,7 +1093,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(), new ArrayList<>());
@@ -1129,7 +1127,7 @@ public class OrderApiMapperTest {
     assertEquals(order.getStartTime(), 9876598760L);
     assertEquals(order.getScheduledStartTime(), 128937981273L);
     assertEquals(order.getRouteType(), RouteType.POLYGON);
-    assertEquals(order.getServiceName(), "service");
+    assertEquals(order.getServiceName(), "Transportation");
     assertEquals(order.getDistance(), 546);
     assertEquals(order.getRoutePath(), Arrays.asList(routePoint, routePoint2, routePoint2));
     assertEquals(order.getOptions(), new ArrayList<>());
